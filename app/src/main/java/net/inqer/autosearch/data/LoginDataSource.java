@@ -10,6 +10,7 @@ import net.inqer.autosearch.data.service.AccountClient;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.util.concurrent.ExecutionException;
 
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
@@ -27,10 +28,10 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class LoginDataSource {
     private static final String TAG = "LoginDataSource";
 
-    HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY);
+    private HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY);
 
 
-    OkHttpClient okHttpClient = new OkHttpClient.Builder()
+    private OkHttpClient okHttpClient = new OkHttpClient.Builder()
             .addInterceptor(new Interceptor() {
                 @NotNull
                 @Override
@@ -46,15 +47,18 @@ public class LoginDataSource {
             }).addInterceptor(loggingInterceptor).build();
 
 
-    Retrofit retrofit = new Retrofit.Builder()
+    private Retrofit retrofit = new Retrofit.Builder()
             .baseUrl("http://8fde093bb098.sn.mynetname.net/api/")
             .addConverterFactory(GsonConverterFactory.create())
-            .client(okHttpClient)
+//            .client(okHttpClient)
             .build();
+
 
     private AccountClient accountClient = retrofit.create(AccountClient.class);
 
+
     private Result result;
+
 
     private Callback<LoggedInUser> loginCallback = new Callback<LoggedInUser>() {
         @Override
@@ -75,28 +79,48 @@ public class LoginDataSource {
         }
     };
 
+
     private static class LoginAsyncTask extends AsyncTask<Void, Void, LoggedInUser> {
-        LoginCredentials loginCredentials;
-        private String password;
-        private AccountClient accountClient;
+        private final Call<LoggedInUser> call;
+
+        LoginAsyncTask(Call<LoggedInUser> call) {
+            this.call = call;
+        }
 
         @Override
         protected LoggedInUser doInBackground(Void... voids) {
-            return null;
+            Log.d(TAG, "doInBackground: LoginAsyncTask executed");
+            try {
+                Response<LoggedInUser> response = call.execute();
+                return response.body();
+            } catch (IOException e) {
+                Log.e(TAG, "doInBackground: Failed to execute call", e);
+                return null;
+            }
         }
     }
 
+
     public Result<LoggedInUser> login(String username, String password) {
+        Log.d(TAG, "login: DataSource Login method called");
         result = null;
 
-        LoginCredentials loginCredentials = new LoginCredentials(username, password);
+        LoginCredentials credentials = new LoginCredentials(username, password);
 
-        Call<LoggedInUser> login_call = accountClient.login(loginCredentials);
+        Call<LoggedInUser> login_call = accountClient.login(credentials);
 
-        login_call.clone().enqueue(loginCallback);
+        LoginAsyncTask task = new LoginAsyncTask(login_call);
+        task.execute();
+        try {
+            result = new Result.Success<LoggedInUser>(task.get());
+        } catch (ExecutionException | InterruptedException e) {
+            Log.e(TAG, "login: Failed to get task data!", e);
+            result = new Result.Error(e);
+        }
 
         return result;
     }
+
 
     public void logout() {
         // TODO: revoke authentication

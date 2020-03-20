@@ -1,5 +1,7 @@
 package net.inqer.autosearch.data;
 
+import android.util.Log;
+
 import net.inqer.autosearch.data.model.LoggedInUser;
 
 /**
@@ -7,6 +9,7 @@ import net.inqer.autosearch.data.model.LoggedInUser;
  * maintains an in-memory cache of login status and user credentials information.
  */
 public class LoginRepository {
+    private static final String TAG = "LoginRepository";
 
     private static volatile LoginRepository instance;
 
@@ -44,6 +47,7 @@ public class LoginRepository {
     }
 
     public Result<LoggedInUser> login(String username, String password) {
+        Log.d(TAG, "login: Repository Login method called");
         // handle login
         Result<LoggedInUser> result = dataSource.login(username, password);
         if (result instanceof Result.Success) {

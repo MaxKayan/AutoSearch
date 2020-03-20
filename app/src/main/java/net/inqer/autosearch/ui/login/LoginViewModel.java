@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import android.util.Log;
 import android.util.Patterns;
 
 import net.inqer.autosearch.data.LoginRepository;
@@ -12,6 +13,7 @@ import net.inqer.autosearch.data.model.LoggedInUser;
 import net.inqer.autosearch.R;
 
 public class LoginViewModel extends ViewModel {
+    private static final String TAG = "LoginViewModel";
 
     private MutableLiveData<LoginFormState> loginFormState = new MutableLiveData<>();
     private MutableLiveData<LoginResult> loginResult = new MutableLiveData<>();
@@ -30,6 +32,7 @@ public class LoginViewModel extends ViewModel {
     }
 
     public void login(String username, String password) {
+        Log.d(TAG, "login: ViewModel login method called");
         // can be launched in a separate asynchronous job
         Result<LoggedInUser> result = loginRepository.login(username, password);
 
