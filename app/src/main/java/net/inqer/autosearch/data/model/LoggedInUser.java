@@ -1,10 +1,13 @@
 package net.inqer.autosearch.data.model;
 
+import androidx.room.Entity;
+
 import com.google.gson.annotations.SerializedName;
 
 /**
  * Data class that captures user information for logged in users retrieved from LoginRepository
  */
+@Entity
 public class LoggedInUser {
 
     private String userId;

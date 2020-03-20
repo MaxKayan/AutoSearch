@@ -1,5 +1,6 @@
 package net.inqer.autosearch.data;
 
+import android.os.AsyncTask;
 import android.util.Log;
 
 import net.inqer.autosearch.data.model.LoggedInUser;
@@ -55,30 +56,44 @@ public class LoginDataSource {
 
     private Result result;
 
+    private Callback<LoggedInUser> loginCallback = new Callback<LoggedInUser>() {
+        @Override
+        public void onResponse(@NotNull Call<LoggedInUser> call, @NotNull Response<LoggedInUser> response) {
+            if (response.isSuccessful()) {
+                Log.i(TAG, "onResponse: Successfully logged in!");
+                result = new Result.Success(response.body());
+
+            } else {
+                Log.e(TAG, "onResponse: Response was not successful! Code = " + response.code());
+                result = new Result.Error(new IOException("onResponse: Response was not successful! Code = "));
+            }
+        }
+
+        @Override
+        public void onFailure(@NotNull Call<LoggedInUser> call, @NotNull Throwable t) {
+            result = new Result.Error(new IOException("onFailure: Failed to send POST request! -- "+t.getMessage()));
+        }
+    };
+
+    private static class LoginAsyncTask extends AsyncTask<Void, Void, LoggedInUser> {
+        LoginCredentials loginCredentials;
+        private String password;
+        private AccountClient accountClient;
+
+        @Override
+        protected LoggedInUser doInBackground(Void... voids) {
+            return null;
+        }
+    }
+
     public Result<LoggedInUser> login(String username, String password) {
+        result = null;
+
         LoginCredentials loginCredentials = new LoginCredentials(username, password);
 
         Call<LoggedInUser> login_call = accountClient.login(loginCredentials);
 
-        login_call.clone().enqueue(new Callback<LoggedInUser>() {
-            @Override
-            public void onResponse(@NotNull Call<LoggedInUser> call, @NotNull Response<LoggedInUser> response) {
-                if (response.isSuccessful()) {
-                    Log.i(TAG, "onResponse: Successfully logged in!");
-                    result = new Result.Success(response.body());
-
-                } else {
-                    Log.e(TAG, "onResponse: Response was not successful! Code = " + response.code());
-                    result = new Result.Error(new IOException("onResponse: Response was not successful! Code = "));
-                }
-
-            }
-
-            @Override
-            public void onFailure(@NotNull Call<LoggedInUser> call, @NotNull Throwable t) {
-                result = new Result.Error(new IOException("onFailure: Failed to send POST request! -- "+t.getMessage()));
-            }
-        });
+        login_call.clone().enqueue(loginCallback);
 
         return result;
     }
