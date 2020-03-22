@@ -1,13 +1,18 @@
 package net.inqer.autosearch.ui.launcher;
 
+import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Window;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -71,6 +76,22 @@ public class LauncherActivity extends AppCompatActivity {
                 @Override
                 public void onFailure(@NotNull Call<AccountProperties> call, @NotNull Throwable t) {
                     Log.e(TAG, "onFailure: Failed to enqueue API call!", t);
+                    new AlertDialog.Builder(LauncherActivity.this)
+                            .setTitle(R.string.launcher_fail_alert_title)
+                            .setMessage(R.string.launcher_fail_alert_message)
+                            .setPositiveButton("Retry", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    LauncherActivity.this.recreate();
+                                }
+                            })
+                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    finish();
+                                }
+                            })
+                            .show();
                 }
             });
 
@@ -90,6 +111,7 @@ public class LauncherActivity extends AppCompatActivity {
 
     private void selectMainActivity() {
         Log.d(TAG, "selectMainActivity: Chosen Main");
+        Toast.makeText(this, "Saved authentication is valid", Toast.LENGTH_SHORT).show();
         startActivity(new Intent(this, MainActivity.class));
         finish();
     }
