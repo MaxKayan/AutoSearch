@@ -50,7 +50,7 @@ public class LoginDataSource {
     private Retrofit retrofit = new Retrofit.Builder()
             .baseUrl("http://8fde093bb098.sn.mynetname.net/api/")
             .addConverterFactory(GsonConverterFactory.create())
-//            .client(okHttpClient)
+            .client(okHttpClient)
             .build();
 
 

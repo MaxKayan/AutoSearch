@@ -10,6 +10,11 @@
     <string name="action_sign_in_short">Sign in</string>
     <string name="welcome">"Welcome !"</string>
     <string name="invalid_username">Not a valid username</string>
-    <string name="invalid_password">Password must be >5 characters</string>
+    <string name="invalid_password">Password must be at least 6 characters</string>
     <string name="login_failed">"Login failed"</string>
+
+    <string name="base_api_url">http://8fde093bb098.sn.mynetname.net/api/</string>
+    
+    <string name="preference_auth_file_key">net.inqer.autosearch.AUTH_FILE</string>
+    <string name="saved_token_key">net.inqer.autosearch.AUTH_TOKEN_KEY</string>
 </resources>

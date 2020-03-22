@@ -1,6 +1,9 @@
 package net.inqer.autosearch.data.service;
 
 
+import android.accounts.Account;
+
+import net.inqer.autosearch.data.model.AccountProperties;
 import net.inqer.autosearch.data.model.City;
 import net.inqer.autosearch.data.model.LoggedInUser;
 import net.inqer.autosearch.data.model.LoginCredentials;
@@ -19,5 +22,8 @@ public interface AccountClient {
 
     @GET("cities/{city_slug}/")
     Call<City> getCityBySlug(@Header("Authorization") String authToken, @Path("city_slug") String slug);
+
+    @GET("account/")
+    Call<AccountProperties> getAccountProperties(@Header("Authorization") String authToken);
 
 }

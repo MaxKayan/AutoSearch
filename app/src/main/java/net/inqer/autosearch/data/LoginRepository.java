@@ -1,8 +1,12 @@
 package net.inqer.autosearch.data;
 
+import android.content.SharedPreferences;
+import android.security.keystore.KeyProperties;
 import android.util.Log;
 
 import net.inqer.autosearch.data.model.LoggedInUser;
+
+import javax.crypto.KeyGenerator;
 
 /**
  * Class that requests authentication and user information from the remote data source and
@@ -10,6 +14,8 @@ import net.inqer.autosearch.data.model.LoggedInUser;
  */
 public class LoginRepository {
     private static final String TAG = "LoginRepository";
+
+//    final KeyGenerator keyGenerator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, "AndroidKeyStore");
 
     private static volatile LoginRepository instance;
 
