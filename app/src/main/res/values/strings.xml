@@ -19,4 +19,9 @@
     <string name="saved_token_key">net.inqer.autosearch.AUTH_TOKEN_KEY</string>
     <string name="launcher_fail_alert_title">Failed to connect</string>
     <string name="launcher_fail_alert_message">Please check your Internet connection and retry</string>
+    <string name="action_profile_title">Profile</string>
+    <string name="action_settings_title">Settings</string>
+    <string name="title_search">Search</string>
+    <string name="title_filters">My Filters</string>
+    <string name="title_settings">Settings</string>
 </resources>

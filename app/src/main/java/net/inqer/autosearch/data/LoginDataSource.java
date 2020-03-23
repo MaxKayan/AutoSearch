@@ -32,19 +32,15 @@ public class LoginDataSource {
 
 
     private OkHttpClient okHttpClient = new OkHttpClient.Builder()
-            .addInterceptor(new Interceptor() {
-                @NotNull
-                @Override
-                public okhttp3.Response intercept(@NotNull Chain chain) throws IOException {
-                    Request originalRequest = chain.request();
+            .addInterceptor(chain -> {
+                Request originalRequest = chain.request();
+                Request newRequest = originalRequest.newBuilder()
+                        .header("Interceptor-Header", "xyz")
+                        .build();
 
-                    Request newRequest = originalRequest.newBuilder()
-                            .header("Interceptor-Header", "xyz")
-                            .build();
-
-                    return chain.proceed(newRequest);
-                }
-            }).addInterceptor(loggingInterceptor).build();
+                return chain.proceed(newRequest);
+            })
+            .addInterceptor(loggingInterceptor).build();
 
 
     private Retrofit retrofit = new Retrofit.Builder()
@@ -92,7 +88,12 @@ public class LoginDataSource {
             Log.d(TAG, "doInBackground: LoginAsyncTask executed");
             try {
                 Response<LoggedInUser> response = call.execute();
-                return response.body();
+                if (response.isSuccessful()) {
+                    return response.body();
+                } else {
+                    Log.w(TAG, "doInBackground: failed to obtain token");
+                    return null;
+                }
             } catch (IOException e) {
                 Log.e(TAG, "doInBackground: Failed to execute call", e);
                 return null;
@@ -112,7 +113,12 @@ public class LoginDataSource {
         LoginAsyncTask task = new LoginAsyncTask(login_call);
         task.execute();
         try {
-            result = new Result.Success<LoggedInUser>(task.get());
+            LoggedInUser receivedUser = task.get();
+            if (receivedUser != null) {
+                result = new Result.Success<>(receivedUser);
+            } else {
+                result = new Result.Error(new IOException("Failed to retrieve user data"));
+            }
         } catch (ExecutionException | InterruptedException e) {
             Log.e(TAG, "login: Failed to get task data!", e);
             result = new Result.Error(e);

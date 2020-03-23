@@ -1,6 +1,7 @@
 package net.inqer.autosearch.ui.login;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -15,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import net.inqer.autosearch.MainActivity;
 import net.inqer.autosearch.R;
 import net.inqer.autosearch.data.preferences.AuthParametersProvider;
 import net.inqer.autosearch.databinding.ActivityLoginBinding;
@@ -71,7 +73,7 @@ public class LoginActivity extends AppCompatActivity {
                 setResult(Activity.RESULT_OK);
 
                 //Complete and destroy login activity once successful
-//                finish();
+                proceedToMain();
             }
         });
 
@@ -112,6 +114,11 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         Log.i(TAG, "onCreate: Token = "+ authSettings.getValue(getString(R.string.preference_auth_file_key)));
+    }
+
+    private void proceedToMain() {
+        startActivity(new Intent(this, MainActivity.class));
+        finish();
     }
 
     private void updateUiWithUser(LoggedInUserView model) {

@@ -1,4 +1,4 @@
-package net.inqer.autosearch.ui.home;
+package net.inqer.autosearch.ui.fragment.home;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;

@@ -7,6 +7,7 @@ import net.inqer.autosearch.data.model.AccountProperties;
 import net.inqer.autosearch.data.model.City;
 import net.inqer.autosearch.data.model.LoggedInUser;
 import net.inqer.autosearch.data.model.LoginCredentials;
+import net.inqer.autosearch.data.model.api.AuthCheckResponse;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -17,7 +18,7 @@ import retrofit2.http.Path;
 
 public interface AccountClient {
 
-    @POST("login/")
+    @POST("auth/obtain_key/")
     Call<LoggedInUser> login(@Body LoginCredentials credentials);
 
     @GET("cities/{city_slug}/")
@@ -25,5 +26,8 @@ public interface AccountClient {
 
     @GET("account/")
     Call<AccountProperties> getAccountProperties(@Header("Authorization") String authToken);
+
+    @GET("auth/checkme/")
+    Call<AuthCheckResponse> checkAuthentication(@Header("Authorization") String authToken);
 
 }

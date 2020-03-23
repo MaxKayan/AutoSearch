@@ -19,11 +19,13 @@ import com.google.gson.GsonBuilder;
 import net.inqer.autosearch.MainActivity;
 import net.inqer.autosearch.R;
 import net.inqer.autosearch.data.model.AccountProperties;
+import net.inqer.autosearch.data.model.api.AuthCheckResponse;
 import net.inqer.autosearch.data.preferences.AuthParametersProvider;
 import net.inqer.autosearch.data.service.AccountClient;
 import net.inqer.autosearch.ui.login.LoginActivity;
 
 import org.jetbrains.annotations.NotNull;
+import org.json.JSONObject;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -57,24 +59,41 @@ public class LauncherActivity extends AppCompatActivity {
 
             AccountClient accountClient = retrofit.create(AccountClient.class);
 
-            Call<AccountProperties> call = accountClient.getAccountProperties("Token "+token);
-            call.enqueue(new Callback<AccountProperties>() {
-                @Override
-                public void onResponse(@NotNull Call<AccountProperties> call, @NotNull Response<AccountProperties> response) {
-                    Log.d(TAG, "onResponse: Launcher API call response code is - "+response.code());
+//            Call<AccountProperties> call = accountClient.getAccountProperties("Token "+token);
+//            call.enqueue(new Callback<AccountProperties>() {
+//                @Override
+//                public void onResponse(@NotNull Call<AccountProperties> call, @NotNull Response<AccountProperties> response) {
+//                    Log.d(TAG, "onResponse: Launcher API call response code is - "+response.code());
+//
+//                    if (response.isSuccessful()) {
+//                        AccountProperties accountProperties = response.body();
+//                        Log.d(TAG, "onResponse: " + (accountProperties != null ? accountProperties.toString() : null));
+//                        selectMainActivity();
+//                    } else {
+//                        Log.w(TAG, "onResponse: response wasn't successful");
+//                        selectLoginActivity();
+//                    }
+//                }
 
+            Call<AuthCheckResponse> call = accountClient.checkAuthentication("Token "+token);
+            call.enqueue(new Callback<AuthCheckResponse>() {
+                @Override
+                public void onResponse(@NotNull Call<AuthCheckResponse> call, @NotNull Response<AuthCheckResponse> response) {
                     if (response.isSuccessful()) {
-                        AccountProperties accountProperties = response.body();
-                        Log.d(TAG, "onResponse: " + (accountProperties != null ? accountProperties.toString() : null));
-                        selectMainActivity();
+                        AuthCheckResponse result = response.body();
+                        if (result != null && result.isSuccessful()) {
+                            Log.d(TAG, "onResponse: "+result.getMessage());
+                            selectMainActivity();
+                        }
+
                     } else {
-                        Log.w(TAG, "onResponse: response wasn't successful");
+                        Log.d(TAG, "onResponse: not successful, code is - "+response.code());
                         selectLoginActivity();
                     }
                 }
 
                 @Override
-                public void onFailure(@NotNull Call<AccountProperties> call, @NotNull Throwable t) {
+                public void onFailure(@NotNull Call<AuthCheckResponse> call, @NotNull Throwable t) {
                     Log.e(TAG, "onFailure: Failed to enqueue API call!", t);
                     new AlertDialog.Builder(LauncherActivity.this)
                             .setTitle(R.string.launcher_fail_alert_title)
