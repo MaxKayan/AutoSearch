@@ -27,6 +27,9 @@ public interface AccountClient {
     @GET("account/")
     Call<AccountProperties> getAccountProperties(@Header("Authorization") String authToken);
 
+    @GET("account/")
+    Call<AccountProperties> getAccountProperties();
+
     @GET("auth/checkme/")
     Call<AuthCheckResponse> checkAuthentication(@Header("Authorization") String authToken);
 

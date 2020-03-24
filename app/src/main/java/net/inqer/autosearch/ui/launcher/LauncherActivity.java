@@ -110,6 +110,12 @@ public class LauncherActivity extends AppCompatActivity {
                                     finish();
                                 }
                             })
+                            .setNeutralButton("Go Offline", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    selectMainActivity();
+                                }
+                            })
                             .show();
                 }
             });

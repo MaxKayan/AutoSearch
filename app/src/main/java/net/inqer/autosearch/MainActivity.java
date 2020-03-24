@@ -14,6 +14,7 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import net.inqer.autosearch.data.preferences.AuthParametersProvider;
 import net.inqer.autosearch.data.service.AccountClient;
 import net.inqer.autosearch.databinding.ActivityMainBinding;
 
@@ -24,11 +25,15 @@ public class MainActivity extends AppCompatActivity {
 
 //    ActivityMainBinding binding;
 
+    public static AuthParametersProvider parametersProvider;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setTheme(R.style.AppTheme);
+
+        AuthParametersProvider parametersProvider = new AuthParametersProvider(this);
 
 //        binding = ActivityMainBinding.inflate(getLayoutInflater());
 
