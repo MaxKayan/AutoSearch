@@ -23,4 +23,10 @@
         android:label="@string/title_filters"
         tools:layout="@layout/fragment_filters"/>
 
+    <fragment
+        android:id="@+id/navigation_parameters"
+        android:name="net.inqer.autosearch.ui.fragment.parameters.ParametersFragment"
+        android:label="@string/title_parameters"
+        tools:layout="@layout/fragment_filters"/>
+
 </navigation>

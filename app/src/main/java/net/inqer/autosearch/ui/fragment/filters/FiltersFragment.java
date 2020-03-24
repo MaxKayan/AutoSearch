@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import net.inqer.autosearch.R;
+import net.inqer.autosearch.databinding.FragmentFiltersBinding;
 
 public class FiltersFragment extends Fragment {
 
@@ -22,17 +23,33 @@ public class FiltersFragment extends Fragment {
         return new FiltersFragment();
     }
 
+    private FragmentFiltersBinding binding;
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_filters, container, false);
     }
 
+
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        mViewModel = ViewModelProviders.of(this).get(FiltersViewModel.class);
-        // TODO: Use the ViewModel
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        binding = FragmentFiltersBinding.inflate(getLayoutInflater());
     }
 
+
+    @Override
+    public void onResume() {
+        binding.filtersShimmerViewContainer.startShimmer();
+        super.onResume();
+    }
+
+
+    @Override
+    public void onPause() {
+        binding.filtersShimmerViewContainer.stopShimmer();
+        super.onPause();
+    }
 }

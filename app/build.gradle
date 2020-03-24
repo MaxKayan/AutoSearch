@@ -56,9 +56,9 @@ dependencies {
     testImplementation 'androidx.room:room-testing:2.2.5'
 
     // Retrofit 2
-    implementation 'com.squareup.retrofit2:retrofit:2.7.2'
+    implementation 'com.squareup.retrofit2:retrofit:2.8.0'
     //implementation 'com.google.code.gson:gson:2.8.6'
-    implementation 'com.squareup.retrofit2:converter-gson:2.7.2'
+    implementation 'com.squareup.retrofit2:converter-gson:2.8.0'
 
     implementation 'com.squareup.okhttp3:logging-interceptor:4.4.1'
 
@@ -67,6 +67,8 @@ dependencies {
     implementation "com.github.bumptech.glide:glide:$glideVersion"
     annotationProcessor 'androidx.annotation:annotation:1.1.0'
     annotationProcessor "com.github.bumptech.glide:compiler:$glideVersion"
+
+    implementation 'com.facebook.shimmer:shimmer:0.5.0'
 
 //    implementation 'androidx.security:security-crypto:1.0.0-beta01'
 }

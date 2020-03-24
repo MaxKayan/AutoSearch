@@ -1,5 +1,7 @@
 package net.inqer.autosearch.data.model;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.time.OffsetDateTime;
 
 public class AccountProperties {
@@ -28,6 +30,7 @@ public class AccountProperties {
         this.is_superuser = is_superuser;
     }
 
+    @NotNull
     @Override
     public String toString() {
         return "AccountProperties{" +

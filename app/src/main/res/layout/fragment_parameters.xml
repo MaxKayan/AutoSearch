@@ -1,13 +1,147 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".ui.fragment.parameters.ParametersFragment">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Hello" />
+    <!--    <ScrollView-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="match_parent">-->
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="@dimen/data_vertical_margin">
+
+            <TextView
+                android:id="@+id/param_data_headline"
+                style="@style/TextAppearance.AppCompat.Headline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
+                android:gravity="center_vertical"
+                android:text="Profile Data"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/param_edit_data"
+                style="@style/TextAppearance.AppCompat.Large"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@id/param_data_headline"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:text="Edit"
+                android:textColor="@color/colorPrimary" />
+
+        </RelativeLayout>
+
+
+        <TextView
+            android:id="@+id/param_username"
+            style="@style/TextAppearance.AppCompat.Large"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="@dimen/data_vertical_margin"
+            android:text="Username"
+            app:layout_constraintTop_toBottomOf="@id/param_data_headline" />
+
+
+        <include layout="@layout/hr" />
+
+
+        <TextView
+            android:id="@+id/param_email"
+            style="@style/TextAppearance.AppCompat.Large"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/data_vertical_margin"
+            android:text="Email" />
+
+
+        <include layout="@layout/hr" />
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/data_vertical_margin">
+
+            <TextView
+                android:id="@+id/param_last_login_hint"
+                style="@style/TextAppearance.AppCompat.Large"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
+                android:text="Last login: "
+                android:textStyle="italic" />
+
+            <TextView
+                android:id="@+id/param_last_login_value"
+                style="@style/TextAppearance.AppCompat.Large"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:text="23.03.2020 23:15" />
+
+        </RelativeLayout>
+
+
+        <include layout="@layout/hr" />
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/data_vertical_margin">
+
+            <TextView
+                android:id="@+id/param_date_joined_hint"
+                style="@style/TextAppearance.AppCompat.Large"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
+                android:text="Date joined: "
+                android:textStyle="italic" />
+
+            <TextView
+                android:id="@+id/param_date_joined_value"
+                style="@style/TextAppearance.AppCompat.Large"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:text="11.02.2020 13:59" />
+
+        </RelativeLayout>
+
+
+        <include layout="@layout/hr"/>
+
+        <Button
+            android:id="@+id/param_button_sign_out"
+            style="@style/Widget.AppCompat.Button.Borderless.Colored"
+            android:textColor="@android:color/holo_red_light"
+            android:textSize="16sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sign Out"/>
+
+    </LinearLayout>
+
+    <!--    </ScrollView>-->
 </FrameLayout>
