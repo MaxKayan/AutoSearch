@@ -6,6 +6,7 @@ import net.inqer.autosearch.BaseApplication;
 import net.inqer.autosearch.dagger.module.ActivityBuilderModule;
 import net.inqer.autosearch.dagger.module.AppModule;
 import net.inqer.autosearch.dagger.module.FragmentBuilderModule;
+import net.inqer.autosearch.dagger.module.ViewModelFactoryModule;
 
 import javax.inject.Singleton;
 
@@ -19,6 +20,7 @@ import dagger.android.AndroidInjector;
         AndroidInjectionModule.class,
         ActivityBuilderModule.class,
         FragmentBuilderModule.class,
+        ViewModelFactoryModule.class,
         AppModule.class
 })
 public interface AppComponent extends AndroidInjector<BaseApplication> {
