@@ -70,19 +70,19 @@ public class AccountProperties {
         return last_login;
     }
 
-    public Boolean isAdmin() {
+    public Boolean getIs_admin() {
         return is_admin;
     }
 
-    public Boolean isActive() {
+    public Boolean getIs_active() {
         return is_active;
     }
 
-    public Boolean isStaff() {
+    public Boolean getIs_staff() {
         return is_staff;
     }
 
-    public Boolean isSuperuser() {
+    public Boolean getIs_superuser() {
         return is_superuser;
     }
 }

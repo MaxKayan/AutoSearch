@@ -1,33 +1,28 @@
 package net.inqer.autosearch.ui.fragment.parameters;
 
-import androidx.lifecycle.ViewModelProvider;
-
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import net.inqer.autosearch.dagger.ViewModelProviderFactory;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.lifecycle.ViewModelProvider;
+
 import net.inqer.autosearch.data.model.AccountProperties;
 import net.inqer.autosearch.databinding.FragmentParametersBinding;
 
 import org.jetbrains.annotations.NotNull;
-
-import javax.inject.Inject;
 
 import dagger.android.support.DaggerFragment;
 
 public class ParametersFragment extends DaggerFragment {
     private static final String TAG = "ParametersFragment";
 
-    @Inject
-    ViewModelProviderFactory providerFactory;
+//    @Inject
+//    ViewModelProviderFactory providerFactory;
 
     private ParametersViewModel viewModel;
 
@@ -47,7 +42,7 @@ public class ParametersFragment extends DaggerFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        viewModel = new ViewModelProvider(this, providerFactory).get(ParametersViewModel.class);
+        viewModel = new ViewModelProvider(this).get(ParametersViewModel.class);
 
         viewModel.updateAccountData();
         viewModel.getAccountProperties().observe(getViewLifecycleOwner(), this::bindProfileData);
