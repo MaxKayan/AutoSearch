@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         setTheme(R.style.AppTheme);
 
-        AuthParametersProvider parametersProvider = new AuthParametersProvider(this);
+//        AuthParametersProvider parametersProvider = new AuthParametersProvider(this);
 
 //        binding = ActivityMainBinding.inflate(getLayoutInflater());
 

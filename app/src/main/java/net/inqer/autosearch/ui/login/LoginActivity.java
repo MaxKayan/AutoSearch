@@ -21,15 +21,20 @@ import net.inqer.autosearch.R;
 import net.inqer.autosearch.data.preferences.AuthParametersProvider;
 import net.inqer.autosearch.databinding.ActivityLoginBinding;
 
+import javax.inject.Inject;
 
-public class LoginActivity extends AppCompatActivity {
+import dagger.android.support.DaggerAppCompatActivity;
+
+
+public class LoginActivity extends DaggerAppCompatActivity {
     private static final String TAG = "LoginActivity";
 
     private LoginViewModel loginViewModel;
 
     private ActivityLoginBinding binding;
 
-    private AuthParametersProvider authSettings;
+    @Inject
+    AuthParametersProvider authSettings;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -41,8 +46,6 @@ public class LoginActivity extends AppCompatActivity {
 
         loginViewModel = new ViewModelProvider(this, new LoginViewModelFactory())
                 .get(LoginViewModel.class);
-
-        authSettings = new AuthParametersProvider(this);
 
         loginViewModel.getLoginFormState().observe(this, loginFormState -> {
             if (loginFormState == null) {

@@ -1,22 +1,27 @@
 package net.inqer.autosearch.data.preferences;
 
+import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import net.inqer.autosearch.R;
 
 import org.jetbrains.annotations.NotNull;
 
+import javax.inject.Inject;
+
 public class AuthParametersProvider {
     private static final String TAG = "EncryptedSettings";
-
     //    private Context context;
     private SharedPreferences sharedPreferences;
 
-    public AuthParametersProvider(@NotNull Context context) {
+
+    @Inject
+    public AuthParametersProvider(@NotNull Application context) {
+        Log.i(TAG, "AuthParametersProvider: Instantiated!");
         int FILE_KEY = R.string.preference_auth_file_key;
         sharedPreferences = context.getSharedPreferences(context.getString(FILE_KEY), Context.MODE_PRIVATE);
-
     }
 
     public void saveValue(String key, String value) {

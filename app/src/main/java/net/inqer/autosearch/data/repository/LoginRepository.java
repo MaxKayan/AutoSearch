@@ -1,12 +1,9 @@
-package net.inqer.autosearch.data;
+package net.inqer.autosearch.data.repository;
 
-import android.content.SharedPreferences;
-import android.security.keystore.KeyProperties;
 import android.util.Log;
 
 import net.inqer.autosearch.data.model.LoggedInUser;
-
-import javax.crypto.KeyGenerator;
+import net.inqer.autosearch.data.model.Result;
 
 /**
  * Class that requests authentication and user information from the remote data source and

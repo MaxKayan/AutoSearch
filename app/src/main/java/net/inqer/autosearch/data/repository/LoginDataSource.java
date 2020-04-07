@@ -1,10 +1,11 @@
-package net.inqer.autosearch.data;
+package net.inqer.autosearch.data.repository;
 
 import android.os.AsyncTask;
 import android.util.Log;
 
 import net.inqer.autosearch.data.model.LoggedInUser;
 import net.inqer.autosearch.data.model.LoginCredentials;
+import net.inqer.autosearch.data.model.Result;
 import net.inqer.autosearch.data.service.AccountClient;
 
 import org.jetbrains.annotations.NotNull;
@@ -12,50 +13,52 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
-import okhttp3.Interceptor;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.logging.HttpLoggingInterceptor;
+import javax.inject.Inject;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Class that handles authentication w/ login credentials and retrieves user information.
  */
 public class LoginDataSource {
     private static final String TAG = "LoginDataSource";
+    private final AccountClient accountClient;
 
-    private HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY);
+    @Inject
+    public LoginDataSource(AccountClient accountClient) {
+        this.accountClient = accountClient;
+    }
 
-
-    private OkHttpClient okHttpClient = new OkHttpClient.Builder()
-            .addInterceptor(chain -> {
-                Request originalRequest = chain.request();
-                Request newRequest = originalRequest.newBuilder()
-                        .header("Interceptor-Header", "xyz")
-                        .build();
-
-                return chain.proceed(newRequest);
-            })
-            .addInterceptor(loggingInterceptor).build();
-
-
-    private Retrofit retrofit = new Retrofit.Builder()
-            .baseUrl("http://8fde093bb098.sn.mynetname.net/api/")
-            .addConverterFactory(GsonConverterFactory.create())
-            .client(okHttpClient)
-            .build();
-
-
-    private AccountClient accountClient = retrofit.create(AccountClient.class);
+//    private HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY);
+//
+//
+//    private OkHttpClient okHttpClient = new OkHttpClient.Builder()
+//            .addInterceptor(chain -> {
+//                Request originalRequest = chain.request();
+//                Request newRequest = originalRequest.newBuilder()
+//                        .header("Interceptor-Header", "xyz")
+//                        .build();
+//
+//                return chain.proceed(newRequest);
+//            })
+//            .addInterceptor(loggingInterceptor).build();
+//
+//
+//    private Retrofit retrofit = new Retrofit.Builder()
+//            .baseUrl("http://8fde093bb098.sn.mynetname.net/api/")
+//            .addConverterFactory(GsonConverterFactory.create())
+//            .client(okHttpClient)
+//            .build();
+//
+//
+//    private AccountClient accountClient = retrofit.create(AccountClient.class);
 
 
     private Result result;
 
-
+    @SuppressWarnings("unchecked")
     private Callback<LoggedInUser> loginCallback = new Callback<LoggedInUser>() {
         @Override
         public void onResponse(@NotNull Call<LoggedInUser> call, @NotNull Response<LoggedInUser> response) {

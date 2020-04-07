@@ -4,34 +4,33 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import net.inqer.autosearch.MainActivity;
 import net.inqer.autosearch.data.model.AccountProperties;
 import net.inqer.autosearch.data.networking.ApiService;
-import net.inqer.autosearch.data.networking.RetrofitService;
 import net.inqer.autosearch.data.service.AccountClient;
 
 import org.jetbrains.annotations.NotNull;
+
+import javax.inject.Inject;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public class ParametersViewModel extends ViewModel {
-    // TODO: Implement the ViewModel
 
+    private AccountClient accountClient = ApiService.retrofitService();
     private MutableLiveData<AccountProperties> accountProperties = new MutableLiveData<>();
 
-    AccountClient accountClient = ApiService.retrofitService();
-
+    @Inject
     public ParametersViewModel() {
 //        updateAccountData();
     }
 
-    public LiveData<AccountProperties> getAccountProperties() {
+    LiveData<AccountProperties> getAccountProperties() {
         return accountProperties;
     }
 
-    public void updateAccountData() {
+    void updateAccountData() {
         Call<AccountProperties> call = accountClient.getAccountProperties();
         call.enqueue(new Callback<AccountProperties>() {
             @Override

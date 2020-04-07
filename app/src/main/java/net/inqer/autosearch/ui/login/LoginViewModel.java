@@ -8,8 +8,8 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import net.inqer.autosearch.R;
-import net.inqer.autosearch.data.LoginRepository;
-import net.inqer.autosearch.data.Result;
+import net.inqer.autosearch.data.repository.LoginRepository;
+import net.inqer.autosearch.data.model.Result;
 import net.inqer.autosearch.data.model.LoggedInUser;
 
 public class LoginViewModel extends ViewModel {

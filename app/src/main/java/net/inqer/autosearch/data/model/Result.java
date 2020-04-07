@@ -1,4 +1,4 @@
-package net.inqer.autosearch.data;
+package net.inqer.autosearch.data.model;
 
 import org.jetbrains.annotations.NotNull;
 
