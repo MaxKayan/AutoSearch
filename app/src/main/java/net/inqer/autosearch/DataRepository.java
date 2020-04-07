@@ -1,14 +1,19 @@
 package net.inqer.autosearch;
 
+import android.os.AsyncTask;
+import android.util.Log;
+
 import net.inqer.autosearch.data.model.AccountProperties;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Singleton
 public class DataRepository {
+    private static final String TAG = "DataRepository";
 
     private static DataRepository instance;
 
@@ -39,10 +44,29 @@ public class DataRepository {
     }
 
     public List<AccountProperties> getAllAccounts() {
-        return mDatabase.accountDao().getAll();
+        try {
+            GetterAsyncTask task = new GetterAsyncTask(mDatabase);
+            task.execute();
+            return task.get();
+        } catch (ExecutionException | InterruptedException e) {
+            Log.e(TAG, "getAllAccounts: error:", e);
+            return null;
+        }
     }
 
     public void delete(AccountProperties accountProperties) {
         mDatabase.accountDao().delete(accountProperties);
+    }
+
+    private static class GetterAsyncTask extends AsyncTask<Void, Void, List<AccountProperties>> {
+        private final AppDatabase database;
+        GetterAsyncTask(AppDatabase database) {
+            this.database = database;
+        }
+
+        @Override
+        protected List<AccountProperties> doInBackground(Void... voids) {
+            return database.accountDao().getAll();
+        }
     }
 }

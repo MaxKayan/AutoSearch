@@ -16,6 +16,8 @@ import net.inqer.autosearch.databinding.FragmentParametersBinding;
 
 import org.jetbrains.annotations.NotNull;
 
+import javax.inject.Inject;
+
 import dagger.android.support.DaggerFragment;
 
 public class ParametersFragment extends DaggerFragment {
@@ -25,6 +27,9 @@ public class ParametersFragment extends DaggerFragment {
 //    ViewModelProviderFactory providerFactory;
 
     private ParametersViewModel viewModel;
+
+    @Inject
+    ParametersViewModelFactory factory;
 
     private FragmentParametersBinding binding;
 
@@ -42,7 +47,7 @@ public class ParametersFragment extends DaggerFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        viewModel = new ViewModelProvider(this).get(ParametersViewModel.class);
+        viewModel = new ViewModelProvider(this, factory).get(ParametersViewModel.class);
 
         viewModel.updateAccountData();
         viewModel.getAccountProperties().observe(getViewLifecycleOwner(), this::bindProfileData);
@@ -54,6 +59,8 @@ public class ParametersFragment extends DaggerFragment {
             Toast.makeText(v.getContext(), "Sign Out LONG click pressed", Toast.LENGTH_SHORT).show();
             return true;
         });
+
+        Log.d(TAG, "onViewCreated: "+viewModel.getAllAccounts());
     }
 
 
