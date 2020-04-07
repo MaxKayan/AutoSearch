@@ -1,8 +1,5 @@
 package net.inqer.autosearch.data.networking;
 
-import android.content.res.Resources;
-
-import net.inqer.autosearch.R;
 import net.inqer.autosearch.data.service.AccountClient;
 
 import okhttp3.OkHttpClient;
@@ -10,8 +7,6 @@ import okhttp3.Request;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-
-import static net.inqer.autosearch.MainActivity.parametersProvider;
 
 public class ApiService {
 

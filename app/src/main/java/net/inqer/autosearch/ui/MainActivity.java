@@ -1,11 +1,9 @@
-package net.inqer.autosearch;
+package net.inqer.autosearch.ui;
 
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
-
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,30 +12,28 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
-import net.inqer.autosearch.data.preferences.AuthParametersProvider;
-import net.inqer.autosearch.data.service.AccountClient;
-import net.inqer.autosearch.databinding.ActivityMainBinding;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
+import net.inqer.autosearch.R;
+import net.inqer.autosearch.data.preferences.AuthParametersProvider;
+import net.inqer.autosearch.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {
 
-//    ActivityMainBinding binding;
+    ActivityMainBinding binding;
 
     public static AuthParametersProvider parametersProvider;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
         setTheme(R.style.AppTheme);
 
 //        AuthParametersProvider parametersProvider = new AuthParametersProvider(this);
 
-//        binding = ActivityMainBinding.inflate(getLayoutInflater());
-
-        BottomNavigationView navView = findViewById(R.id.nav_view);
+        BottomNavigationView navView = binding.navView;
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(

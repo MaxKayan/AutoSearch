@@ -10,11 +10,11 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 
-import net.inqer.autosearch.MainActivity;
 import net.inqer.autosearch.R;
 import net.inqer.autosearch.data.model.api.AuthCheckResponse;
 import net.inqer.autosearch.data.preferences.AuthParametersProvider;
 import net.inqer.autosearch.data.service.AccountClient;
+import net.inqer.autosearch.ui.MainActivity;
 import net.inqer.autosearch.ui.login.LoginActivity;
 
 import org.jetbrains.annotations.NotNull;

@@ -2,9 +2,15 @@ package net.inqer.autosearch.dagger.module;
 
 import android.app.Application;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
+import androidx.room.Room;
+import androidx.room.RoomDatabase;
+import androidx.sqlite.db.SupportSQLiteDatabase;
 
+import net.inqer.autosearch.AppDatabase;
 import net.inqer.autosearch.R;
 import net.inqer.autosearch.data.service.AccountClient;
 
@@ -14,13 +20,37 @@ import javax.inject.Singleton;
 import dagger.Module;
 import dagger.Provides;
 import okhttp3.OkHttpClient;
-import okhttp3.Request;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 @Module
 public class AppModule {
+    private static final String TAG = "AppModule";
+
+    @Singleton
+    @Provides
+    AppDatabase provideAppDatabase(Application application) {
+        return Room.databaseBuilder(
+                application,
+                AppDatabase.class,
+                "application_database")
+                .fallbackToDestructiveMigration()
+                .addCallback(new RoomDatabase.Callback() {
+                    @Override
+                    public void onCreate(@NonNull SupportSQLiteDatabase db) {
+                        super.onCreate(db);
+                        Log.i(TAG, "RoomDatabase: onCreate: called!");
+                    }
+
+                    @Override
+                    public void onOpen(@NonNull SupportSQLiteDatabase db) {
+                        super.onOpen(db);
+                        Log.d(TAG, "RoomDatabase: onOpen: called!");
+                    }
+                })
+                .build();
+    }
 
     @Singleton
     @Provides
@@ -59,5 +89,6 @@ public class AppModule {
     AccountClient provideAccountClient(Retrofit retrofit) {
         return retrofit.create(AccountClient.class);
     }
+
 
 }

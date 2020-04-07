@@ -12,14 +12,13 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
-import net.inqer.autosearch.MainActivity;
 import net.inqer.autosearch.R;
 import net.inqer.autosearch.data.preferences.AuthParametersProvider;
 import net.inqer.autosearch.databinding.ActivityLoginBinding;
+import net.inqer.autosearch.ui.MainActivity;
 
 import javax.inject.Inject;
 

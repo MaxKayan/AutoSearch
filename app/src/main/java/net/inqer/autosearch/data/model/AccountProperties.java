@@ -1,11 +1,15 @@
 package net.inqer.autosearch.data.model;
 
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
 import org.jetbrains.annotations.NotNull;
 
-import java.time.OffsetDateTime;
-
+@Entity(tableName = "account_table")
 public class AccountProperties {
+    @PrimaryKey
     private Integer id;
+
     private String email;
     private String username;
 
@@ -66,19 +70,19 @@ public class AccountProperties {
         return last_login;
     }
 
-    public Boolean getIs_admin() {
+    public Boolean isAdmin() {
         return is_admin;
     }
 
-    public Boolean getIs_active() {
+    public Boolean isActive() {
         return is_active;
     }
 
-    public Boolean getIs_staff() {
+    public Boolean isStaff() {
         return is_staff;
     }
 
-    public Boolean getIs_superuser() {
+    public Boolean isSuperuser() {
         return is_superuser;
     }
 }

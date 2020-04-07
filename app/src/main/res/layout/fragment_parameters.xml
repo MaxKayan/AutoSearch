@@ -54,8 +54,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginVertical="@dimen/data_vertical_margin"
-            android:text="Username"
-            app:layout_constraintTop_toBottomOf="@id/param_data_headline" />
+            android:text="Username" />
 
 
         <include layout="@layout/hr" />
@@ -130,18 +129,69 @@
         </RelativeLayout>
 
 
-        <include layout="@layout/hr"/>
+        <include layout="@layout/hr" />
 
         <Button
             android:id="@+id/param_button_sign_out"
             style="@style/Widget.AppCompat.Button.Borderless.Colored"
-            android:textColor="@android:color/holo_red_light"
-            android:textSize="16sp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Sign Out"/>
+            android:text="Sign Out"
+            android:textColor="@android:color/holo_red_light"
+            android:textSize="16sp" />
 
     </LinearLayout>
+
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/param_shimmer_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:shimmer_duration="1000"
+        app:shimmer_base_alpha="0">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <View
+                android:layout_width="200dp"
+                android:layout_height="30dp"
+                android:background="@color/background"
+                android:layout_marginVertical="12dp"
+                android:visibility="invisible"/>
+
+            <View
+                android:layout_width="240dp"
+                android:layout_height="30dp"
+                android:background="@color/background"
+                android:layout_marginVertical="12dp" />
+
+            <View
+                android:layout_width="240dp"
+                android:layout_height="30dp"
+                android:background="@color/background"
+                android:layout_marginVertical="16dp" />
+
+            <View
+                android:layout_width="240dp"
+                android:layout_height="30dp"
+                android:background="@color/background"
+                android:layout_marginVertical="10dp"
+                android:layout_gravity="right"/>
+
+            <View
+                android:layout_width="240dp"
+                android:layout_height="30dp"
+                android:background="@color/background"
+                android:layout_marginVertical="10dp"
+                android:layout_gravity="right"/>
+
+        </LinearLayout>
+
+    </com.facebook.shimmer.ShimmerFrameLayout>
+
 
     <!--    </ScrollView>-->
 </FrameLayout>
