@@ -1,15 +1,22 @@
 package net.inqer.autosearch.dagger.module;
 
+import net.inqer.autosearch.MainActivity;
+import net.inqer.autosearch.dagger.module.viewmodel.LoginViewModelModule;
 import net.inqer.autosearch.ui.launcher.LauncherActivity;
+import net.inqer.autosearch.ui.login.LoginActivity;
 
-import dagger.Binds;
 import dagger.Module;
 import dagger.android.ContributesAndroidInjector;
-import dagger.multibindings.IntoMap;
 
 @Module
 public abstract class ActivityBuilderModule {
 
-    @ContributesAndroidInjector
+    @ContributesAndroidInjector(modules = {LauncherModule.class})
     abstract LauncherActivity contributeLauncherActivity();
+
+    @ContributesAndroidInjector(modules = {LauncherModule.class, LoginViewModelModule.class})
+    abstract LoginActivity contributeLoginActivity();
+
+    @ContributesAndroidInjector(modules = {LauncherModule.class})
+    abstract MainActivity contributeMainActivity();
 }

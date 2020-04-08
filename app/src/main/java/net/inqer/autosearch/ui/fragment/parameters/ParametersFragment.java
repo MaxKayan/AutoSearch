@@ -1,18 +1,17 @@
 package net.inqer.autosearch.ui.fragment.parameters;
 
-import androidx.lifecycle.ViewModelProvider;
-
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.lifecycle.ViewModelProvider;
+
+import net.inqer.autosearch.MainActivity;
 import net.inqer.autosearch.dagger.ViewModelProviderFactory;
 import net.inqer.autosearch.data.model.AccountProperties;
 import net.inqer.autosearch.databinding.FragmentParametersBinding;
@@ -53,12 +52,14 @@ public class ParametersFragment extends DaggerFragment {
         viewModel.getAccountProperties().observe(getViewLifecycleOwner(), this::bindProfileData);
 
         binding.paramButtonSignOut.setOnClickListener(v -> {
-            Toast.makeText(v.getContext(), "Sign Out button pressed", Toast.LENGTH_SHORT).show();
+            signOut();
         });
         binding.paramButtonSignOut.setOnLongClickListener(v -> {
             Toast.makeText(v.getContext(), "Sign Out LONG click pressed", Toast.LENGTH_SHORT).show();
             return true;
         });
+
+
     }
 
 
@@ -70,5 +71,12 @@ public class ParametersFragment extends DaggerFragment {
         binding.paramEmail.setText(properties.getEmail());
         binding.paramLastLoginValue.setText(properties.getLast_login());
         binding.paramDateJoinedValue.setText(properties.getDate_joined());
+    }
+
+    private void signOut() {
+        if (getActivity() instanceof MainActivity) {
+            Toast.makeText(getContext(), "Signing Out...", Toast.LENGTH_SHORT).show();
+            ((MainActivity)getActivity()).signOut();
+        }
     }
 }

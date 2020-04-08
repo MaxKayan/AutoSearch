@@ -10,14 +10,12 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Toast;
 
-import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import net.inqer.autosearch.MainActivity;
 import net.inqer.autosearch.R;
+import net.inqer.autosearch.dagger.ViewModelProviderFactory;
 import net.inqer.autosearch.data.preferences.AuthParametersProvider;
 import net.inqer.autosearch.databinding.ActivityLoginBinding;
 
@@ -34,6 +32,9 @@ public class LoginActivity extends DaggerAppCompatActivity {
     private ActivityLoginBinding binding;
 
     @Inject
+    ViewModelProviderFactory providerFactory;
+
+    @Inject
     AuthParametersProvider authSettings;
 
     @Override
@@ -44,8 +45,7 @@ public class LoginActivity extends DaggerAppCompatActivity {
         setContentView(view);
         setTheme(R.style.AppTheme);
 
-        loginViewModel = new ViewModelProvider(this, new LoginViewModelFactory())
-                .get(LoginViewModel.class);
+        loginViewModel = new ViewModelProvider(this, providerFactory).get(LoginViewModel.class);
 
         loginViewModel.getLoginFormState().observe(this, loginFormState -> {
             if (loginFormState == null) {
@@ -60,23 +60,21 @@ public class LoginActivity extends DaggerAppCompatActivity {
             }
         });
 
-        loginViewModel.getLoginResult().observe(this, new Observer<LoginResult>() {
-            @Override
-            public void onChanged(@Nullable LoginResult loginResult) {
-                if (loginResult == null) {
-                    return;
-                }
-                binding.loading.setVisibility(View.GONE);
-                if (loginResult.getError() != null) {
-                    showLoginFailed(loginResult.getError());
-                }
-                if (loginResult.getSuccess() != null) {
-                    updateUiWithUser(loginResult.getSuccess());
-                    proceedToMain();
-                }
-                setResult(Activity.RESULT_OK);
-
+        loginViewModel.getLoginResult().observe(this, loginResult -> {
+            if (loginResult == null) {
+                return;
             }
+            binding.loading.setVisibility(View.GONE);
+
+            if (loginResult.getError() != null) {
+                showLoginFailed(loginResult.getError(), loginResult.getExceptionMessage());
+            }
+            if (loginResult.getSuccess() != null) {
+                updateUiWithUser(loginResult.getSuccess());
+                proceedToMain();
+            }
+            setResult(Activity.RESULT_OK);
+
         });
 
         TextWatcher afterTextChangedListener = new TextWatcher() {
@@ -131,7 +129,7 @@ public class LoginActivity extends DaggerAppCompatActivity {
         Toast.makeText(getApplicationContext(), welcome+" - "+model.getToken(), Toast.LENGTH_LONG).show();
     }
 
-    private void showLoginFailed(@StringRes Integer errorString) {
-        Toast.makeText(getApplicationContext(), errorString, Toast.LENGTH_SHORT).show();
+    private void showLoginFailed(@StringRes Integer errorString, String exceptionMessage) {
+        Toast.makeText(getApplicationContext(), getString(errorString)+"\n"+exceptionMessage, Toast.LENGTH_SHORT).show();
     }
 }

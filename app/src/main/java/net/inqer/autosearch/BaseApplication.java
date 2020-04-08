@@ -1,9 +1,5 @@
 package net.inqer.autosearch;
 
-import android.app.Application;
-
-//import net.inqer.autosearch.dagger.component.DaggerAppComponent;
-
 import net.inqer.autosearch.dagger.component.DaggerAppComponent;
 
 import dagger.android.AndroidInjector;
@@ -17,6 +13,5 @@ public class BaseApplication extends DaggerApplication {
         return DaggerAppComponent.builder()
                 .application(this)
                 .build();
-//        return null;
     }
 }

@@ -6,12 +6,11 @@ import android.util.Log;
 import net.inqer.autosearch.data.model.LoggedInUser;
 import net.inqer.autosearch.data.model.LoginCredentials;
 import net.inqer.autosearch.data.model.Result;
-import net.inqer.autosearch.data.service.AccountClient;
+import net.inqer.autosearch.data.service.AuthApi;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
-import java.util.concurrent.ExecutionException;
 
 import javax.inject.Inject;
 
@@ -24,11 +23,11 @@ import retrofit2.Response;
  */
 public class LoginDataSource {
     private static final String TAG = "LoginDataSource";
-    private final AccountClient accountClient;
+    private final AuthApi authApi;
 
     @Inject
-    public LoginDataSource(AccountClient accountClient) {
-        this.accountClient = accountClient;
+    public LoginDataSource(AuthApi authApi) {
+        this.authApi = authApi;
     }
 
 //    private HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY);
@@ -53,7 +52,7 @@ public class LoginDataSource {
 //            .build();
 //
 //
-//    private AccountClient accountClient = retrofit.create(AccountClient.class);
+//    private AuthApi authApi = retrofit.create(AuthApi.class);
 
 
     private Result result;
@@ -111,21 +110,19 @@ public class LoginDataSource {
 
         LoginCredentials credentials = new LoginCredentials(username, password);
 
-        Call<LoggedInUser> login_call = accountClient.login(credentials);
-
-        LoginAsyncTask task = new LoginAsyncTask(login_call);
-        task.execute();
-        try {
-            LoggedInUser receivedUser = task.get();
-            if (receivedUser != null) {
-                result = new Result.Success<>(receivedUser);
-            } else {
-                result = new Result.Error(new IOException("Failed to retrieve user data"));
-            }
-        } catch (ExecutionException | InterruptedException e) {
-            Log.e(TAG, "login: Failed to get task data!", e);
-            result = new Result.Error(e);
-        }
+//        LoginAsyncTask task = new LoginAsyncTask(login_call);
+//        task.execute();
+//        try {
+//            LoggedInUser receivedUser = task.get();
+//            if (receivedUser != null) {
+//                result = new Result.Success<>(receivedUser);
+//            } else {
+//                result = new Result.Error(new IOException("Failed to retrieve user data"));
+//            }
+//        } catch (ExecutionException | InterruptedException e) {
+//            Log.e(TAG, "login: Failed to get task data!", e);
+//            result = new Result.Error(e);
+//        }
 
         return result;
     }

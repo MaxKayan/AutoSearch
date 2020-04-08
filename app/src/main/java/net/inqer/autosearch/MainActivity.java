@@ -1,41 +1,44 @@
 package net.inqer.autosearch;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+
+import net.inqer.autosearch.dagger.annotation.MainActivityScope;
 import net.inqer.autosearch.data.preferences.AuthParametersProvider;
-import net.inqer.autosearch.data.service.AccountClient;
 import net.inqer.autosearch.databinding.ActivityMainBinding;
+import net.inqer.autosearch.ui.login.LoginActivity;
 
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
+import javax.inject.Inject;
 
-public class MainActivity extends AppCompatActivity {
+import dagger.android.support.DaggerAppCompatActivity;
 
-//    ActivityMainBinding binding;
+@MainActivityScope
+public class MainActivity extends DaggerAppCompatActivity {
+    private static final String TAG = "MainActivity";
 
-    public static AuthParametersProvider parametersProvider;
+    ActivityMainBinding binding;
+
+    @Inject
+    AuthParametersProvider parametersProvider;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
         setTheme(R.style.AppTheme);
-
-//        AuthParametersProvider parametersProvider = new AuthParametersProvider(this);
-
-//        binding = ActivityMainBinding.inflate(getLayoutInflater());
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
@@ -68,5 +71,13 @@ public class MainActivity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+
+    public void signOut() {
+        Log.d(TAG, "signOut: called");
+        parametersProvider.removeValue(getString(R.string.saved_token_key));
+        startActivity(new Intent(this, LoginActivity.class));
+        finish();
     }
 }

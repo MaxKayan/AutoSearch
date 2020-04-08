@@ -9,7 +9,6 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 
 public class ViewModelProviderFactory implements ViewModelProvider.Factory {
-
     private static final String TAG = "ViewModelProviderFactor";
 
     private final Map<Class<? extends ViewModel>, Provider<ViewModel>> creators;

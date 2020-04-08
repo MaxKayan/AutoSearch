@@ -9,6 +9,6 @@ import dagger.android.ContributesAndroidInjector;
 @Module
 public abstract class FragmentBuilderModule {
 
-    @ContributesAndroidInjector(modules = {ParametersViewModelModule.class})
+    @ContributesAndroidInjector(modules = {MainModule.class, ParametersViewModelModule.class})
     abstract ParametersFragment contributeParametersFragment();
 }
