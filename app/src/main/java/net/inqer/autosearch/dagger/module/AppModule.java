@@ -33,6 +33,13 @@ public class AppModule {
 
     @Singleton
     @Provides
+    @Named("TOKEN")
+    static String provideInitToken() {
+        return "";
+    }
+
+    @Singleton
+    @Provides
     static Retrofit provideRetrofitInstance(OkHttpClient httpClient) {
         return new Retrofit.Builder()
                 .baseUrl(Constants.BASE_URL)

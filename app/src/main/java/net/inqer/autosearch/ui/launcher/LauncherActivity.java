@@ -15,6 +15,7 @@ import net.inqer.autosearch.data.model.api.AuthCheckResponse;
 import net.inqer.autosearch.data.preferences.AuthParametersProvider;
 import net.inqer.autosearch.data.service.AuthApi;
 import net.inqer.autosearch.ui.login.LoginActivity;
+import net.inqer.autosearch.util.TokenInjectionInterceptor;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -37,11 +38,16 @@ public class LauncherActivity extends DaggerAppCompatActivity {
     @Named("logo")
     Drawable logo;
 
+    @Inject
+    TokenInjectionInterceptor interceptor;
+
+    private String token;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        String token = authSettings.getValue(getString(R.string.saved_token_key));
+        token = authSettings.getValue(getString(R.string.saved_token_key));
 
         if (token != null) {
             Log.d(TAG, "onCreate: Token is not empty, checking access...");
@@ -77,32 +83,6 @@ public class LauncherActivity extends DaggerAppCompatActivity {
                         }
                     });
 
-
-//            Call<AuthCheckResponse> call = authApi.checkAuthentication("Token " + token);
-//            call.enqueue(new Callback<AuthCheckResponse>() {
-//                @Override
-//                public void onResponse(@NotNull Call<AuthCheckResponse> call, @NotNull Response<AuthCheckResponse> response) {
-//                    if (response.isSuccessful()) {
-//                        AuthCheckResponse result = response.body();
-//                        if (result != null && result.isSuccessful()) {
-//                            Log.d(TAG, "onResponse: " + result.getMessage());
-//                            selectMainActivity();
-//                        }
-//
-//                    } else {
-//                        Log.w(TAG, "onResponse: not successful, code is - " + response.code());
-//                        selectLoginActivity();
-//                    }
-//                }
-//
-//                @Override
-//                public void onFailure(@NotNull Call<AuthCheckResponse> call, @NotNull Throwable t) {
-//                    Log.e(TAG, "onFailure: Failed to enqueue API call!", t);
-//
-//                    showErrorAlertDialog();
-//                }
-//            });
-
         } else {
             Log.w(TAG, "onCreate: Token is empty, creating Login Activity. -- ");
             selectLoginActivity();
@@ -119,6 +99,7 @@ public class LauncherActivity extends DaggerAppCompatActivity {
 
     private void selectMainActivity() {
         Log.d(TAG, "selectMainActivity: Chosen Main");
+        interceptor.setSessionToken(token);
         startActivity(new Intent(this, MainActivity.class));
         finish();
     }

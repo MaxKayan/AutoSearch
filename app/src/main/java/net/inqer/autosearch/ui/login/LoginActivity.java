@@ -18,6 +18,7 @@ import net.inqer.autosearch.R;
 import net.inqer.autosearch.dagger.ViewModelProviderFactory;
 import net.inqer.autosearch.data.preferences.AuthParametersProvider;
 import net.inqer.autosearch.databinding.ActivityLoginBinding;
+import net.inqer.autosearch.util.TokenInjectionInterceptor;
 
 import javax.inject.Inject;
 
@@ -36,6 +37,9 @@ public class LoginActivity extends DaggerAppCompatActivity {
 
     @Inject
     AuthParametersProvider authSettings;
+
+    @Inject
+    TokenInjectionInterceptor interceptor;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -125,6 +129,7 @@ public class LoginActivity extends DaggerAppCompatActivity {
         String welcome = getString(R.string.welcome) + model.getDisplayName();
         // TODO : initiate successful logged in experience
         authSettings.saveValue(getString(R.string.saved_token_key), model.getToken());
+        interceptor.setSessionToken(model.getToken());
         Log.i(TAG, "updateUiWithUser: Token saved! -- "+model.getToken());
         Toast.makeText(getApplicationContext(), welcome+" - "+model.getToken(), Toast.LENGTH_LONG).show();
     }
