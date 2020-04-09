@@ -4,6 +4,8 @@ import android.util.Log;
 import android.util.Patterns;
 
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.LiveDataReactiveStreams;
+import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
@@ -17,18 +19,14 @@ import javax.inject.Inject;
 import io.reactivex.MaybeObserver;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
+import retrofit2.HttpException;
 
 public class LoginViewModel extends ViewModel {
     private static final String TAG = "LoginViewModel";
-
+    private final AuthApi authApi;
     private MutableLiveData<LoginFormState> loginFormState = new MutableLiveData<>();
     private MutableLiveData<LoginResult> loginResult = new MutableLiveData<>();
-//    private LoginRepository loginRepository;
-
-//    LoginViewModel(LoginRepository loginRepository) {
-//        this.loginRepository = loginRepository;
-//    }
-    private final AuthApi authApi;
+    private MediatorLiveData<LoggedInUser> authUser = new MediatorLiveData<>();
 
     @Inject
     public LoginViewModel(AuthApi api) {
@@ -43,19 +41,21 @@ public class LoginViewModel extends ViewModel {
         return loginResult;
     }
 
-//    public void login(String username, String password) {
-//        Log.d(TAG, "login: ViewModel login method called");
-//        // can be launched in a separate asynchronous job
-//        Result<LoggedInUser> result = loginRepository.login(username, password);
-//
-//        Log.d(TAG, "login: result is - "+result.toString()+" : "+result.getClass().getName());
-//        if (result instanceof Result.Success) {
-//            LoggedInUser data = ((Result.Success<LoggedInUser>) result).getData();
-//            loginResult.setValue(new LoginResult(new LoggedInUserView(data.getDisplayName(), data.getToken())));
-//        } else {
-//            loginResult.setValue(new LoginResult(R.string.login_failed));
-//        }
-//    }
+    public LiveData<LoggedInUser> observeUser() {
+        return authUser;
+    }
+
+    public void authenticateWithCredentials(final String email, final String password) {
+        final LiveData<LoggedInUser> source = LiveDataReactiveStreams.fromPublisher(
+                authApi.login(new LoginCredentials(email, password))
+                        .subscribeOn(Schedulers.io())
+        );
+
+        authUser.addSource(source, loggedInUser -> {
+            authUser.setValue(loggedInUser);
+            authUser.removeSource(source);
+        });
+    }
 
     public void login(final String email, final String password) {
         authApi.login(new LoginCredentials(email, password))
@@ -70,13 +70,16 @@ public class LoginViewModel extends ViewModel {
 
                     @Override
                     public void onSuccess(LoggedInUser loggedInUser) {
-                        loginResult.postValue(new LoginResult(new LoggedInUserView(loggedInUser.getDisplayName(), loggedInUser.getToken())));
+                        loginResult.postValue(new LoginResult(new LoggedInUserView(loggedInUser.getUsername(), loggedInUser.getToken())));
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        Log.e(TAG, "onError: authApi.login request failed", e);
                         loginResult.postValue(new LoginResult(R.string.login_failed, e.getMessage()));
+
+                        if (e instanceof HttpException) {
+                            Log.w(TAG, "onError: "+((HttpException) e).code());;
+                        }
                     }
 
                     @Override
@@ -86,32 +89,6 @@ public class LoginViewModel extends ViewModel {
                 });
     }
 
-//    new Observer<LoggedInUser>() {
-//        @Override
-//        public void onSubscribe(Disposable d) {
-//
-//        }
-//
-//        @Override
-//        public void onNext(LoggedInUser loggedInUser) {
-//            if (loggedInUser != null) {
-//                loginResult.postValue(new LoginResult(new LoggedInUserView(loggedInUser.getDisplayName(), loggedInUser.getToken())));
-//            } else {
-//                loginResult.postValue(new LoginResult(R.string.login_failed, "Invalid data received"));
-//            }
-//        }
-//
-//        @Override
-//        public void onError(Throwable e) {
-//            Log.e(TAG, "onError: authApi.login request failed", e);
-//            loginResult.postValue(new LoginResult(R.string.login_failed, e.getMessage()));
-//        }
-//
-//        @Override
-//        public void onComplete() {
-//
-//        }
-//    }
 
     public void loginDataChanged(String username, String password) {
         if (!isUserNameValid(username)) {

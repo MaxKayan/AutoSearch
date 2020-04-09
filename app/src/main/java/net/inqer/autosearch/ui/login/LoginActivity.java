@@ -33,6 +33,7 @@ public class LoginActivity extends DaggerAppCompatActivity {
     AuthParametersProvider authSettings;
     @Inject
     TokenInjectionInterceptor interceptor;
+
     private LoginViewModel loginViewModel;
     private ActivityLoginBinding binding;
 
@@ -45,6 +46,51 @@ public class LoginActivity extends DaggerAppCompatActivity {
         setTheme(R.style.AppTheme);
 
         loginViewModel = new ViewModelProvider(this, providerFactory).get(LoginViewModel.class);
+
+        TextWatcher afterTextChangedListener = new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                // ignore
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                // ignore
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                loginViewModel.loginDataChanged(binding.username.getText().toString(),
+                        binding.password.getText().toString());
+            }
+        };
+
+        binding.username.addTextChangedListener(afterTextChangedListener);
+
+        binding.password.addTextChangedListener(afterTextChangedListener);
+        binding.password.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                Log.d(TAG, "onEditorAction: Login called");
+                attemptLogin();
+            }
+            return false;
+        });
+
+        binding.login.setOnClickListener(v -> {
+            Log.d(TAG, "onClick: Login called by button");
+            binding.loading.setVisibility(View.VISIBLE);
+            attemptLogin();
+        });
+
+        subscribeObservers();
+    }
+
+    private void subscribeObservers() {
+        loginViewModel.observeUser().observe(this, loggedInUser -> {
+            if (loggedInUser != null) {
+                Log.d(TAG, "onChanged: " + loggedInUser.getEmail());
+            }
+        });
 
         loginViewModel.getLoginFormState().observe(this, loginFormState -> {
             if (loginFormState == null) {
@@ -75,44 +121,6 @@ public class LoginActivity extends DaggerAppCompatActivity {
             setResult(Activity.RESULT_OK);
 
         });
-
-        TextWatcher afterTextChangedListener = new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                // ignore
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                // ignore
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                loginViewModel.loginDataChanged(binding.username.getText().toString(),
-                        binding.password.getText().toString());
-            }
-        };
-
-        binding.username.addTextChangedListener(afterTextChangedListener);
-        binding.password.addTextChangedListener(afterTextChangedListener);
-        binding.password.setOnEditorActionListener((v, actionId, event) -> {
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                Log.d(TAG, "onEditorAction: Login called");
-                loginViewModel.login(binding.username.getText().toString(),
-                        binding.password.getText().toString());
-            }
-            return false;
-        });
-
-        binding.login.setOnClickListener(v -> {
-            Log.d(TAG, "onClick: Login called by button");
-            binding.loading.setVisibility(View.VISIBLE);
-            loginViewModel.login(binding.username.getText().toString(),
-                                binding.password.getText().toString());
-        });
-
-        Log.i(TAG, "onCreate: Token = " + authSettings.getValue(getString(R.string.preference_auth_file_key)));
     }
 
     private void updateUiWithUser(LoggedInUserView model) {
@@ -133,4 +141,10 @@ public class LoginActivity extends DaggerAppCompatActivity {
         startActivity(new Intent(this, MainActivity.class));
         finish();
     }
+
+
+    private void attemptLogin() {
+        loginViewModel.authenticateWithCredentials(binding.username.getText().toString(), binding.password.getText().toString());
+    }
+
 }

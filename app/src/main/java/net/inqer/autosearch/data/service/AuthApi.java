@@ -8,6 +8,7 @@ import net.inqer.autosearch.data.model.api.AuthCheckResponse;
 import net.inqer.autosearch.util.Constants;
 
 import io.reactivex.Flowable;
+import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
@@ -22,7 +23,7 @@ public interface AuthApi {
 
     @Headers(Constants.NO_AUTHENTICATION_COOKIE+": guest")
     @POST("register/")
-    Flowable<LoggedInUser> register(@Body RegisterCredentials credentials);
+    Call<LoggedInUser> register(@Body RegisterCredentials credentials);
 
     @Headers(Constants.NO_AUTHENTICATION_COOKIE+": guest")
     @GET("auth/checkme/")
