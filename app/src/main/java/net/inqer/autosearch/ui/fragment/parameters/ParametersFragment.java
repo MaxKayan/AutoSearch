@@ -12,9 +12,9 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProvider;
 
 import net.inqer.autosearch.MainActivity;
-import net.inqer.autosearch.dagger.ViewModelProviderFactory;
 import net.inqer.autosearch.data.model.AccountProperties;
 import net.inqer.autosearch.databinding.FragmentParametersBinding;
+import net.inqer.autosearch.util.ViewModelProviderFactory;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -65,8 +65,8 @@ public class ParametersFragment extends DaggerFragment {
 
     private void bindProfileData(@NotNull AccountProperties properties) {
         Log.d(TAG, "bindProfileData: Called.");
-        Log.d(TAG, "bindProfileData: "+properties.toString());
-        Log.d(TAG, "bindProfileData: "+binding.paramUsername.getText().toString());
+        Log.d(TAG, "bindProfileData: " + properties.toString());
+        Log.d(TAG, "bindProfileData: " + binding.paramUsername.getText().toString());
         binding.paramUsername.setText(properties.getUsername());
         binding.paramEmail.setText(properties.getEmail());
         binding.paramLastLoginValue.setText(properties.getLast_login());
@@ -76,7 +76,7 @@ public class ParametersFragment extends DaggerFragment {
     private void signOut() {
         if (getActivity() instanceof MainActivity) {
             Toast.makeText(getContext(), "Signing Out...", Toast.LENGTH_SHORT).show();
-            ((MainActivity)getActivity()).signOut();
+            ( (MainActivity) getActivity() ).signOut();
         }
     }
 }

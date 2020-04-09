@@ -1,6 +1,5 @@
 package net.inqer.autosearch.ui.launcher;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -21,7 +20,8 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import dagger.android.support.DaggerAppCompatActivity;
-import io.reactivex.Observer;
+import io.reactivex.SingleObserver;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
@@ -54,32 +54,28 @@ public class LauncherActivity extends DaggerAppCompatActivity {
 
             authApi.checkAuthentication("Token " + token)
                     .toObservable()
+                    .singleOrError()
+                    .observeOn(AndroidSchedulers.mainThread())
                     .subscribeOn(Schedulers.io())
-                    .subscribe(new Observer<AuthCheckResponse>() {
+                    .subscribe(new SingleObserver<AuthCheckResponse>() {
                         @Override
                         public void onSubscribe(Disposable d) {
 
                         }
 
                         @Override
-                        public void onNext(AuthCheckResponse authCheckResponse) {
+                        public void onSuccess(AuthCheckResponse authCheckResponse) {
                             if (authCheckResponse.isSuccessful()) {
                                 selectMainActivity();
                             } else {
-                                Log.w(TAG, "onNext: checkAuthentication: failed to authenticate");
                                 selectLoginActivity();
                             }
                         }
 
                         @Override
                         public void onError(Throwable e) {
-                            Log.e(TAG, "onError: checkAuthentication failed", e);
+                            Log.e(TAG, "onError: checkAuthentication:", e);
                             showErrorAlertDialog(e.getMessage());
-                        }
-
-                        @Override
-                        public void onComplete() {
-
                         }
                     });
 
@@ -106,27 +102,17 @@ public class LauncherActivity extends DaggerAppCompatActivity {
 
 
     private void showErrorAlertDialog(final String errorMessage) {
-        new AlertDialog.Builder(LauncherActivity.this)
+        AlertDialog alertDialog = new AlertDialog.Builder(LauncherActivity.this)
                 .setTitle(R.string.launcher_fail_alert_title)
-                .setMessage(R.string.launcher_fail_alert_message+"\n\n"+errorMessage)
-                .setPositiveButton("Retry", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        LauncherActivity.this.recreate();
-                    }
-                })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        finish();
-                    }
-                })
-                .setNeutralButton("Go Offline", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        selectMainActivity();
-                    }
-                })
-                .show();
+                .setMessage(getString(R.string.launcher_fail_alert_message)+"\n\n"+errorMessage)
+                .setPositiveButton("Retry", (dialog, which) -> LauncherActivity.this.recreate())
+                .setNegativeButton("Cancel", (dialog, which) -> finish())
+                .setNeutralButton("Go Offline", (dialog, which) -> selectMainActivity())
+                .create();
+        alertDialog.setCanceledOnTouchOutside(false);
+        alertDialog.setOnCancelListener(dialog -> finish());
+
+        alertDialog.show();
     }
+
 }

@@ -1,4 +1,4 @@
-package net.inqer.autosearch.dagger;
+package net.inqer.autosearch.util;
 
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;

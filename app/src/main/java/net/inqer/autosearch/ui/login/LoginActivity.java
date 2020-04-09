@@ -15,10 +15,10 @@ import androidx.lifecycle.ViewModelProvider;
 
 import net.inqer.autosearch.MainActivity;
 import net.inqer.autosearch.R;
-import net.inqer.autosearch.dagger.ViewModelProviderFactory;
 import net.inqer.autosearch.data.preferences.AuthParametersProvider;
 import net.inqer.autosearch.databinding.ActivityLoginBinding;
 import net.inqer.autosearch.util.TokenInjectionInterceptor;
+import net.inqer.autosearch.util.ViewModelProviderFactory;
 
 import javax.inject.Inject;
 
@@ -27,19 +27,14 @@ import dagger.android.support.DaggerAppCompatActivity;
 
 public class LoginActivity extends DaggerAppCompatActivity {
     private static final String TAG = "LoginActivity";
-
-    private LoginViewModel loginViewModel;
-
-    private ActivityLoginBinding binding;
-
     @Inject
     ViewModelProviderFactory providerFactory;
-
     @Inject
     AuthParametersProvider authSettings;
-
     @Inject
     TokenInjectionInterceptor interceptor;
+    private LoginViewModel loginViewModel;
+    private ActivityLoginBinding binding;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -114,15 +109,10 @@ public class LoginActivity extends DaggerAppCompatActivity {
             Log.d(TAG, "onClick: Login called by button");
             binding.loading.setVisibility(View.VISIBLE);
             loginViewModel.login(binding.username.getText().toString(),
-                    binding.password.getText().toString());
+                                binding.password.getText().toString());
         });
 
-        Log.i(TAG, "onCreate: Token = "+ authSettings.getValue(getString(R.string.preference_auth_file_key)));
-    }
-
-    private void proceedToMain() {
-        startActivity(new Intent(this, MainActivity.class));
-        finish();
+        Log.i(TAG, "onCreate: Token = " + authSettings.getValue(getString(R.string.preference_auth_file_key)));
     }
 
     private void updateUiWithUser(LoggedInUserView model) {
@@ -130,11 +120,17 @@ public class LoginActivity extends DaggerAppCompatActivity {
         // TODO : initiate successful logged in experience
         authSettings.saveValue(getString(R.string.saved_token_key), model.getToken());
         interceptor.setSessionToken(model.getToken());
-        Log.i(TAG, "updateUiWithUser: Token saved! -- "+model.getToken());
-        Toast.makeText(getApplicationContext(), welcome+" - "+model.getToken(), Toast.LENGTH_LONG).show();
+        Log.i(TAG, "updateUiWithUser: Token saved! -- " + model.getToken());
+        Toast.makeText(getApplicationContext(), welcome + " - " + model.getToken(), Toast.LENGTH_LONG).show();
     }
 
     private void showLoginFailed(@StringRes Integer errorString, String exceptionMessage) {
-        Toast.makeText(getApplicationContext(), getString(errorString)+"\n"+exceptionMessage, Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), getString(errorString) + "\n" + exceptionMessage, Toast.LENGTH_SHORT).show();
+    }
+
+
+    private void proceedToMain() {
+        startActivity(new Intent(this, MainActivity.class));
+        finish();
     }
 }

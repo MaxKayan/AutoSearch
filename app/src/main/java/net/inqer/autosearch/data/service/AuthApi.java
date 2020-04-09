@@ -3,6 +3,7 @@ package net.inqer.autosearch.data.service;
 
 import net.inqer.autosearch.data.model.LoggedInUser;
 import net.inqer.autosearch.data.model.LoginCredentials;
+import net.inqer.autosearch.data.model.RegisterCredentials;
 import net.inqer.autosearch.data.model.api.AuthCheckResponse;
 import net.inqer.autosearch.util.Constants;
 
@@ -18,6 +19,10 @@ public interface AuthApi {
     @Headers(Constants.NO_AUTHENTICATION_COOKIE+": guest")
     @POST("auth/obtain_key/")
     Flowable<LoggedInUser> login(@Body LoginCredentials credentials);
+
+    @Headers(Constants.NO_AUTHENTICATION_COOKIE+": guest")
+    @POST("register/")
+    Flowable<LoggedInUser> register(@Body RegisterCredentials credentials);
 
     @Headers(Constants.NO_AUTHENTICATION_COOKIE+": guest")
     @GET("auth/checkme/")
