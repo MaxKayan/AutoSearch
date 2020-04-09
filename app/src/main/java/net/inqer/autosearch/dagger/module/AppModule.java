@@ -33,13 +33,6 @@ public class AppModule {
 
     @Singleton
     @Provides
-    @Named("TOKEN")
-    static String provideInitToken() {
-        return "";
-    }
-
-    @Singleton
-    @Provides
     static Retrofit provideRetrofitInstance(OkHttpClient httpClient) {
         return new Retrofit.Builder()
                 .baseUrl(Constants.BASE_URL)
@@ -53,13 +46,6 @@ public class AppModule {
     @Provides
     static OkHttpClient provideOkHttpClient(TokenInjectionInterceptor tokenInterceptor) {
         return new OkHttpClient.Builder()
-//                .addInterceptor(chain -> {
-//                    Request originalRequest = chain.request();
-//                    Request newRequest = originalRequest.newBuilder()
-//                            .header("Authorization", "Token ")
-//                            .build();
-//                    return chain.proceed(newRequest);
-//                })
                 .addInterceptor(tokenInterceptor)
                 .addInterceptor(new HttpLoggingInterceptor()
                         .setLevel(HttpLoggingInterceptor.Level.BODY))

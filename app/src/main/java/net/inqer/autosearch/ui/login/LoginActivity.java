@@ -144,7 +144,8 @@ public class LoginActivity extends DaggerAppCompatActivity {
 
 
     private void attemptLogin() {
-        loginViewModel.authenticateWithCredentials(binding.username.getText().toString(), binding.password.getText().toString());
+//        loginViewModel.authenticateWithCredentials(binding.username.getText().toString(), binding.password.getText().toString());
+        loginViewModel.login(binding.username.getText().toString(), binding.password.getText().toString());
     }
 
 }

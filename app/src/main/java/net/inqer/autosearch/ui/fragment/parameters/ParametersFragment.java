@@ -14,6 +14,7 @@ import androidx.lifecycle.ViewModelProvider;
 import net.inqer.autosearch.MainActivity;
 import net.inqer.autosearch.data.model.AccountProperties;
 import net.inqer.autosearch.databinding.FragmentParametersBinding;
+import net.inqer.autosearch.databinding.FragmentParametersShimmerBinding;
 import net.inqer.autosearch.util.ViewModelProviderFactory;
 
 import org.jetbrains.annotations.NotNull;
@@ -31,6 +32,7 @@ public class ParametersFragment extends DaggerFragment {
     private ParametersViewModel viewModel;
 
     private FragmentParametersBinding binding;
+    private FragmentParametersShimmerBinding shimmerBinding;
 
 //    public static ParametersFragment newInstance() {
 //        return new ParametersFragment();
@@ -40,6 +42,7 @@ public class ParametersFragment extends DaggerFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         binding = FragmentParametersBinding.inflate(inflater, container, false);
+        shimmerBinding = FragmentParametersShimmerBinding.bind(binding.getRoot());
         return binding.getRoot();
     }
 
@@ -49,7 +52,7 @@ public class ParametersFragment extends DaggerFragment {
         viewModel = new ViewModelProvider(this, providerFactory).get(ParametersViewModel.class);
 
         viewModel.updateAccountData();
-        viewModel.getAccountProperties().observe(getViewLifecycleOwner(), this::bindProfileData);
+
 
         binding.paramButtonSignOut.setOnClickListener(v -> {
             signOut();
@@ -59,7 +62,11 @@ public class ParametersFragment extends DaggerFragment {
             return true;
         });
 
+        subscribeListeners();
+    }
 
+    private void subscribeListeners() {
+        viewModel.getAccountProperties().observe(getViewLifecycleOwner(), this::bindProfileData);
     }
 
 
@@ -71,6 +78,8 @@ public class ParametersFragment extends DaggerFragment {
         binding.paramEmail.setText(properties.getEmail());
         binding.paramLastLoginValue.setText(properties.getLast_login());
         binding.paramDateJoinedValue.setText(properties.getDate_joined());
+
+        shimmerBinding.parametersShimmerLayout.setVisibility(View.GONE);
     }
 
     private void signOut() {
@@ -78,5 +87,18 @@ public class ParametersFragment extends DaggerFragment {
             Toast.makeText(getContext(), "Signing Out...", Toast.LENGTH_SHORT).show();
             ( (MainActivity) getActivity() ).signOut();
         }
+    }
+
+    @Override
+    public void onResume() {
+        Log.d(TAG, "onResume: start Shimmer");
+//        shimmerBinding.parametersShimmerLayout.startShimmer();
+        super.onResume();
+    }
+
+    @Override
+    public void onPause() {
+//        shimmerBinding.parametersShimmerLayout.stopShimmer();
+        super.onPause();
     }
 }

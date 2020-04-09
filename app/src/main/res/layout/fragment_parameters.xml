@@ -15,7 +15,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:padding="16dp"
+        tools:ignore="UselessParent">
 
 
         <RelativeLayout
@@ -54,7 +55,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginVertical="@dimen/data_vertical_margin"
-            android:text="Username"
             app:layout_constraintTop_toBottomOf="@id/param_data_headline" />
 
 
@@ -66,8 +66,7 @@
             style="@style/TextAppearance.AppCompat.Large"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/data_vertical_margin"
-            android:text="Email" />
+            android:layout_marginBottom="@dimen/data_vertical_margin" />
 
 
         <include layout="@layout/hr" />
@@ -85,7 +84,6 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentLeft="true"
-                android:text="Last login: "
                 android:textStyle="italic" />
 
             <TextView
@@ -94,8 +92,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:text="23.03.2020 23:15" />
+                android:layout_alignParentRight="true" />
 
         </RelativeLayout>
 
@@ -115,7 +112,6 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentLeft="true"
-                android:text="Date joined: "
                 android:textStyle="italic" />
 
             <TextView
@@ -124,8 +120,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:text="11.02.2020 13:59" />
+                android:layout_alignParentRight="true" />
 
         </RelativeLayout>
 
@@ -142,6 +137,9 @@
             android:text="Sign Out"/>
 
     </LinearLayout>
+
+    <include
+        layout="@layout/fragment_parameters_shimmer"/>
 
     <!--    </ScrollView>-->
 </FrameLayout>

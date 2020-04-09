@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.inject.Inject;
 
 public class AuthParametersProvider {
-    private static final String TAG = "EncryptedSettings";
+    private static final String TAG = "AuthParametersProvider";
     //    private Context context;
     private SharedPreferences sharedPreferences;
 

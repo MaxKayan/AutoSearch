@@ -35,6 +35,11 @@ public class ParametersViewModel extends ViewModel {
             @Override
             public void onResponse(@NotNull Call<AccountProperties> call, @NotNull Response<AccountProperties> response) {
                 if (response.isSuccessful()) {
+                    try {
+                        Thread.sleep(1500);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                     accountProperties.setValue(response.body());
                 }
             }

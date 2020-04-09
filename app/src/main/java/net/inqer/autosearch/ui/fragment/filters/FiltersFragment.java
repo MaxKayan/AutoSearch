@@ -1,16 +1,13 @@
 package net.inqer.autosearch.ui.fragment.filters;
 
-import androidx.lifecycle.ViewModelProviders;
-
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 import net.inqer.autosearch.R;
 import net.inqer.autosearch.databinding.FragmentFiltersBinding;
@@ -42,14 +39,14 @@ public class FiltersFragment extends Fragment {
 
     @Override
     public void onResume() {
-        binding.filtersShimmerViewContainer.startShimmer();
+//        binding.filtersShimmerViewContainer.startShimmer();
         super.onResume();
     }
 
 
     @Override
     public void onPause() {
-        binding.filtersShimmerViewContainer.stopShimmer();
+//        binding.filtersShimmerViewContainer.stopShimmer();
         super.onPause();
     }
 }

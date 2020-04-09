@@ -7,7 +7,6 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.inject.Singleton;
 
 import okhttp3.Interceptor;
@@ -21,8 +20,7 @@ public class TokenInjectionInterceptor implements Interceptor {
     private String sessionToken;
 
     @Inject
-    public TokenInjectionInterceptor(@Named("TOKEN") String sessionToken) {
-        this.sessionToken = sessionToken;
+    TokenInjectionInterceptor() {
     }
 
     public void setSessionToken(String sessionToken) {
