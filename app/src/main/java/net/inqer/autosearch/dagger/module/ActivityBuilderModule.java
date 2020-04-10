@@ -1,7 +1,7 @@
 package net.inqer.autosearch.dagger.module;
 
-import net.inqer.autosearch.MainActivity;
 import net.inqer.autosearch.dagger.module.viewmodel.LoginViewModelModule;
+import net.inqer.autosearch.ui.MainActivity;
 import net.inqer.autosearch.ui.launcher.LauncherActivity;
 import net.inqer.autosearch.ui.login.LoginActivity;
 

@@ -11,10 +11,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProvider;
 
-import net.inqer.autosearch.MainActivity;
 import net.inqer.autosearch.data.model.AccountProperties;
 import net.inqer.autosearch.databinding.FragmentParametersBinding;
 import net.inqer.autosearch.databinding.FragmentParametersShimmerBinding;
+import net.inqer.autosearch.ui.MainActivity;
 import net.inqer.autosearch.util.ViewModelProviderFactory;
 
 import org.jetbrains.annotations.NotNull;

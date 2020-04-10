@@ -1,4 +1,4 @@
-package net.inqer.autosearch;
+package net.inqer.autosearch.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,6 +11,7 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import net.inqer.autosearch.R;
 import net.inqer.autosearch.dagger.annotation.MainActivityScope;
 import net.inqer.autosearch.data.preferences.AuthParametersProvider;
 import net.inqer.autosearch.databinding.ActivityMainBinding;

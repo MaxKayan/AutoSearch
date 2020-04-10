@@ -13,10 +13,10 @@ import android.widget.Toast;
 import androidx.annotation.StringRes;
 import androidx.lifecycle.ViewModelProvider;
 
-import net.inqer.autosearch.MainActivity;
 import net.inqer.autosearch.R;
 import net.inqer.autosearch.data.preferences.AuthParametersProvider;
 import net.inqer.autosearch.databinding.ActivityLoginBinding;
+import net.inqer.autosearch.ui.MainActivity;
 import net.inqer.autosearch.util.TokenInjectionInterceptor;
 import net.inqer.autosearch.util.ViewModelProviderFactory;
 
@@ -78,7 +78,7 @@ public class LoginActivity extends DaggerAppCompatActivity {
 
         binding.login.setOnClickListener(v -> {
             Log.d(TAG, "onClick: Login called by button");
-            binding.loading.setVisibility(View.VISIBLE);
+            showProgressBar(true);
             attemptLogin();
         });
 
@@ -86,9 +86,30 @@ public class LoginActivity extends DaggerAppCompatActivity {
     }
 
     private void subscribeObservers() {
-        loginViewModel.observeUser().observe(this, loggedInUser -> {
-            if (loggedInUser != null) {
-                Log.d(TAG, "onChanged: " + loggedInUser.getEmail());
+
+        loginViewModel.observerAuthState().observe(this, authResource -> {
+            if (authResource != null) {
+                switch (authResource.status) {
+                    case LOADING: {
+                        showProgressBar(true);
+                        break;
+                    }
+                    case AUTHENTICATED: {
+                        showProgressBar(false);
+                        Log.d(TAG, "subscribeObservers: LOGIN SUCCESS: "+authResource.data.getEmail());
+                        updateUiWithUser(new LoggedInUserView(authResource.data.getUsername(), authResource.data.getToken()));
+                        break;
+                    }
+                    case ERROR: {
+                        showProgressBar(false);
+                        Toast.makeText(this, authResource.message, Toast.LENGTH_LONG).show();
+                        break;
+                    }
+                    case NOT_AUTHENTICATED: {
+                        showProgressBar(false);
+                        break;
+                    }
+                }
             }
         });
 
@@ -109,7 +130,7 @@ public class LoginActivity extends DaggerAppCompatActivity {
             if (loginResult == null) {
                 return;
             }
-            binding.loading.setVisibility(View.GONE);
+            showProgressBar(false);
 
             if (loginResult.getError() != null) {
                 showLoginFailed(loginResult.getError(), loginResult.getExceptionMessage());
@@ -123,11 +144,20 @@ public class LoginActivity extends DaggerAppCompatActivity {
         });
     }
 
+    private void showProgressBar(boolean isVisible) {
+        if (isVisible) {
+            binding.loading.setVisibility(View.VISIBLE);
+        } else {
+            binding.loading.setVisibility(View.GONE);
+        }
+    }
+
     private void updateUiWithUser(LoggedInUserView model) {
         String welcome = getString(R.string.welcome) + model.getDisplayName();
         // TODO : initiate successful logged in experience
         authSettings.saveValue(getString(R.string.saved_token_key), model.getToken());
         interceptor.setSessionToken(model.getToken());
+        proceedToMain();
         Log.i(TAG, "updateUiWithUser: Token saved! -- " + model.getToken());
         Toast.makeText(getApplicationContext(), welcome + " - " + model.getToken(), Toast.LENGTH_LONG).show();
     }
@@ -144,8 +174,8 @@ public class LoginActivity extends DaggerAppCompatActivity {
 
 
     private void attemptLogin() {
-//        loginViewModel.authenticateWithCredentials(binding.username.getText().toString(), binding.password.getText().toString());
-        loginViewModel.login(binding.username.getText().toString(), binding.password.getText().toString());
+        loginViewModel.authenticate(binding.username.getText().toString(), binding.password.getText().toString());
+//        loginViewModel.login(binding.username.getText().toString(), binding.password.getText().toString());
     }
 
 }
