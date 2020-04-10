@@ -10,7 +10,8 @@
         android:id="@+id/parameters_shimmer_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:shimmer_duration="1000">
+        app:shimmer_duration="850"
+        app:shimmer_fixed_width="350dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -22,7 +23,7 @@
 
             <View
                 android:id="@+id/shimmer_param_data_headline"
-                android:layout_width="200dp"
+                android:layout_width="130dp"
                 android:layout_height="32dp"
                 android:layout_marginVertical="@dimen/data_vertical_margin"
                 android:visibility="invisible" />
@@ -30,7 +31,7 @@
             <View
                 android:id="@+id/shimmer_param_username"
                 style="@style/TextAppearance.AppCompat.Large"
-                android:layout_width="300dp"
+                android:layout_width="200dp"
                 android:layout_height="30dp"
                 android:layout_marginVertical="@dimen/data_vertical_margin"
                 android:background="@color/background"
@@ -54,7 +55,7 @@
 
             <View
                 style="@style/TextAppearance.AppCompat.Large"
-                android:layout_width="300dp"
+                android:layout_width="match_parent"
                 android:layout_height="30dp"
                 android:layout_marginBottom="@dimen/data_vertical_margin"
                 android:background="@color/background" />
@@ -65,7 +66,7 @@
 
             <View
                 style="@style/TextAppearance.AppCompat.Large"
-                android:layout_width="300dp"
+                android:layout_width="match_parent"
                 android:layout_height="30dp"
                 android:layout_marginBottom="@dimen/data_vertical_margin"
                 android:background="@color/background" />

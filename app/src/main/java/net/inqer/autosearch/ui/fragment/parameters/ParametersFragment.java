@@ -92,13 +92,13 @@ public class ParametersFragment extends DaggerFragment {
     @Override
     public void onResume() {
         Log.d(TAG, "onResume: start Shimmer");
-//        shimmerBinding.parametersShimmerLayout.startShimmer();
+        shimmerBinding.parametersShimmerLayout.startShimmer();
         super.onResume();
     }
 
     @Override
     public void onPause() {
-//        shimmerBinding.parametersShimmerLayout.stopShimmer();
+        shimmerBinding.parametersShimmerLayout.stopShimmer();
         super.onPause();
     }
 }

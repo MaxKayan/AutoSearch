@@ -28,5 +28,4 @@ public interface AuthApi {
     @Headers(Constants.NO_AUTHENTICATION_COOKIE+": guest")
     @GET("auth/checkme/")
     Flowable<AuthCheckResponse> checkAuthentication(@Header("Authorization") String authToken);
-
 }
