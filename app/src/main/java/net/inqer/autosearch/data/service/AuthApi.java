@@ -4,7 +4,6 @@ package net.inqer.autosearch.data.service;
 import net.inqer.autosearch.data.model.LoggedInUser;
 import net.inqer.autosearch.data.model.LoginCredentials;
 import net.inqer.autosearch.data.model.RegisterCredentials;
-import net.inqer.autosearch.data.model.api.AuthCheckResponse;
 import net.inqer.autosearch.util.Constants;
 
 import io.reactivex.Flowable;
@@ -27,5 +26,5 @@ public interface AuthApi {
 
     @Headers(Constants.NO_AUTHENTICATION_COOKIE+": guest")
     @GET("auth/checkme/")
-    Flowable<AuthCheckResponse> checkAuthentication(@Header("Authorization") String authToken);
+    Flowable<LoggedInUser> checkAuthentication(@Header("Authorization") String authToken);
 }

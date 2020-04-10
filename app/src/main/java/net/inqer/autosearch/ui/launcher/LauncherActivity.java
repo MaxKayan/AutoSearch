@@ -12,7 +12,6 @@ import androidx.lifecycle.LiveDataReactiveStreams;
 import net.inqer.autosearch.BaseActivity;
 import net.inqer.autosearch.R;
 import net.inqer.autosearch.data.model.LoggedInUser;
-import net.inqer.autosearch.data.model.api.AuthCheckResponse;
 import net.inqer.autosearch.data.preferences.AuthParametersProvider;
 import net.inqer.autosearch.data.service.AuthApi;
 import net.inqer.autosearch.ui.MainActivity;
@@ -59,7 +58,10 @@ public class LauncherActivity extends BaseActivity {
                                 Log.d(TAG, "apply: ");
                                 return null;
                             })
-                            .map((Function<AuthCheckResponse, AuthResource<LoggedInUser>>) authCheckResponse -> null)
+                           .map((Function<LoggedInUser, AuthResource<LoggedInUser>>) loggedInUser -> {
+                               Log.d(TAG, "apply: ");
+                               return null;
+                           })
                             .subscribeOn(Schedulers.io())
                     )
             );
