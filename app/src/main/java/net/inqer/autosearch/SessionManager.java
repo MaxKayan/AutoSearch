@@ -36,9 +36,7 @@ public class SessionManager {
         }
     }
 
-    public void checkAuthentication() {
 
-    }
 
     public void logOut() {
         Log.d(TAG, "logOut: logging out...");

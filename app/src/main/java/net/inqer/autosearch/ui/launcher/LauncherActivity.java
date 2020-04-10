@@ -1,115 +1,74 @@
 package net.inqer.autosearch.ui.launcher;
 
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.lifecycle.LiveDataReactiveStreams;
+import androidx.lifecycle.ViewModelProvider;
 
 import net.inqer.autosearch.BaseActivity;
 import net.inqer.autosearch.R;
-import net.inqer.autosearch.data.model.LoggedInUser;
-import net.inqer.autosearch.data.preferences.AuthParametersProvider;
-import net.inqer.autosearch.data.service.AuthApi;
 import net.inqer.autosearch.ui.MainActivity;
-import net.inqer.autosearch.ui.login.LoginActivity;
-import net.inqer.autosearch.util.TokenInjectionInterceptor;
+import net.inqer.autosearch.util.ViewModelProviderFactory;
 
 import javax.inject.Inject;
-import javax.inject.Named;
-
-import io.reactivex.functions.Function;
-import io.reactivex.schedulers.Schedulers;
 
 public class LauncherActivity extends BaseActivity {
     private static final String TAG = "LauncherActivity";
-
     @Inject
-    AuthParametersProvider authSettings;
-
-    @Inject
-    AuthApi authApi;
-
-    @Inject
-    @Named("logo")
-    Drawable logo;
-
-    @Inject
-    TokenInjectionInterceptor interceptor;
-
+    ViewModelProviderFactory providerFactory;
     private String token;
-
+    private LauncherViewModel viewModel;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG, "onCreate: Launcher activity created");
+        viewModel = new ViewModelProvider(this, providerFactory).get(LauncherViewModel.class);
+        subscribeObservers();
 
-        token = authSettings.getValue(getString(R.string.saved_token_key));
+        token = viewModel.getToken();
 
         if (token != null) {
             Log.d(TAG, "onCreate: Token is not empty, checking access...");
 
-            sessionManager.authenticateWithCredentials(LiveDataReactiveStreams.fromPublisher(
-                    authApi.checkAuthentication("Token " + token)
-                            .onErrorReturn(throwable -> {
-                                Log.d(TAG, "apply: ");
-                                return null;
-                            })
-                           .map((Function<LoggedInUser, AuthResource<LoggedInUser>>) loggedInUser -> {
-                               Log.d(TAG, "apply: ");
-                               return null;
-                           })
-                            .subscribeOn(Schedulers.io())
-                    )
-            );
-
-//            authApi.checkAuthentication("Token " + token)
-//                    .toObservable()
-//                    .singleOrError()
-//                    .observeOn(AndroidSchedulers.mainThread())
-//                    .subscribeOn(Schedulers.io())
-//                    .subscribe(new SingleObserver<AuthCheckResponse>() {
-//                        @Override
-//                        public void onSubscribe(Disposable d) {
-//
-//                        }
-//
-//                        @Override
-//                        public void onSuccess(AuthCheckResponse authCheckResponse) {
-//                            if (authCheckResponse.isSuccessful()) {
-//                                selectMainActivity();
-//                            } else {
-//                                selectLoginActivity();
-//                            }
-//                        }
-//
-//                        @Override
-//                        public void onError(Throwable e) {
-//                            Log.e(TAG, "onError: checkAuthentication:", e);
-//                            showErrorAlertDialog(e.getMessage());
-//                        }
-//                    });
+            viewModel.checkAuthenticationByToken(token);
 
         } else {
             Log.w(TAG, "onCreate: Token is empty, creating Login Activity. -- ");
-            selectLoginActivity();
+            navLoginScreen();
         }
 
+
     }
 
-
-    private void selectLoginActivity() {
-        Log.d(TAG, "selectLoginActivity: Chosen Login");
-        startActivity(new Intent(this, LoginActivity.class));
-        finish();
+    private void subscribeObservers() {
+        viewModel.getAuthUser().observe(this, authResource -> {
+            switch (authResource.status) {
+                case LOADING:
+                    Log.d(TAG, "subscribeObservers: loading data...");
+                    break;
+                case ERROR:
+                    showErrorAlertDialog(authResource.message);
+                    break;
+                case AUTHENTICATED:
+                    selectMainActivity();
+                    break;
+            }
+        });
     }
+
+//    private void selectLoginActivity() {
+//        Log.d(TAG, "selectLoginActivity: Chosen Login");
+//        startActivity(new Intent(this, LoginActivity.class));
+//        finish();
+//    }
 
     private void selectMainActivity() {
         Log.d(TAG, "selectMainActivity: Chosen Main");
-        interceptor.setSessionToken(token);
+        viewModel.setSessionToken(token);
         startActivity(new Intent(this, MainActivity.class));
         finish();
     }

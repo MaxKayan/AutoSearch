@@ -25,20 +25,19 @@ public abstract class BaseActivity extends DaggerAppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        subscribeObservers();
+        subscribeDefaultObservers();
     }
 
-    private void subscribeObservers() {
+    private void subscribeDefaultObservers() {
         sessionManager.getAuthUser().observe(this, authResource -> {
             if (authResource != null) {
                 switch (authResource.status) {
-                    case LOADING:
                     case NOT_AUTHENTICATED: {
                         navLoginScreen();
                         break;
                     }
                     case AUTHENTICATED: {
-                        Log.d(TAG, "subscribeObservers: LOGIN SUCCESS: " + authResource.data.getEmail());
+                        Log.d(TAG, "subscribeDefaultObservers: LOGIN SUCCESS: " + authResource.data.getEmail());
                         break;
                     }
                     case ERROR: {
@@ -50,7 +49,7 @@ public abstract class BaseActivity extends DaggerAppCompatActivity {
         });
     }
 
-    private void navLoginScreen() {
+    protected void navLoginScreen() {
         Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
         finish();

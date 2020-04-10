@@ -10,7 +10,9 @@ import net.inqer.autosearch.R;
 import org.jetbrains.annotations.NotNull;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
+@Singleton
 public class AuthParametersProvider {
     private static final String TAG = "AuthParametersProvider";
     //    private Context context;
