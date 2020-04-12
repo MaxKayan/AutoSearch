@@ -5,11 +5,14 @@ import android.graphics.drawable.Drawable;
 
 import androidx.core.content.ContextCompat;
 
+import com.google.gson.GsonBuilder;
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 
 import net.inqer.autosearch.R;
 import net.inqer.autosearch.util.Constants;
 import net.inqer.autosearch.util.TokenInjectionInterceptor;
+
+import java.text.SimpleDateFormat;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -36,7 +39,9 @@ public class AppModule {
     static Retrofit provideRetrofitInstance(OkHttpClient httpClient) {
         return new Retrofit.Builder()
                 .baseUrl(Constants.BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create(new GsonBuilder()
+                        .setDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+                        .create()))
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .client(httpClient)
                 .build();
@@ -50,6 +55,12 @@ public class AppModule {
                 .addInterceptor(new HttpLoggingInterceptor()
                         .setLevel(HttpLoggingInterceptor.Level.BODY))
                 .build();
+    }
+
+    @Singleton
+    @Provides
+    static SimpleDateFormat provideDateFormat(Application application) {
+        return new SimpleDateFormat("dd MMMM yyyy 'в' HH:mm:ss", application.getResources().getConfiguration().locale);
     }
 
 }

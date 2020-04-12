@@ -41,7 +41,7 @@ public class ParametersViewModel extends ViewModel {
 
             @Override
             public void onFailure(@NotNull Call<AccountProperties> call, @NotNull Throwable t) {
-
+                Log.e(TAG, "onFailure: Error: ", t);
             }
         });
     }

@@ -19,6 +19,8 @@ import net.inqer.autosearch.util.ViewModelProviderFactory;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.text.SimpleDateFormat;
+
 import javax.inject.Inject;
 
 import dagger.android.support.DaggerFragment;
@@ -28,6 +30,9 @@ public class ParametersFragment extends DaggerFragment {
 
     @Inject
     ViewModelProviderFactory providerFactory;
+
+    @Inject
+    SimpleDateFormat dateFormat;
 
     private ParametersViewModel viewModel;
 
@@ -71,13 +76,11 @@ public class ParametersFragment extends DaggerFragment {
 
 
     private void bindProfileData(@NotNull AccountProperties properties) {
-        Log.d(TAG, "bindProfileData: Called.");
         Log.d(TAG, "bindProfileData: " + properties.toString());
-        Log.d(TAG, "bindProfileData: " + binding.paramUsername.getText().toString());
         binding.paramUsername.setText(properties.getUsername());
         binding.paramEmail.setText(properties.getEmail());
-        binding.paramLastLoginValue.setText(properties.getLast_login());
-        binding.paramDateJoinedValue.setText(properties.getDate_joined());
+        binding.paramLastLoginValue.setText(dateFormat.format(properties.getLast_login()));
+        binding.paramDateJoinedValue.setText(dateFormat.format(properties.getDate_joined()));
 
         shimmerBinding.parametersShimmerLayout.setVisibility(View.GONE);
     }

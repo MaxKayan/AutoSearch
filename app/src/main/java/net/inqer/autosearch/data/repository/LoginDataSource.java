@@ -3,9 +3,9 @@ package net.inqer.autosearch.data.repository;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import net.inqer.autosearch.data.model.LoggedInUser;
 import net.inqer.autosearch.data.model.LoginCredentials;
 import net.inqer.autosearch.data.model.Result;
+import net.inqer.autosearch.data.model.User;
 import net.inqer.autosearch.data.service.AuthApi;
 
 import org.jetbrains.annotations.NotNull;
@@ -58,9 +58,9 @@ public class LoginDataSource {
     private Result result;
 
     @SuppressWarnings("unchecked")
-    private Callback<LoggedInUser> loginCallback = new Callback<LoggedInUser>() {
+    private Callback<User> loginCallback = new Callback<User>() {
         @Override
-        public void onResponse(@NotNull Call<LoggedInUser> call, @NotNull Response<LoggedInUser> response) {
+        public void onResponse(@NotNull Call<User> call, @NotNull Response<User> response) {
             if (response.isSuccessful()) {
                 Log.i(TAG, "onResponse: Successfully logged in!");
                 result = new Result.Success(response.body());
@@ -72,24 +72,24 @@ public class LoginDataSource {
         }
 
         @Override
-        public void onFailure(@NotNull Call<LoggedInUser> call, @NotNull Throwable t) {
+        public void onFailure(@NotNull Call<User> call, @NotNull Throwable t) {
             result = new Result.Error(new IOException("onFailure: Failed to send POST request! -- "+t.getMessage()));
         }
     };
 
 
-    private static class LoginAsyncTask extends AsyncTask<Void, Void, LoggedInUser> {
-        private final Call<LoggedInUser> call;
+    private static class LoginAsyncTask extends AsyncTask<Void, Void, User> {
+        private final Call<User> call;
 
-        LoginAsyncTask(Call<LoggedInUser> call) {
+        LoginAsyncTask(Call<User> call) {
             this.call = call;
         }
 
         @Override
-        protected LoggedInUser doInBackground(Void... voids) {
+        protected User doInBackground(Void... voids) {
             Log.d(TAG, "doInBackground: LoginAsyncTask executed");
             try {
-                Response<LoggedInUser> response = call.execute();
+                Response<User> response = call.execute();
                 if (response.isSuccessful()) {
                     return response.body();
                 } else {
@@ -104,7 +104,7 @@ public class LoginDataSource {
     }
 
 
-    public Result<LoggedInUser> login(String username, String password) {
+    public Result<User> login(String username, String password) {
         Log.d(TAG, "login: DataSource Login method called");
         result = null;
 

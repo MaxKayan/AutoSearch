@@ -12,8 +12,8 @@ import com.jakewharton.retrofit2.adapter.rxjava2.HttpException;
 
 import net.inqer.autosearch.R;
 import net.inqer.autosearch.SessionManager;
-import net.inqer.autosearch.data.model.LoggedInUser;
 import net.inqer.autosearch.data.model.LoginCredentials;
+import net.inqer.autosearch.data.model.User;
 import net.inqer.autosearch.data.service.AuthApi;
 import net.inqer.autosearch.ui.launcher.AuthResource;
 
@@ -51,7 +51,7 @@ public class LoginViewModel extends ViewModel {
         sessionManager.authenticateWithCredentials(queryUser(email, password));
     }
 
-    private LiveData<AuthResource<LoggedInUser>> queryUser(String email, String password) {
+    private LiveData<AuthResource<User>> queryUser(String email, String password) {
         return LiveDataReactiveStreams.fromPublisher(
                 authApi.login(new LoginCredentials(email, password))
 
@@ -74,11 +74,11 @@ public class LoginViewModel extends ViewModel {
                                     }
                                 }
                             }
-                            return new LoggedInUser(errorMessage);
+                            return new User(errorMessage);
                         })
 
                         // Return user with error if there is one
-                        .map((Function<LoggedInUser, AuthResource<LoggedInUser>>) loggedInUser -> {
+                        .map((Function<User, AuthResource<User>>) loggedInUser -> {
                             if (loggedInUser.getErrorCase() != null) {
                                 return AuthResource.error(loggedInUser.getErrorCase(), null);
                             }
@@ -88,7 +88,7 @@ public class LoginViewModel extends ViewModel {
         );
     }
 
-    LiveData<AuthResource<LoggedInUser>> observerAuthState() {
+    LiveData<AuthResource<User>> observerAuthState() {
         return sessionManager.getAuthUser();
     }
 

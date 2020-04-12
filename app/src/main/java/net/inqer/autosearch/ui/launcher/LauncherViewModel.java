@@ -9,7 +9,7 @@ import androidx.lifecycle.ViewModel;
 
 import net.inqer.autosearch.R;
 import net.inqer.autosearch.SessionManager;
-import net.inqer.autosearch.data.model.LoggedInUser;
+import net.inqer.autosearch.data.model.User;
 import net.inqer.autosearch.data.preferences.AuthParametersProvider;
 import net.inqer.autosearch.data.service.AuthApi;
 import net.inqer.autosearch.util.TokenInjectionInterceptor;
@@ -47,9 +47,9 @@ public class LauncherViewModel extends ViewModel {
                 authApi.checkAuthentication("Token " + token)
                         .onErrorReturn(throwable -> {
                             Log.d(TAG, "apply: ");
-                            return new LoggedInUser(throwable.getMessage());
+                            return new User(throwable.getMessage());
                         })
-                        .map((Function<LoggedInUser, AuthResource<LoggedInUser>>) loggedInUser -> {
+                        .map((Function<User, AuthResource<User>>) loggedInUser -> {
                             if (loggedInUser.getErrorCase() != null) {
                                 return AuthResource.error(loggedInUser.getErrorCase(), null);
                             } else return AuthResource.authenticated(loggedInUser);
@@ -67,7 +67,7 @@ public class LauncherViewModel extends ViewModel {
         interceptor.setSessionToken(token);
     }
 
-    public LiveData<AuthResource<LoggedInUser>> getAuthUser() {
+    public LiveData<AuthResource<User>> getAuthUser() {
         return sessionManager.getAuthUser();
     }
 

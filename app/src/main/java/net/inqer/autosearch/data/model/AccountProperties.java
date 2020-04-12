@@ -2,23 +2,22 @@ package net.inqer.autosearch.data.model;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.time.OffsetDateTime;
+import java.util.Date;
 
 public class AccountProperties {
     private Integer id;
     private String email;
     private String username;
 
-    // TODO: Use actual DateTime formats instead of Strings
-    private String date_joined;
-    private String last_login;
+    private Date date_joined;
+    private Date last_login;
 
     private Boolean is_admin;
     private Boolean is_active;
     private Boolean is_staff;
     private Boolean is_superuser;
 
-    public AccountProperties(Integer id, String email, String username, String date_joined, String last_login, Boolean is_admin, Boolean is_active, Boolean is_staff, Boolean is_superuser) {
+    public AccountProperties(Integer id, String email, String username, Date date_joined, Date last_login, Boolean is_admin, Boolean is_active, Boolean is_staff, Boolean is_superuser) {
         this.id = id;
         this.email = email;
         this.username = username;
@@ -58,11 +57,11 @@ public class AccountProperties {
         return username;
     }
 
-    public String getDate_joined() {
+    public Date getDate_joined() {
         return date_joined;
     }
 
-    public String getLast_login() {
+    public Date getLast_login() {
         return last_login;
     }
 

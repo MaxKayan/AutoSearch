@@ -3,30 +3,28 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.fragment.filters.FiltersFragment">
 
-    <com.facebook.shimmer.ShimmerFrameLayout
-        android:id="@+id/filters_shimmer_view_container"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/filters_recyclerview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:shimmer_duration="1000">
+        android:orientation="vertical"
+        tools:listitem="@layout/filter_item"/>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/filters_fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|bottom"
+        android:layout_margin="32dp"
+        android:src="@drawable/ic_add_white" />
 
-            <include layout="@layout/example_shimmer" />
-
-            <include layout="@layout/example_shimmer" />
-
-            <include layout="@layout/example_shimmer" />
-
-            <include layout="@layout/example_shimmer" />
-
-        </LinearLayout>
-
-    </com.facebook.shimmer.ShimmerFrameLayout>
+    <ProgressBar
+        android:id="@+id/filters_progressbar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone"/>
 
 </FrameLayout>

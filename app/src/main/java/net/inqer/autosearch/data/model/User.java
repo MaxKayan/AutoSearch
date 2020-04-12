@@ -5,7 +5,7 @@ import androidx.room.Entity;
 
 
 @Entity
-public class LoggedInUser {
+public class User {
 
     private Integer userId;
     private String username;
@@ -16,7 +16,7 @@ public class LoggedInUser {
     private String errorCase;
 
     // Successful log-in
-    public LoggedInUser(int userId, String username, String email, String token) {
+    public User(int userId, String username, String email, String token) {
         this.userId = userId;
         this.username = username;
         this.email = email;
@@ -24,7 +24,7 @@ public class LoggedInUser {
     }
 
     // Failed log-in
-    public LoggedInUser(@Nullable String errorCase) {
+    public User(@Nullable String errorCase) {
         this.errorCase = errorCase;
     }
 
