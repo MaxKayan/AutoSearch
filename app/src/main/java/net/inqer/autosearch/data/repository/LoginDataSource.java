@@ -3,10 +3,10 @@ package net.inqer.autosearch.data.repository;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import net.inqer.autosearch.data.model.AuthResult;
 import net.inqer.autosearch.data.model.LoginCredentials;
-import net.inqer.autosearch.data.model.Result;
 import net.inqer.autosearch.data.model.User;
-import net.inqer.autosearch.data.service.AuthApi;
+import net.inqer.autosearch.data.source.api.AuthApi;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -55,7 +55,7 @@ public class LoginDataSource {
 //    private AuthApi authApi = retrofit.create(AuthApi.class);
 
 
-    private Result result;
+    private AuthResult result;
 
     @SuppressWarnings("unchecked")
     private Callback<User> loginCallback = new Callback<User>() {
@@ -63,17 +63,17 @@ public class LoginDataSource {
         public void onResponse(@NotNull Call<User> call, @NotNull Response<User> response) {
             if (response.isSuccessful()) {
                 Log.i(TAG, "onResponse: Successfully logged in!");
-                result = new Result.Success(response.body());
+                result = new AuthResult.Success(response.body());
 
             } else {
                 Log.e(TAG, "onResponse: Response was not successful! Code = " + response.code());
-                result = new Result.Error(new IOException("onResponse: Response was not successful! Code = "));
+                result = new AuthResult.Error(new IOException("onResponse: Response was not successful! Code = "));
             }
         }
 
         @Override
         public void onFailure(@NotNull Call<User> call, @NotNull Throwable t) {
-            result = new Result.Error(new IOException("onFailure: Failed to send POST request! -- "+t.getMessage()));
+            result = new AuthResult.Error(new IOException("onFailure: Failed to send POST request! -- "+t.getMessage()));
         }
     };
 
@@ -104,7 +104,7 @@ public class LoginDataSource {
     }
 
 
-    public Result<User> login(String username, String password) {
+    public AuthResult<User> login(String username, String password) {
         Log.d(TAG, "login: DataSource Login method called");
         result = null;
 

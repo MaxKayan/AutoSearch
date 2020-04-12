@@ -1,4 +1,4 @@
-package net.inqer.autosearch.data.preferences;
+package net.inqer.autosearch.data.source.local;
 
 import android.app.Application;
 import android.content.Context;

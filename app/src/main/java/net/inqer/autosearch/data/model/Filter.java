@@ -6,16 +6,19 @@ import androidx.room.PrimaryKey;
 
 import com.google.gson.annotations.SerializedName;
 
+import net.inqer.autosearch.util.Util;
+
 import java.util.Date;
 
-@Entity
+@Entity(tableName = "filters")
 public class Filter {
+    private static final String TAG = "Filter";
 
     @PrimaryKey
     private Integer id;
     private String slug;
-    private String fid;
     private Integer quantity;
+
     @SerializedName("created_at")
     private Date created_at;
     private String cities;
@@ -55,12 +58,11 @@ public class Filter {
     @SerializedName("engine_to")
     private String engineDisplacementMax;
 
-    @SerializedName("count")
+    @SerializedName("refresh_count")
     private Integer refreshCount;
 
     public Filter(Integer id,
                   String slug,
-                  String fid,
                   Integer quantity,
                   Date created_at,
                   String cities,
@@ -79,7 +81,6 @@ public class Filter {
                   Integer refreshCount) {
         this.id = id;
         this.slug = slug;
-        this.fid = fid;
         this.quantity = quantity;
         this.created_at = created_at;
         this.cities = cities;
@@ -105,10 +106,6 @@ public class Filter {
 
     public String getSlug() {
         return slug;
-    }
-
-    public String getFid() {
-        return fid;
     }
 
     public Integer getQuantity() {
@@ -181,29 +178,29 @@ public class Filter {
 
 
     @Override
-    public boolean equals(@Nullable Object obj) {
+    public boolean equals(Object obj) {
         if (obj instanceof Filter) {
-            Filter secondFilter = (Filter) obj;
+            Filter secFilter = (Filter) obj;
 
-            return this.id == secondFilter.id &&
-                    this.slug == secondFilter.slug &&
-                    this.fid == secondFilter.fid &&
-                    this.quantity == secondFilter.quantity &&
-                    this.created_at == secondFilter.created_at &&
-                    this.cities == secondFilter.cities &&
-                    this.carMark == secondFilter.carMark &&
-                    this.carModel == secondFilter.carModel &&
-                    this.hull == secondFilter.hull &&
-                    this.fuel == secondFilter.fuel &&
-                    this.transmission == secondFilter.transmission &&
-                    this.radius == secondFilter.radius &&
-                    this.priceMinimum == secondFilter.priceMinimum &&
-                    this.priceMaximum == secondFilter.priceMaximum &&
-                    this.manufactureYearMin == secondFilter.manufactureYearMin &&
-                    this.manufactureYearMax == secondFilter.manufactureYearMax &&
-                    this.engineDisplacementMin == secondFilter.engineDisplacementMin &&
-                    this.engineDisplacementMax == secondFilter.engineDisplacementMax &&
-                    this.refreshCount == secondFilter.refreshCount;
+            return
+//                        this.id.equals(secondFilter.id) &&
+                    this.slug.equals(secFilter.slug) &&
+                            this.quantity.equals(secFilter.quantity) &&
+                            this.created_at.equals(secFilter.created_at) &&
+                            this.cities.equals(secFilter.cities) &&
+                            this.carMark.equals(secFilter.carMark) &&
+                            this.carModel.equals(secFilter.carModel) &&
+                            this.hull.equals(secFilter.hull) &&
+                            this.fuel.equals(secFilter.fuel) &&
+                            this.transmission.equals(secFilter.transmission) &&
+                            this.radius.equals(secFilter.radius) &&
+                            Util.equals(this.priceMinimum, secFilter.priceMinimum) &&
+                            Util.equals(this.priceMaximum, secFilter.priceMaximum) &&
+                            Util.equals(this.manufactureYearMin, secFilter.manufactureYearMin) &&
+                            Util.equals(this.manufactureYearMax, secFilter.manufactureYearMax) &&
+                            this.engineDisplacementMin.equals(secFilter.engineDisplacementMin) &&
+                            this.engineDisplacementMax.equals(secFilter.engineDisplacementMax) &&
+                            this.refreshCount.equals(secFilter.refreshCount);
         }
         return false;
     }

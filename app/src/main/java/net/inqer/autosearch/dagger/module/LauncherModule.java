@@ -2,7 +2,7 @@ package net.inqer.autosearch.dagger.module;
 
 import android.app.Application;
 
-import net.inqer.autosearch.data.service.AuthApi;
+import net.inqer.autosearch.data.source.api.AuthApi;
 
 import javax.inject.Named;
 

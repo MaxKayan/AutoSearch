@@ -2,7 +2,7 @@ package net.inqer.autosearch.dagger.module;
 
 import android.app.Application;
 
-import net.inqer.autosearch.data.service.MainApi;
+import net.inqer.autosearch.data.source.api.MainApi;
 
 import dagger.Module;
 import dagger.Provides;

@@ -1,4 +1,4 @@
-package net.inqer.autosearch.ui.fragment.parameters;
+package net.inqer.autosearch.ui.fragment.filters;
 
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
@@ -29,8 +29,8 @@ public class FiltersAdapter extends ListAdapter<Filter, FiltersAdapter.FilterVie
 
         @Override
         public boolean areContentsTheSame(@NonNull Filter oldItem, @NonNull Filter newItem) {
-//            return oldItem.equals(newItem);
-            return oldItem.getId().equals(newItem.getId());
+            boolean isEqual = oldItem.equals(newItem);
+            return isEqual;
         }
     };
 

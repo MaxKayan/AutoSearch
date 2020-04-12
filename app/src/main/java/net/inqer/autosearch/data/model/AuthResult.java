@@ -5,26 +5,26 @@ import org.jetbrains.annotations.NotNull;
 /**
  * A generic class that holds a result success w/ data or an error exception.
  */
-public class Result<T> {
+public class AuthResult<T> {
     // hide the private constructor to limit subclass types (Success, Error)
-    private Result() {
+    private AuthResult() {
     }
 
     @NotNull
     @Override
     public String toString() {
-        if (this instanceof Result.Success) {
-            Result.Success success = (Result.Success) this;
+        if (this instanceof AuthResult.Success) {
+            AuthResult.Success success = (AuthResult.Success) this;
             return "Success[data=" + success.getData().toString() + "]";
-        } else if (this instanceof Result.Error) {
-            Result.Error error = (Result.Error) this;
+        } else if (this instanceof AuthResult.Error) {
+            AuthResult.Error error = (AuthResult.Error) this;
             return "Error[exception=" + error.getError().toString() + "]";
         }
         return "";
     }
 
     // Success sub-class
-    public final static class Success<T> extends Result {
+    public final static class Success<T> extends AuthResult {
         private T data;
 
         public Success(T data) {
@@ -37,7 +37,7 @@ public class Result<T> {
     }
 
     // Error sub-class
-    public final static class Error extends Result {
+    public final static class Error extends AuthResult {
         private Exception error;
 
         public Error(Exception error) {

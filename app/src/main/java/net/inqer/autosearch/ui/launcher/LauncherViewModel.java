@@ -10,8 +10,8 @@ import androidx.lifecycle.ViewModel;
 import net.inqer.autosearch.R;
 import net.inqer.autosearch.SessionManager;
 import net.inqer.autosearch.data.model.User;
-import net.inqer.autosearch.data.preferences.AuthParametersProvider;
-import net.inqer.autosearch.data.service.AuthApi;
+import net.inqer.autosearch.data.source.api.AuthApi;
+import net.inqer.autosearch.data.source.local.AuthParametersProvider;
 import net.inqer.autosearch.util.TokenInjectionInterceptor;
 
 import javax.inject.Inject;

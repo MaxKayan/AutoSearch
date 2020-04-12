@@ -13,7 +13,6 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import net.inqer.autosearch.databinding.FragmentFiltersBinding;
-import net.inqer.autosearch.ui.fragment.parameters.FiltersAdapter;
 import net.inqer.autosearch.util.ViewModelProviderFactory;
 
 import javax.inject.Inject;
@@ -30,7 +29,7 @@ public class FiltersFragment extends DaggerFragment {
     ViewModelProviderFactory providerFactory;
     private FiltersViewModel viewModel;
 
-    FragmentFiltersBinding binding;
+    private FragmentFiltersBinding binding;
 
     public static FiltersFragment newInstance() {
         return new FiltersFragment();
@@ -49,18 +48,29 @@ public class FiltersFragment extends DaggerFragment {
         super.onViewCreated(view, savedInstanceState);
         viewModel = new ViewModelProvider(this, providerFactory).get(FiltersViewModel.class);
 
+        showProgressBar(true);
         setupRecyclerView();
         subscribeObservers();
         setupFab();
-
-        viewModel.updateData();
     }
 
     private void subscribeObservers() {
-        viewModel.observeFilters().observe(getViewLifecycleOwner(), filters -> {
-            Log.d(TAG, "subscribeObservers: submit list"+
-                    "\n filters size: "+filters.size());
-            adapter.submitList(filters);
+        viewModel.observeFilterData().observe(getViewLifecycleOwner(),
+                filters -> adapter.submitList(filters));
+
+        viewModel.observeFilterEvents().observe(getViewLifecycleOwner(), event -> {
+            switch (event.status) {
+                case LOADING:
+                    showProgressBar(true);
+                    break;
+                case SUCCESS:
+                    showProgressBar(false);
+                    break;
+                case ERROR:
+                    showError(event.message);
+                    showProgressBar(false);
+                    break;
+            }
         });
     }
 
@@ -69,15 +79,32 @@ public class FiltersFragment extends DaggerFragment {
         binding.filtersRecyclerview.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.filtersRecyclerview.setHasFixedSize(true);
         binding.filtersRecyclerview.setAdapter(adapter);
-        Log.d(TAG, "setupRecyclerView: "+binding.filtersRecyclerview.getAdapter());
+        Log.d(TAG, "setupRecyclerView: " + binding.filtersRecyclerview.getAdapter());
     }
 
 
     private void setupFab() {
         binding.filtersFab.setOnClickListener(v -> {
-            Toast.makeText(getContext(), "FAB pressed!", Toast.LENGTH_SHORT).show();
-            viewModel.updateData();
+            viewModel.refreshData();
         });
+        binding.filtersFab.setOnLongClickListener(v -> {
+            viewModel.deleteFilters();
+            return true;
+        });
+    }
+
+
+    private void showProgressBar(boolean show) {
+        if (show) {
+            binding.filtersProgressbar.setVisibility(View.VISIBLE);
+        } else {
+            binding.filtersProgressbar.setVisibility(View.GONE);
+        }
+    }
+
+    private void showError(String message) {
+        Log.w(TAG, "showError: " + message);
+        Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
     }
 
 

@@ -14,7 +14,7 @@ import androidx.annotation.StringRes;
 import androidx.lifecycle.ViewModelProvider;
 
 import net.inqer.autosearch.R;
-import net.inqer.autosearch.data.preferences.AuthParametersProvider;
+import net.inqer.autosearch.data.source.local.AuthParametersProvider;
 import net.inqer.autosearch.databinding.ActivityLoginBinding;
 import net.inqer.autosearch.ui.MainActivity;
 import net.inqer.autosearch.util.TokenInjectionInterceptor;

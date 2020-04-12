@@ -2,7 +2,7 @@ package net.inqer.autosearch.data.repository;
 
 import android.util.Log;
 
-import net.inqer.autosearch.data.model.Result;
+import net.inqer.autosearch.data.model.AuthResult;
 import net.inqer.autosearch.data.model.User;
 
 /**
@@ -49,12 +49,12 @@ public class LoginRepository {
         // @see https://developer.android.com/training/articles/keystore
     }
 
-    public Result<User> login(String username, String password) {
+    public AuthResult<User> login(String username, String password) {
         Log.d(TAG, "login: Repository Login method called");
         // handle login
-        Result<User> result = dataSource.login(username, password);
-        if (result instanceof Result.Success) {
-            setLoggedInUser(((Result.Success<User>) result).getData());
+        AuthResult<User> result = dataSource.login(username, password);
+        if (result instanceof AuthResult.Success) {
+            setLoggedInUser(((AuthResult.Success<User>) result).getData());
         }
         return result;
     }

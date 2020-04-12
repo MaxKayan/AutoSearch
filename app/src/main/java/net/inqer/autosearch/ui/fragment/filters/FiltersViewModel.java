@@ -1,59 +1,49 @@
 package net.inqer.autosearch.ui.fragment.filters;
 
-import android.util.Log;
-
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.ViewModel;
 
+import net.inqer.autosearch.data.model.Event;
 import net.inqer.autosearch.data.model.Filter;
-import net.inqer.autosearch.data.model.api.PageResponse;
-import net.inqer.autosearch.data.service.MainApi;
-
-import org.jetbrains.annotations.NotNull;
+import net.inqer.autosearch.data.source.FiltersRepository;
 
 import java.util.List;
 
 import javax.inject.Inject;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-
 public class FiltersViewModel extends ViewModel {
     private static final String TAG = "FiltersViewModel";
-    @Inject
-    MainApi api;
-    private MutableLiveData<List<Filter>> filtersList = new MutableLiveData<>();
+    private final FiltersRepository repository;
+    private MediatorLiveData<List<Filter>> filtersList = new MediatorLiveData<>();
 
     @Inject
-    FiltersViewModel() {
+    FiltersViewModel(FiltersRepository filtersRepository) {
+        this.repository = filtersRepository;
+        subscribeObservers();
     }
 
-    public void updateData() {
-        api.getFilters().enqueue(new Callback<PageResponse<Filter>>() {
-            @Override
-            public void onResponse(@NotNull Call<PageResponse<Filter>> call, @NotNull Response<PageResponse<Filter>> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    filtersList.postValue(response.body().getResults());
-
-                    for (Filter filter : response.body().getResults()) {
-                        Log.d(TAG, filter.getCarMark() + " " + filter.getCarModel());
-                    }
-                } else {
-                    Log.w(TAG, "onResponse: failed to get filters" +
-                            "\n code: " + response.code());
-                }
-            }
-
-            @Override
-            public void onFailure(@NotNull Call<PageResponse<Filter>> call, @NotNull Throwable t) {
-                Log.e(TAG, "onFailure: Error: ", t);
+    private void subscribeObservers() {
+        filtersList.addSource(repository.observeFilters(), event -> {
+            if (event.status == Event.ResultStatus.SUCCESS) {
+                filtersList.setValue(event.data);
             }
         });
     }
 
-    public LiveData<List<Filter>> observeFilters() {
+    LiveData<Event<List<Filter>>> observeFilterEvents() {
+        return repository.observeFilters();
+    }
+
+    LiveData<List<Filter>> observeFilterData() {
         return filtersList;
+    }
+
+    void refreshData() {
+        repository.refreshFilters();
+    }
+
+    void deleteFilters() {
+        repository.clearFilters();
     }
 }

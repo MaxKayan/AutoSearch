@@ -2,13 +2,17 @@ package net.inqer.autosearch.dagger.module;
 
 import android.app.Application;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 
 import androidx.core.content.ContextCompat;
+import androidx.room.Room;
 
 import com.google.gson.GsonBuilder;
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 
 import net.inqer.autosearch.R;
+import net.inqer.autosearch.data.source.local.AppDatabase;
+import net.inqer.autosearch.data.source.local.dao.FilterDao;
 import net.inqer.autosearch.util.Constants;
 import net.inqer.autosearch.util.TokenInjectionInterceptor;
 
@@ -26,12 +30,29 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 @Module
 public class AppModule {
+    private static final String TAG = "AppModule";
 
     @Singleton
     @Provides
     @Named("logo")
     static Drawable provideAppDrawable(Application application) {
         return ContextCompat.getDrawable(application, R.drawable.ic_android);
+    }
+
+    @Singleton
+    @Provides
+    static AppDatabase provideAppDatabase(Application application) {
+        Log.i(TAG, "provideAppDatabase: creating Room database...");
+        return Room.databaseBuilder(application, AppDatabase.class, "autosearch_database")
+                .fallbackToDestructiveMigration()
+//                .addCallback(roomCallback)
+                .build();
+    }
+
+    @Singleton
+    @Provides
+    static FilterDao provideFilterDao(AppDatabase appDatabase) {
+        return appDatabase.filterDao();
     }
 
     @Singleton

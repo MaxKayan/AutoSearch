@@ -1,4 +1,4 @@
-package net.inqer.autosearch.data.service;
+package net.inqer.autosearch.data.source.api;
 
 import net.inqer.autosearch.data.model.AccountProperties;
 import net.inqer.autosearch.data.model.City;

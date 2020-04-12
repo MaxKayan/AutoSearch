@@ -14,7 +14,7 @@ import net.inqer.autosearch.R;
 import net.inqer.autosearch.SessionManager;
 import net.inqer.autosearch.data.model.LoginCredentials;
 import net.inqer.autosearch.data.model.User;
-import net.inqer.autosearch.data.service.AuthApi;
+import net.inqer.autosearch.data.source.api.AuthApi;
 import net.inqer.autosearch.ui.launcher.AuthResource;
 
 import javax.inject.Inject;

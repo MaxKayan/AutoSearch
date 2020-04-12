@@ -7,7 +7,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import net.inqer.autosearch.data.model.AccountProperties;
-import net.inqer.autosearch.data.service.MainApi;
+import net.inqer.autosearch.data.source.api.MainApi;
 
 import org.jetbrains.annotations.NotNull;
 

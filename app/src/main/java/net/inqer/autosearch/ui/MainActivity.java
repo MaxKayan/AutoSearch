@@ -13,7 +13,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import net.inqer.autosearch.R;
 import net.inqer.autosearch.dagger.annotation.MainActivityScope;
-import net.inqer.autosearch.data.preferences.AuthParametersProvider;
+import net.inqer.autosearch.data.source.local.AuthParametersProvider;
 import net.inqer.autosearch.databinding.ActivityMainBinding;
 import net.inqer.autosearch.ui.login.LoginActivity;
 
