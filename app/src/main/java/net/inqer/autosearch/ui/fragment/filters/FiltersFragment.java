@@ -55,8 +55,8 @@ public class FiltersFragment extends DaggerFragment {
     }
 
     private void subscribeObservers() {
-        viewModel.observeFilterData().observe(getViewLifecycleOwner(),
-                filters -> adapter.submitList(filters));
+//        viewModel.observeFilterData().observe(getViewLifecycleOwner(),
+//                filters -> adapter.submitList(filters));
 
         viewModel.observeFilterEvents().observe(getViewLifecycleOwner(), event -> {
             switch (event.status) {
@@ -64,10 +64,15 @@ public class FiltersFragment extends DaggerFragment {
                     showProgressBar(true);
                     break;
                 case SUCCESS:
+                    if (event.data != null) {
+                        Log.d(TAG, "subscribeObservers: submitting: "+event.data.size());
+                        adapter.submitList(event.data);
+                    }
                     showProgressBar(false);
                     break;
                 case ERROR:
                     showError(event.message);
+                    viewModel.resetFilterObserver();
                     showProgressBar(false);
                     break;
             }
@@ -79,7 +84,6 @@ public class FiltersFragment extends DaggerFragment {
         binding.filtersRecyclerview.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.filtersRecyclerview.setHasFixedSize(true);
         binding.filtersRecyclerview.setAdapter(adapter);
-        Log.d(TAG, "setupRecyclerView: " + binding.filtersRecyclerview.getAdapter());
     }
 
 

@@ -35,8 +35,12 @@ public class FiltersViewModel extends ViewModel {
         return repository.observeFilters();
     }
 
-    LiveData<List<Filter>> observeFilterData() {
-        return filtersList;
+//    LiveData<List<Filter>> observeFilterData() {
+//        return filtersList;
+//    }
+
+    void resetFilterObserver() {
+        repository.resetFilterObserver();
     }
 
     void refreshData() {

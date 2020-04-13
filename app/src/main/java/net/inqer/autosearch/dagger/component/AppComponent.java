@@ -1,6 +1,7 @@
 package net.inqer.autosearch.dagger.component;
 
 import android.app.Application;
+import android.net.ConnectivityManager;
 
 import net.inqer.autosearch.BaseApplication;
 import net.inqer.autosearch.SessionManager;
@@ -32,6 +33,9 @@ public interface AppComponent extends AndroidInjector<BaseApplication> {
     interface Builder {
         @BindsInstance
         Builder application(Application application);
+
+        @BindsInstance
+        Builder connectivityManager(ConnectivityManager connectivityManager);
 
         AppComponent build();
     }

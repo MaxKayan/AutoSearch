@@ -1,6 +1,5 @@
 package net.inqer.autosearch.data.source;
 
-import android.annotation.SuppressLint;
 import android.util.Log;
 
 import androidx.lifecycle.LiveData;
@@ -18,6 +17,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -50,13 +50,18 @@ public class FiltersRepository {
         return observableFilters;
     }
 
+    public void resetFilterObserver() {
+        observableFilters.removeSource(dao.observeFilters());
+        subscribeObservers();
+    }
+
     public void refreshFilters() {
         observableFilters.postValue(Event.loading(null));
         api.getFilters().enqueue(new Callback<PageResponse<Filter>>() {
             @Override
             public void onResponse(@NotNull Call<PageResponse<Filter>> call, @NotNull Response<PageResponse<Filter>> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    saveFilters(response.body().getResults());
+                    reloadFilters(response.body().getResults());
                 } else {
                     Log.w(TAG, "onResponse: failed to get filters" +
                             "\n code: " + response.code());
@@ -71,9 +76,14 @@ public class FiltersRepository {
         });
     }
 
-    @SuppressLint("CheckResult")
-    public void saveFilters(List<Filter> filters) {
-        dao.insertAllFilters(filters)
+
+    public void createFilter() {
+    }
+
+
+    @SuppressWarnings("UnusedReturnValue")
+    private Disposable saveFilters(List<Filter> filters) {
+        return dao.insertAllFilters(filters)
                 .subscribeOn(Schedulers.io())
                 .subscribe(() -> {
                     Log.d(TAG, "saveFilters: Successfully saved filters");
@@ -82,12 +92,23 @@ public class FiltersRepository {
                 });
     }
 
-    @SuppressLint("CheckResult")
-    public void clearFilters() {
-        dao.deleteAllFilters()
+    @SuppressWarnings("UnusedReturnValue")
+    public Disposable clearFilters() {
+        return dao.deleteAllFilters()
                 .subscribeOn(Schedulers.io())
                 .subscribe(() -> {
                     Log.d(TAG, "clearFilters: Successfully deleted all filters");
+                }, throwable -> {
+                    Log.e(TAG, "clearFilters: Error: ", throwable);
+                });
+    }
+
+
+    public Disposable reloadFilters(List<Filter> filters) {
+        return dao.deleteAllFilters()
+                .subscribeOn(Schedulers.io())
+                .subscribe(() -> {
+                    saveFilters(filters);
                 }, throwable -> {
                     Log.e(TAG, "clearFilters: Error: ", throwable);
                 });

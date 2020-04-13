@@ -41,7 +41,6 @@ public class LauncherActivity extends BaseActivity {
             navLoginScreen();
         }
 
-
     }
 
     private void subscribeObservers() {
