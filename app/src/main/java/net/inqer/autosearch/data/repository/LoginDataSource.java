@@ -105,7 +105,7 @@ public class LoginDataSource {
 
 
     public AuthResult<User> login(String username, String password) {
-        Log.d(TAG, "login: DataSource Login method called");
+        Log.d(TAG, "login: DataSourceRx Login method called");
         result = null;
 
         LoginCredentials credentials = new LoginCredentials(username, password);

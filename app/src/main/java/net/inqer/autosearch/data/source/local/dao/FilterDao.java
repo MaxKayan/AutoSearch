@@ -11,6 +11,7 @@ import net.inqer.autosearch.data.model.Filter;
 import java.util.List;
 
 import io.reactivex.Completable;
+import io.reactivex.Observable;
 import io.reactivex.Single;
 
 @Dao
@@ -19,10 +20,16 @@ public interface FilterDao {
     LiveData<List<Filter>> observeFilters();
 
     @Query("SELECT * FROM filters")
+    Observable<List<Filter>> observeFiltersRx();
+
+    @Query("SELECT * FROM filters")
     Single<List<Filter>> getFilters();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     Completable insertAllFilters(List<Filter> filters);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    Completable saveAllFilters(List<Filter> filters);
 
     @Query("DELETE FROM filters")
     Completable deleteAllFilters();

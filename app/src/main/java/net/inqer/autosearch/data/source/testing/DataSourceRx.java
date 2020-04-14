@@ -5,13 +5,13 @@ import java.util.List;
 import io.reactivex.Completable;
 import io.reactivex.Observable;
 
-public interface DataSource<T> {
+public interface DataSourceRx<T> {
 
     Observable<List<T>> getAll();
 
     Observable<List<T>> getAll(Query<T> query);
 
-    Observable<List<T>> saveAll(List<T> list);
+    Completable saveAll(List<T> list);
 
     Completable removeAll(List<T> list);
 

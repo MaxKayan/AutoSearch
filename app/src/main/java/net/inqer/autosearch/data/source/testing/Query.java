@@ -7,9 +7,9 @@ import java.util.Map;
 import io.reactivex.Observable;
 
 public class Query<T> {
-    private final DataSource<T> dataSource;
+    private final DataSourceRx<T> dataSource;
 
-    public Query(final DataSource<T> dataSource) {
+    public Query(final DataSourceRx<T> dataSource) {
         this.dataSource = dataSource;
     }
 

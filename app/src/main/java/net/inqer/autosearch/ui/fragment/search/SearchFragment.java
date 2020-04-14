@@ -11,33 +11,44 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import net.inqer.autosearch.R;
+import net.inqer.autosearch.databinding.FragmentSearchBinding;
+import net.inqer.autosearch.util.ViewModelProviderFactory;
 
-public class SearchFragment extends Fragment {
+import javax.inject.Inject;
 
-    private SearchViewModel mViewModel;
+import dagger.android.support.DaggerFragment;
 
-    public static SearchFragment newInstance() {
-        return new SearchFragment();
-    }
+public class SearchFragment extends DaggerFragment {
+
+    @Inject
+    ViewModelProviderFactory providerFactory;
+
+    private SearchViewModel viewModel;
+
+    private FragmentSearchBinding binding;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_search, container, false);
+        binding = FragmentSearchBinding.inflate(inflater, container, false);
+        return binding.getRoot();
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        viewModel = new ViewModelProvider(this, providerFactory).get(SearchViewModel.class);
         setHasOptionsMenu(true);
 
-        ActionBar actionBar = getActivity() instanceof AppCompatActivity?((AppCompatActivity) getActivity()).getSupportActionBar():null;
+//        ActionBar actionBar = getActivity() instanceof AppCompatActivity ? ((AppCompatActivity) getActivity()).getSupportActionBar() : null;
     }
+
+
+
+
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {

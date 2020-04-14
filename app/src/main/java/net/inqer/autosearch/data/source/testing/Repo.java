@@ -11,16 +11,16 @@ import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.schedulers.Schedulers;
 
-public abstract class Repo<T> implements DataSource<T> {
+public abstract class Repo<T> implements DataSourceRx<T> {
     private static final String TAG = "Repo";
 
-    private final DataSource<T> api;
-    private final DataSource<T> db;
+    private final DataSourceRx<T> api;
+    private final DataSourceRx<T> db;
     private final ConnectivityManager cm;
 
 
-    public Repo(@Named("apiDataSource") DataSource<T> api,
-                @Named("apiDataSource") DataSource<T> db,
+    public Repo(@Named("apiDataSource") DataSourceRx<T> api,
+                @Named("apiDataSource") DataSourceRx<T> db,
                 ConnectivityManager cm) {
         this.api = api;
         this.db = db;
@@ -41,11 +41,11 @@ public abstract class Repo<T> implements DataSource<T> {
                 Observable.defer(() -> {
                     if (isNetworkAvailable()) {
                         // get new items from api
-                        return api.getAll().subscribeOn(Schedulers.io())
+                        return api.getAll().subscribeOn(Schedulers.io());
                                 // remove old items from db
-                                .flatMap(filters -> db.clear()
-                                        // and Then save new items from api to db
-                                        .andThen(db.saveAll(filters)));
+//                                .flatMap(filters -> db.clear()
+//                                        // and Then save new items from api to db
+//                                        .andThen(db.saveAll(filters)));
                     } else {
                         // or return empty
                         return Observable.empty();
@@ -61,13 +61,13 @@ public abstract class Repo<T> implements DataSource<T> {
 
 
     @Override
-    public Observable<List<T>> saveAll(List<T> list) {
+    public Completable saveAll(List<T> list) {
         if (isNetworkAvailable()) {
             // save items to api first
-            return api.saveAll(list).subscribeOn(Schedulers.io())
+            return api.saveAll(list).subscribeOn(Schedulers.io());
                     // save items to db
-                    .flatMap(filters -> db.saveAll(list));
-        } else return Observable.error(new IllegalAccessError("No Internet connection!"));
+
+        } else return Completable.error(new IllegalAccessError("No Internet connection!"));
     }
 
 
