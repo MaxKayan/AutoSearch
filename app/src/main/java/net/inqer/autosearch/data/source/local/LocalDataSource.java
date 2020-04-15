@@ -2,17 +2,16 @@ package net.inqer.autosearch.data.source.local;
 
 import net.inqer.autosearch.data.model.Filter;
 import net.inqer.autosearch.data.source.local.dao.FilterDao;
-import net.inqer.autosearch.data.source.testing.DataSourceRx;
-import net.inqer.autosearch.data.source.testing.Query;
+import net.inqer.autosearch.data.source.testing.DataSource;
 
 import java.util.List;
 
 import javax.inject.Inject;
 
 import io.reactivex.Completable;
-import io.reactivex.Observable;
+import io.reactivex.Flowable;
 
-public class LocalDataSource implements DataSourceRx<Filter> {
+public class LocalDataSource implements DataSource<Filter> {
     private static final String TAG = "LocalDataSource";
 
     private final FilterDao dao;
@@ -24,27 +23,32 @@ public class LocalDataSource implements DataSourceRx<Filter> {
 
 
     @Override
-    public Observable<List<Filter>> getAll() {
-        return dao.observeFiltersRx();
+    public Flowable<List<Filter>> getAll() {
+        return dao.observeFilters();
     }
 
     @Override
-    public Observable<List<Filter>> getAll(Query<Filter> query) {
-        return null;
+    public Completable save(Filter instance) {
+        return dao.insertFilter(instance);
     }
 
     @Override
     public Completable saveAll(List<Filter> list) {
-        return dao.saveAllFilters(list);
+        return dao.insertAllFilters(list);
     }
 
     @Override
-    public Completable removeAll(List<Filter> list) {
-        return dao.deleteAllFilters();
+    public Completable delete(Filter instance) {
+        return dao.deleteFilter(instance);
+    }
+
+    @Override
+    public Completable deleteAll(List<Filter> list) {
+        return dao.deleteAll(list);
     }
 
     @Override
     public Completable clear() {
-        return null;
+        return dao.deleteAllFilters();
     }
 }

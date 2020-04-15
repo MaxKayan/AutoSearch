@@ -1,15 +1,12 @@
 package net.inqer.autosearch.data.source.testing;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import io.reactivex.Observable;
-
 public class Query<T> {
-    private final DataSourceRx<T> dataSource;
+    private final DataSource<T> dataSource;
 
-    public Query(final DataSourceRx<T> dataSource) {
+    public Query(final DataSource<T> dataSource) {
         this.dataSource = dataSource;
     }
 
@@ -24,14 +21,14 @@ public class Query<T> {
         return this;
     }
 
-    public Observable<List<T>> findAll() {
-        return dataSource.getAll(this);
-    }
+//    public Flowable<List<T>> findAll() {
+//        return dataSource.getAll(this);
+//    }
 
-    public Observable<T> findFirst() {
-        return dataSource.getAll(this)
-                .filter(list -> !list.isEmpty())
-                .map(list -> list.get(0));
-    }
+//    public Flowable<T> findFirst() {
+//        return dataSource.getAll(this)
+//                .filter(list -> !list.isEmpty())
+//                .map(list -> list.get(0));
+//    }
 
 }

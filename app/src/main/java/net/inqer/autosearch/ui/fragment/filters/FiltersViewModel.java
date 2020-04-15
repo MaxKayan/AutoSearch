@@ -1,7 +1,8 @@
 package net.inqer.autosearch.ui.fragment.filters;
 
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MediatorLiveData;
+import androidx.lifecycle.LiveDataReactiveStreams;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import net.inqer.autosearch.data.model.Event;
@@ -15,7 +16,7 @@ import javax.inject.Inject;
 public class FiltersViewModel extends ViewModel {
     private static final String TAG = "FiltersViewModel";
     private final FiltersRepository repository;
-    private MediatorLiveData<List<Filter>> filtersList = new MediatorLiveData<>();
+    private MutableLiveData<List<Filter>> filtersList = new MutableLiveData<>();
 
     @Inject
     FiltersViewModel(FiltersRepository filtersRepository) {
@@ -24,15 +25,18 @@ public class FiltersViewModel extends ViewModel {
     }
 
     private void subscribeObservers() {
-        filtersList.addSource(repository.observeFilters(), event -> {
-            if (event.status == Event.ResultStatus.SUCCESS) {
-                filtersList.setValue(event.data);
-            }
-        });
+//        filtersList.addSource(repository.observeFilters(), event -> {
+//            if (event.status == Event.ResultStatus.SUCCESS) {
+//                filtersList.setValue(event.data);
+//            }
+//        });
+
     }
 
     LiveData<Event<List<Filter>>> observeFilterEvents() {
-        return repository.observeFilters();
+//        return repository.observeFilters();
+        return LiveDataReactiveStreams.fromPublisher(repository.getAll()
+        .map(filters -> Event.success(filters)));
     }
 
 //    LiveData<List<Filter>> observeFilterData() {
@@ -40,14 +44,14 @@ public class FiltersViewModel extends ViewModel {
 //    }
 
     void resetFilterObserver() {
-        repository.resetFilterObserver();
+//        repository.resetFilterObserver();
     }
 
     void refreshData() {
-        repository.refreshFilters();
+//        repository.refreshFilters();
     }
 
     void deleteFilters() {
-        repository.clearFilters();
+//        repository.clearFilters();
     }
 }

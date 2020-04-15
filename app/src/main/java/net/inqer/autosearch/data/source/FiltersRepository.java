@@ -1,116 +1,112 @@
 package net.inqer.autosearch.data.source;
 
+import android.net.ConnectivityManager;
 import android.util.Log;
 
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 
 import net.inqer.autosearch.data.model.Event;
 import net.inqer.autosearch.data.model.Filter;
-import net.inqer.autosearch.data.model.api.PageResponse;
-import net.inqer.autosearch.data.source.api.MainApi;
-import net.inqer.autosearch.data.source.local.dao.FilterDao;
-
-import org.jetbrains.annotations.NotNull;
+import net.inqer.autosearch.data.source.local.LocalDataSource;
+import net.inqer.autosearch.data.source.testing.DataSource;
 
 import java.util.List;
 
 import javax.inject.Inject;
 
+import io.reactivex.Completable;
+import io.reactivex.Flowable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
-public class FiltersRepository {
+public class FiltersRepository implements DataSource<Filter> {
     private static final String TAG = "FiltersRepository";
 
-    private final FilterDao dao;
-    private final MainApi api;
+    private final LocalDataSource local;
+    private final RemoteFilterDataSource remote;
+    private final ConnectivityManager cm;
 
     private MediatorLiveData<Event<List<Filter>>> observableFilters = new MediatorLiveData<>();
 
     @Inject
-    public FiltersRepository(FilterDao filterDao, MainApi mainApi) {
-        this.dao = filterDao;
-        this.api = mainApi;
-
-        subscribeObservers();
+    public FiltersRepository(LocalDataSource local, RemoteFilterDataSource remote, ConnectivityManager cm) {
+        this.local = local;
+        this.remote = remote;
+        this.cm = cm;
+//        subscribeObservers();
     }
 
-    private void subscribeObservers() {
-        observableFilters.addSource(dao.observeFilters(), filters -> {
-            Log.d(TAG, "subscribeObservers: setting new Success event");
-            observableFilters.postValue(Event.success(filters));
-        });
-    }
-
-    public LiveData<Event<List<Filter>>> observeFilters() {
-        return observableFilters;
-    }
-
-    public void resetFilterObserver() {
-        observableFilters.removeSource(dao.observeFilters());
-        subscribeObservers();
-    }
-
-    public void refreshFilters() {
-        observableFilters.postValue(Event.loading(null));
-        api.getFilters().enqueue(new Callback<PageResponse<Filter>>() {
-            @Override
-            public void onResponse(@NotNull Call<PageResponse<Filter>> call, @NotNull Response<PageResponse<Filter>> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    reloadFilters(response.body().getResults());
-                } else {
-                    Log.w(TAG, "onResponse: failed to get filters" +
-                            "\n code: " + response.code());
-                }
-            }
-
-            @Override
-            public void onFailure(@NotNull Call<PageResponse<Filter>> call, @NotNull Throwable t) {
-                Log.e(TAG, "onFailure: Error: ", t);
-                observableFilters.postValue(Event.error(String.valueOf(t.getMessage()), null));
-            }
-        });
+    private boolean isNetworkAvailable() {
+        return cm.getActiveNetworkInfo() != null && cm.getActiveNetworkInfo().isConnected();
     }
 
 
-    public void createFilter() {
+//    @SuppressWarnings("unchecked")
+//    @Override
+//    public Flowable<List<Filter>> getAll() {
+//        return Flowable.concatArrayEager(
+//                // get items from db first
+//                local.getAll(),
+//                Flowable.defer(() -> {
+//                    // get items from api if Network is Available
+//                    if (isNetworkAvailable()) {
+//                        // get new items from api
+//                        return remote.getAll().subscribeOn(Schedulers.io())
+//                                // remove old items from db
+//                                .flatMap(filters -> local.clear()
+//                                        // save new items from api to db
+//                                        .andThen(local.saveAll(filters).toFlowable()));
+//                    } else {
+//                        // or return empty
+//                        return Flowable.empty();
+//                    }
+//                })
+//
+//        );
+//    }
+
+
+    @Override
+    public Flowable<List<Filter>> getAll() {
+        return local.getAll();
     }
 
-
-    @SuppressWarnings("UnusedReturnValue")
-    private Disposable saveFilters(List<Filter> filters) {
-        return dao.insertAllFilters(filters)
+    public void refreshData() {
+        Disposable rDisp = remote.getAll()
                 .subscribeOn(Schedulers.io())
-                .subscribe(() -> {
-                    Log.d(TAG, "saveFilters: Successfully saved filters");
+                .subscribe(filters -> {
+
+                    Disposable reload = local.clear()
+                            .andThen(local.saveAll(filters))
+                    .subscribe(() -> Log.i(TAG, "refreshData: completed"));
+
                 }, throwable -> {
-                    Log.e(TAG, "saveFilters: Error: ", throwable);
+                    Log.e(TAG, "refreshData: error:", throwable);
                 });
     }
 
-    @SuppressWarnings("UnusedReturnValue")
-    public Disposable clearFilters() {
-        return dao.deleteAllFilters()
-                .subscribeOn(Schedulers.io())
-                .subscribe(() -> {
-                    Log.d(TAG, "clearFilters: Successfully deleted all filters");
-                }, throwable -> {
-                    Log.e(TAG, "clearFilters: Error: ", throwable);
-                });
+    @Override
+    public Completable save(Filter instance) {
+        return null;
     }
 
+    @Override
+    public Completable saveAll(List<Filter> list) {
+        return null;
+    }
 
-    public Disposable reloadFilters(List<Filter> filters) {
-        return dao.deleteAllFilters()
-                .subscribeOn(Schedulers.io())
-                .subscribe(() -> {
-                    saveFilters(filters);
-                }, throwable -> {
-                    Log.e(TAG, "clearFilters: Error: ", throwable);
-                });
+    @Override
+    public Completable delete(Filter instance) {
+        return null;
+    }
+
+    @Override
+    public Completable deleteAll(List<Filter> list) {
+        return null;
+    }
+
+    @Override
+    public Completable clear() {
+        return null;
     }
 }
