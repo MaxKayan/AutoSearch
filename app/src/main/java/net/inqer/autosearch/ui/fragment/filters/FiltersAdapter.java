@@ -1,6 +1,5 @@
 package net.inqer.autosearch.ui.fragment.filters;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -25,14 +24,14 @@ public class FiltersAdapter extends ListAdapter<Filter, FiltersAdapter.FilterVie
     private static final DiffUtil.ItemCallback<Filter> DIFF_CALLBACK = new DiffUtil.ItemCallback<Filter>() {
         @Override
         public boolean areItemsTheSame(@NonNull Filter oldItem, @NonNull Filter newItem) {
-            Log.d(TAG, "areItemsTheSame: "+oldItem.getId().equals(newItem.getId()));
+//            Log.d(TAG, "areItemsTheSame: "+oldItem.getId().equals(newItem.getId()));
             return oldItem.getId().equals(newItem.getId());
         }
 
         @Override
         public boolean areContentsTheSame(@NonNull Filter oldItem, @NonNull Filter newItem) {
             boolean isEqual = oldItem.equals(newItem);
-            Log.d(TAG, "areContentsTheSame: "+isEqual);
+//            Log.d(TAG, "areContentsTheSame: "+isEqual);
             return isEqual;
         }
     };
@@ -43,6 +42,10 @@ public class FiltersAdapter extends ListAdapter<Filter, FiltersAdapter.FilterVie
     public FiltersAdapter(SimpleDateFormat dateFormat) {
         super(DIFF_CALLBACK);
         this.dateFormat = dateFormat;
+    }
+
+    public Filter getFilterAt(int position) {
+        return getItem(position);
     }
 
     @NonNull

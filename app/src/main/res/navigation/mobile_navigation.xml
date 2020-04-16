@@ -21,12 +21,23 @@
         android:id="@+id/navigation_filters"
         android:name="net.inqer.autosearch.ui.fragment.filters.FiltersFragment"
         android:label="@string/title_filters"
-        tools:layout="@layout/fragment_filters"/>
+        tools:layout="@layout/fragment_filters">
+        <action
+            android:id="@+id/action_navigation_filter_editor"
+            app:destination="@id/addEditFilterFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_parameters"
         android:name="net.inqer.autosearch.ui.fragment.parameters.ParametersFragment"
         android:label="@string/title_parameters"
         tools:layout="@layout/fragment_filters"/>
+    <fragment
+        android:id="@+id/addEditFilterFragment"
+        android:name="net.inqer.autosearch.ui.fragment.filters.AddEditFilterFragment"
+        android:label="Create new filter"
+        tools:layout="@layout/fragment_add_edit_filter" />
 
 </navigation>

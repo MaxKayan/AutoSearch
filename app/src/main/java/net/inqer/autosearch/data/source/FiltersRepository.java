@@ -37,39 +37,41 @@ public class FiltersRepository implements DataSource<Filter> {
     }
 
     private boolean isNetworkAvailable() {
-        return cm.getActiveNetworkInfo() != null && cm.getActiveNetworkInfo().isConnected();
+        boolean result = cm.getActiveNetworkInfo() != null && cm.getActiveNetworkInfo().isConnected();
+        Log.d(TAG, "isNetworkAvailable: " + result);
+        return result;
     }
 
 
-//    @SuppressWarnings("unchecked")
-//    @Override
-//    public Flowable<List<Filter>> getAll() {
-//        return Flowable.concatArrayEager(
-//                // get items from db first
-//                local.getAll(),
-//                Flowable.defer(() -> {
-//                    // get items from api if Network is Available
-//                    if (isNetworkAvailable()) {
-//                        // get new items from api
-//                        return remote.getAll().subscribeOn(Schedulers.io())
-//                                // remove old items from db
-//                                .flatMap(filters -> local.clear()
-//                                        // save new items from api to db
-//                                        .andThen(local.saveAll(filters).toFlowable()));
-//                    } else {
-//                        // or return empty
-//                        return Flowable.empty();
-//                    }
-//                })
-//
-//        );
-//    }
-
-
+    @SuppressWarnings("unchecked")
     @Override
     public Flowable<List<Filter>> getAll() {
-        return local.getAll();
+        return Flowable.concatArrayEager(
+                // get items from db first
+                local.getAll(),
+                Flowable.defer(() -> {
+                    // get items from api if Network is Available
+                    if (isNetworkAvailable()) {
+                        // get new items from api
+                        return remote.getAll().subscribeOn(Schedulers.io())
+                                // remove old items from db
+//                                .flatMap(filters -> local.clear()
+                                // save new items from api to db
+                                .flatMap(filters -> local.saveAll(filters).toFlowable());
+                    } else {
+                        // or return empty
+                        return Flowable.empty();
+                    }
+                })
+
+        );
     }
+
+
+//    @Override
+//    public Flowable<List<Filter>> getAll() {
+//        return local.getAll();
+//    }
 
     public void refreshData() {
         Disposable rDisp = remote.getAll()
@@ -78,11 +80,17 @@ public class FiltersRepository implements DataSource<Filter> {
 
                     Disposable reload = local.clear()
                             .andThen(local.saveAll(filters))
-                    .subscribe(() -> Log.i(TAG, "refreshData: completed"));
+                            .subscribe(() -> Log.i(TAG, "refreshData: completed"));
 
                 }, throwable -> {
                     Log.e(TAG, "refreshData: error:", throwable);
                 });
+    }
+
+    public Completable refreshFilters() {
+        return remote.getAll()
+                .flatMapCompletable(filters -> local.clear()
+                        .andThen(local.saveAll(filters)));
     }
 
     @Override
@@ -97,7 +105,7 @@ public class FiltersRepository implements DataSource<Filter> {
 
     @Override
     public Completable delete(Filter instance) {
-        return null;
+        return local.delete(instance);
     }
 
     @Override
@@ -107,6 +115,6 @@ public class FiltersRepository implements DataSource<Filter> {
 
     @Override
     public Completable clear() {
-        return null;
+        return local.clear();
     }
 }

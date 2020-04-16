@@ -1,9 +1,12 @@
 package net.inqer.autosearch.data.source.local;
 
+import android.util.Log;
+
 import net.inqer.autosearch.data.model.Filter;
 import net.inqer.autosearch.data.source.local.dao.FilterDao;
 import net.inqer.autosearch.data.source.testing.DataSource;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -34,7 +37,23 @@ public class LocalDataSource implements DataSource<Filter> {
 
     @Override
     public Completable saveAll(List<Filter> list) {
-        return dao.insertAllFilters(list);
+        // get current filters from db
+        return dao.getFilters()
+                .flatMapCompletable(filters -> {
+                    // find difference compared to new list
+                    List<Filter> diff = new ArrayList<>(filters);
+                    diff.removeAll(list);
+
+                    // if current items are not in the new list, delete them, then save passed list
+                    if (!diff.isEmpty()) {
+                        Log.d(TAG, "saveAll: diff not empty, count: "+diff.size());
+                        return deleteAll(diff).andThen(dao.insertAllFilters(list));
+                    }
+
+                    // else, just save passed list
+                    return dao.insertAllFilters(list);
+                });
+//         dao.insertAllFilters(list);
     }
 
     @Override

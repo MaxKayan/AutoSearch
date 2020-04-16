@@ -183,8 +183,8 @@ public class Filter {
             Filter secFilter = (Filter) obj;
 
             return
-//                        this.id.equals(secondFilter.id) &&
-                    this.slug.equals(secFilter.slug) &&
+                    this.id.equals(secFilter.id) &&
+                            this.slug.equals(secFilter.slug) &&
                             this.quantity.equals(secFilter.quantity) &&
                             this.created_at.equals(secFilter.created_at) &&
                             this.cities.equals(secFilter.cities) &&
@@ -204,4 +204,14 @@ public class Filter {
         }
         return false;
     }
+
+    @Override
+    public int hashCode() {
+        return id;
+    }
+
+    //    @Override
+//    public int hashCode() {
+//        return Objects.hash(id,slug,quantity,created_at,cities,carMark,carModel,hull,fuel,transmission,radius,priceMinimum,priceMaximum);
+//    }
 }
