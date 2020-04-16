@@ -13,4 +13,27 @@
         <item name="android:windowBackground">@drawable/splash</item>
     </style>
 
+
+
+    <!-- Filter Add-Edit view -->
+    <style name="EditorCard">
+        <item name="cardCornerRadius">6dp</item>
+        <item name="cardUseCompatPadding">true</item>
+    </style>
+    <style name="EditorTitle">
+        <item name="android:textSize">15sp</item>
+        <item name="android:textColor">@android:color/tab_indicator_text</item>
+    </style>
+
+    <style name="EditorLabel">
+        <item name="android:textSize">17sp</item>
+        <item name="android:textColor">@android:color/secondary_text_light</item>
+    </style>
+
+    <style name="EditorValue">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@android:color/black</item>
+    </style>
+
+
 </resources>

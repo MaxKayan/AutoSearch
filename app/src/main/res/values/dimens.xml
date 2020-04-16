@@ -19,4 +19,14 @@
     <dimen name="timestamp">11dp</dimen>
     <dimen name="description">15dp</dimen>
     <dimen name="price">13dp</dimen>
+
+
+    <!-- Filter Add-Edit view -->
+    <dimen name="card_horizontal_margin">8dp</dimen>
+    <dimen name="card_vertical_margin">4dp</dimen>
+    <dimen name="card_corner_radius">6dp</dimen>
+    <dimen name="editor_card_elevation">6dp</dimen>
+    <dimen name="editor_title_text_size">15sp</dimen>
+    <dimen name="editor_label_text_size">20sp</dimen>
+    <dimen name="editor_value_text_size">20sp</dimen>
 </resources>

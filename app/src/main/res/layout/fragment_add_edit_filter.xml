@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -17,12 +16,11 @@
             android:orientation="vertical">
 
             <androidx.cardview.widget.CardView
+                style="@style/EditorCard"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:layout_marginHorizontal="8dp"
-                app:cardCornerRadius="6dp"
-                app:cardUseCompatPadding="true">
+                android:layout_marginHorizontal="@dimen/card_horizontal_margin"
+                android:layout_marginTop="4dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -30,12 +28,12 @@
                     android:orientation="vertical">
 
                     <TextView
+                        style="@style/EditorTitle"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="8dp"
                         android:layout_marginVertical="4dp"
-                        android:text="Марка и модель"
-                        android:textStyle="" />
+                        android:text="Марка и модель" />
 
                     <include layout="@layout/hr" />
 
@@ -47,18 +45,19 @@
 
                         <TextView
                             android:id="@+id/f_edit_mark_label"
+                            style="@style/EditorLabel"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Марка" />
 
                         <TextView
                             android:id="@+id/f_edit_mark_value"
+                            style="@style/EditorValue"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_alignParentEnd="true"
                             android:layout_alignParentRight="true"
-                            android:text="Honda"
-                            android:textStyle="bold" />
+                            android:text="Honda" />
                     </RelativeLayout>
 
 
@@ -73,18 +72,19 @@
 
                         <TextView
                             android:id="@+id/f_edit_model_label"
+                            style="@style/EditorLabel"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Модель" />
 
                         <TextView
                             android:id="@+id/f_edit_model_value"
+                            style="@style/EditorValue"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_alignParentEnd="true"
                             android:layout_alignParentRight="true"
-                            android:text="Accord"
-                            android:textStyle="bold" />
+                            android:text="Accord" />
                     </RelativeLayout>
 
 
@@ -94,11 +94,10 @@
 
 
             <androidx.cardview.widget.CardView
+                style="@style/EditorCard"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="8dp"
-                app:cardCornerRadius="6dp"
-                app:cardUseCompatPadding="true">
+                android:layout_marginHorizontal="@dimen/card_horizontal_margin">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -106,12 +105,12 @@
                     android:orientation="vertical">
 
                     <TextView
+                        style="@style/EditorTitle"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="8dp"
                         android:layout_marginVertical="4dp"
-                        android:text="Локация"
-                        android:textStyle="" />
+                        android:text="Локация" />
 
                     <include layout="@layout/hr" />
 
@@ -123,18 +122,19 @@
 
                         <TextView
                             android:id="@+id/f_edit_region_label"
+                            style="@style/EditorLabel"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Регион" />
 
                         <TextView
                             android:id="@+id/f_edit_region_value"
+                            style="@style/EditorValue"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_alignParentEnd="true"
                             android:layout_alignParentRight="true"
-                            android:text="Московская область"
-                            android:textStyle="bold" />
+                            android:text="Московская область" />
                     </RelativeLayout>
 
                     <include layout="@layout/hr" />
@@ -147,18 +147,19 @@
 
                         <TextView
                             android:id="@+id/f_edit_city_label"
+                            style="@style/EditorLabel"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Город" />
 
                         <TextView
                             android:id="@+id/f_edit_city_value"
+                            style="@style/EditorValue"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_alignParentEnd="true"
                             android:layout_alignParentRight="true"
-                            android:text="Подольск"
-                            android:textStyle="bold" />
+                            android:text="Подольск" />
                     </RelativeLayout>
 
                 </LinearLayout>
@@ -169,9 +170,8 @@
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="8dp"
-                app:cardCornerRadius="6dp"
-                app:cardUseCompatPadding="true">
+                android:layout_marginHorizontal="@dimen/card_horizontal_margin"
+                style="@style/EditorCard">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -179,12 +179,12 @@
                     android:orientation="vertical">
 
                     <TextView
+                        style="@style/EditorTitle"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="8dp"
                         android:layout_marginVertical="4dp"
-                        android:text="Свойства"
-                        android:textStyle="" />
+                        android:text="Свойства" />
 
                     <include layout="@layout/hr" />
 
@@ -196,24 +196,24 @@
 
                         <TextView
                             android:id="@+id/f_edit_price_label"
+                            style="@style/EditorLabel"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Цена" />
 
                         <TextView
                             android:id="@+id/f_edit_price_value"
+                            style="@style/EditorValue"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_alignParentEnd="true"
                             android:layout_alignParentRight="true"
-                            android:text="От 50000р до 230000р"
-                            android:textStyle="bold" />
+                            android:text="От 50000р до 230000р" />
                     </RelativeLayout>
 
                 </LinearLayout>
 
             </androidx.cardview.widget.CardView>
-
 
 
         </LinearLayout>
