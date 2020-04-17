@@ -3,8 +3,9 @@ package net.inqer.autosearch.dagger.module;
 import net.inqer.autosearch.dagger.module.viewmodel.FiltersViewModelModule;
 import net.inqer.autosearch.dagger.module.viewmodel.ParametersViewModelModule;
 import net.inqer.autosearch.dagger.module.viewmodel.SearchViewModelModule;
-import net.inqer.autosearch.ui.fragment.filters.AddEditFilterFragment;
+import net.inqer.autosearch.ui.dialog.TestDialog;
 import net.inqer.autosearch.ui.fragment.filters.FiltersFragment;
+import net.inqer.autosearch.ui.fragment.filters.ResultsFragment;
 import net.inqer.autosearch.ui.fragment.parameters.ParametersFragment;
 import net.inqer.autosearch.ui.fragment.search.SearchFragment;
 
@@ -24,5 +25,10 @@ public abstract class FragmentBuilderModule {
     abstract SearchFragment contributeSearchFragment();
 
     @ContributesAndroidInjector(modules = {MainModule.class, FiltersViewModelModule.class})
-    abstract AddEditFilterFragment contributeAddEditFilterFragment();
+    abstract ResultsFragment contributeAddEditFilterFragment();
+
+
+    // Dialogs
+    @ContributesAndroidInjector(modules = {MainModule.class})
+    abstract TestDialog contributeTestDialogFragment();
 }

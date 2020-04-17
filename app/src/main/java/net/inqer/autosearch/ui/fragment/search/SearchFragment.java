@@ -1,6 +1,7 @@
 package net.inqer.autosearch.ui.fragment.search;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -15,13 +16,15 @@ import androidx.lifecycle.ViewModelProvider;
 
 import net.inqer.autosearch.R;
 import net.inqer.autosearch.databinding.FragmentSearchBinding;
+import net.inqer.autosearch.ui.dialog.TestDialog;
 import net.inqer.autosearch.util.ViewModelProviderFactory;
 
 import javax.inject.Inject;
 
 import dagger.android.support.DaggerFragment;
 
-public class SearchFragment extends DaggerFragment {
+public class SearchFragment extends DaggerFragment implements TestDialog.OnInputSelected {
+    private static final String TAG = "SearchFragment";
 
     @Inject
     ViewModelProviderFactory providerFactory;
@@ -43,12 +46,60 @@ public class SearchFragment extends DaggerFragment {
         viewModel = new ViewModelProvider(this, providerFactory).get(SearchViewModel.class);
         setHasOptionsMenu(true);
 
-//        ActionBar actionBar = getActivity() instanceof AppCompatActivity ? ((AppCompatActivity) getActivity()).getSupportActionBar() : null;
+        setupClickListeners();
+    }
+
+    private void setupClickListeners() {
+        binding.fEditMark.setOnClickListener(v -> {
+            Toast.makeText(getContext(), "Mark clicked!", Toast.LENGTH_SHORT).show();
+        });
+        binding.fEditModel.setOnClickListener(v -> {
+            Toast.makeText(getContext(), "Model clicked!", Toast.LENGTH_SHORT).show();
+        });
+
+        binding.fEditRegion.setOnClickListener(v -> {
+            TestDialog dialog = new TestDialog();
+            dialog.setTargetFragment(SearchFragment.this, 1);
+            dialog.show(getParentFragmentManager(), "TestDialog");
+        });
+        binding.fEditCity.setOnClickListener(v -> {
+
+        });
+
+        binding.fEditPrice.setOnClickListener(v -> {
+
+        });
+        binding.fEditYear.setOnClickListener(v -> {
+
+        });
+        binding.fEditTransmission.setOnClickListener(v -> {
+
+        });
+        binding.fEditHull.setOnClickListener(v -> {
+
+        });
+        binding.fEditFuel.setOnClickListener(v -> {
+
+        });
+        binding.fEditDisplacement.setOnClickListener(v -> {
+
+        });
+        binding.fEditRadius.setOnClickListener(v -> {
+
+        });
+
+        binding.fEditSearchButton.setOnClickListener(v -> {
+            Toast.makeText(getContext(), "Search button clicked", Toast.LENGTH_SHORT).show();
+        });
     }
 
 
+    @Override
+    public void sendInput(String input) {
+        Log.d(TAG, "sendInput: received: " + input);
 
-
+        binding.fEditRegionValue.setText(input);
+    }
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {

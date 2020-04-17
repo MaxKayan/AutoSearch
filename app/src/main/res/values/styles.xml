@@ -19,6 +19,7 @@
     <style name="EditorCard">
         <item name="cardCornerRadius">6dp</item>
         <item name="cardUseCompatPadding">true</item>
+        <item name="cardElevation">1dp</item>
     </style>
     <style name="EditorTitle">
         <item name="android:textSize">15sp</item>
@@ -35,5 +36,19 @@
         <item name="android:textColor">@android:color/black</item>
     </style>
 
+
+<!-- Rounded Action Button -->
+    <style name="RoundedActionButton">
+        <item name="android:minHeight">0dp</item>
+        <item name="android:minWidth">0dp</item>
+        <item name="android:background">@drawable/rounded_gradient_button</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+
+    <style name="EditorItem">
+        <item name="android:background">?android:attr/selectableItemBackground</item>
+    </style>
 
 </resources>

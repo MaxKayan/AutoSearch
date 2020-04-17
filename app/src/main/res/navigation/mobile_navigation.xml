@@ -15,7 +15,7 @@
         android:id="@+id/navigation_fast_search"
         android:name="net.inqer.autosearch.ui.fragment.search.SearchFragment"
         android:label="@string/title_search"
-        tools:layout="@layout/fragment_search"/>
+        tools:layout="@layout/fragment_search" />
 
     <fragment
         android:id="@+id/navigation_filters"
@@ -24,7 +24,7 @@
         tools:layout="@layout/fragment_filters">
         <action
             android:id="@+id/action_navigation_filter_editor"
-            app:destination="@id/addEditFilterFragment"
+            app:destination="@id/resultsFragment"
             app:enterAnim="@anim/nav_default_enter_anim"
             app:exitAnim="@anim/nav_default_exit_anim" />
     </fragment>
@@ -33,11 +33,12 @@
         android:id="@+id/navigation_parameters"
         android:name="net.inqer.autosearch.ui.fragment.parameters.ParametersFragment"
         android:label="@string/title_parameters"
-        tools:layout="@layout/fragment_filters"/>
+        tools:layout="@layout/fragment_filters" />
+
     <fragment
-        android:id="@+id/addEditFilterFragment"
-        android:name="net.inqer.autosearch.ui.fragment.filters.AddEditFilterFragment"
-        android:label="Create new filter"
-        tools:layout="@layout/fragment_add_edit_filter" />
+        android:id="@+id/resultsFragment"
+        android:name="net.inqer.autosearch.ui.fragment.filters.ResultsFragment"
+        android:label="Results"
+        tools:layout="@layout/fragment_results" />
 
 </navigation>

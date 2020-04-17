@@ -8,26 +8,26 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import net.inqer.autosearch.databinding.FragmentAddEditFilterBinding;
+import net.inqer.autosearch.databinding.FragmentResultsBinding;
 
 import org.jetbrains.annotations.NotNull;
 
 import dagger.android.support.DaggerFragment;
 
-public class AddEditFilterFragment extends DaggerFragment {
+public class ResultsFragment extends DaggerFragment {
 
-//    public AddEditFilterFragment() {
+//    public ResultsFragment() {
 //        // Required empty public constructor
 //    }
 
-    private FragmentAddEditFilterBinding binding;
+    private FragmentResultsBinding binding;
 
-    public static AddEditFilterFragment newInstance() { return new AddEditFilterFragment(); }
+    public static ResultsFragment newInstance() { return new ResultsFragment(); }
 
     @Override
     public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        binding = FragmentAddEditFilterBinding.inflate(getLayoutInflater(), container, false);
+        binding = FragmentResultsBinding.inflate(getLayoutInflater(), container, false);
         return binding.getRoot();
     }
 

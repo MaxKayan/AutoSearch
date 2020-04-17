@@ -131,8 +131,7 @@ public class FiltersFragment extends DaggerFragment {
 
     private void setupFab(View view) {
         binding.filtersFab.setOnClickListener(v -> {
-//            viewModel.refreshData();
-            Navigation.findNavController(view).navigate(R.id.action_navigation_filter_editor);
+            Navigation.findNavController(view).navigate(R.id.navigation_fast_search);
         });
         binding.filtersFab.setOnLongClickListener(v -> {
             viewModel.deleteFilters();

@@ -11,5 +11,4 @@ public class SearchViewModel extends ViewModel {
     public SearchViewModel() {
     }
 
-
 }

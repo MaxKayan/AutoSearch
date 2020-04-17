@@ -25,8 +25,14 @@
     <dimen name="card_horizontal_margin">8dp</dimen>
     <dimen name="card_vertical_margin">4dp</dimen>
     <dimen name="card_corner_radius">6dp</dimen>
+    <dimen name="editor_text_horizontal_margin">8dp</dimen>
+    <dimen name="editor_item_padding">8dp</dimen>
     <dimen name="editor_card_elevation">6dp</dimen>
     <dimen name="editor_title_text_size">15sp</dimen>
     <dimen name="editor_label_text_size">20sp</dimen>
     <dimen name="editor_value_text_size">20sp</dimen>
+
+    <!-- Round Button -->
+    <dimen name="rb_corner_radius">24dp</dimen>
+    <dimen name="button_radius_large">20dp</dimen>
 </resources>
