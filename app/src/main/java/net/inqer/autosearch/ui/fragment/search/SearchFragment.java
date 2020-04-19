@@ -1,5 +1,7 @@
 package net.inqer.autosearch.ui.fragment.search;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -25,12 +27,10 @@ import dagger.android.support.DaggerFragment;
 
 public class SearchFragment extends DaggerFragment implements TestDialog.OnInputSelected {
     private static final String TAG = "SearchFragment";
-
+    private final int REGION = 1;
     @Inject
     ViewModelProviderFactory providerFactory;
-
     private SearchViewModel viewModel;
-
     private FragmentSearchBinding binding;
 
     @Override
@@ -59,8 +59,8 @@ public class SearchFragment extends DaggerFragment implements TestDialog.OnInput
 
         binding.fEditRegion.setOnClickListener(v -> {
             TestDialog dialog = new TestDialog();
-            dialog.setTargetFragment(SearchFragment.this, 1);
-            dialog.show(getParentFragmentManager(), "TestDialog");
+            dialog.setTargetFragment(SearchFragment.this, REGION);
+            dialog.show(getParentFragmentManager(), "RegionDialog");
         });
         binding.fEditCity.setOnClickListener(v -> {
 
@@ -93,6 +93,20 @@ public class SearchFragment extends DaggerFragment implements TestDialog.OnInput
         });
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        Log.d(TAG, "onActivityResult: requestCode: " + requestCode + " ; resultCode: " + resultCode + " intent data: " + data);
+        if (data != null) {
+            switch (requestCode) {
+                case REGION:
+                    switch (resultCode) {
+                        case Activity.RESULT_OK:
+                            binding.fEditRegionValue.setText(data.getStringExtra(TestDialog.RESULT));
+
+                    }
+            }
+        }
+    }
 
     @Override
     public void sendInput(String input) {

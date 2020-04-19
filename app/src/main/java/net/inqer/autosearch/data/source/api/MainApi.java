@@ -17,6 +17,7 @@ import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
+import retrofit2.http.Query;
 import retrofit2.http.Url;
 
 public interface MainApi {
@@ -48,5 +49,8 @@ public interface MainApi {
     Completable clearFilters();
 
     @GET
-    Single<PageResponse<Object>> getPage(@Url String fullUrl);
+    <T> Single<PageResponse<T>> getPage(@Url String fullUrl);
+
+    @GET("cities/")
+    Flowable<PageResponse<City>> getCitiesByRegion(@Query("region_slug") String regionSlug);
 }

@@ -1,8 +1,8 @@
 package net.inqer.autosearch.ui.dialog;
 
-import android.annotation.SuppressLint;
-import android.app.Dialog;
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,15 +17,10 @@ import net.inqer.autosearch.databinding.DialogBinding;
 import dagger.android.support.DaggerDialogFragment;
 
 public class TestDialog extends DaggerDialogFragment {
+    public static final String RESULT = "result";
     private static final String TAG = "TestDialog";
-
-    private DialogBinding binding;
-
-    public interface OnInputSelected {
-        void sendInput(String input);
-    }
-
     public OnInputSelected onInputSelected;
+    private DialogBinding binding;
 
     @Nullable
     @Override
@@ -41,28 +36,21 @@ public class TestDialog extends DaggerDialogFragment {
 
         binding.actionCancel.setOnClickListener(v -> {
             Log.d(TAG, "onViewCreated: closing dialog");
-            getDialog().dismiss();
+            dismiss();
         });
 
         binding.actionOk.setOnClickListener(v -> {
             Log.d(TAG, "setupDialog: OK");
+            Intent data = new Intent();
 
             String input = binding.input.getText().toString();
-            if (!input.equals("")) {
-                onInputSelected.sendInput(input);
-            }
-            getDialog().dismiss();
+
+            data.putExtra(RESULT, input);
+
+            getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, data);
+            dismiss();
         });
     }
-
-    @SuppressLint("RestrictedApi")
-    @Override
-    public void setupDialog(@NonNull Dialog dialog, int style) {
-        super.setupDialog(dialog, style);
-        Log.d(TAG, "setupDialog: called");
-
-    }
-
 
     @Override
     public void onAttach(Context context) {
@@ -72,5 +60,10 @@ public class TestDialog extends DaggerDialogFragment {
         } catch (ClassCastException e) {
             Log.e(TAG, "onAttach: Error: ", e);
         }
+    }
+
+
+    public interface OnInputSelected {
+        void sendInput(String input);
     }
 }

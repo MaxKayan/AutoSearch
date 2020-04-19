@@ -4,42 +4,46 @@ import androidx.room.Entity;
 
 import com.google.gson.annotations.SerializedName;
 
-@Entity(tableName = "cities")
-public class City {
-    private String name;
-    private String region_slug;
-    private String slug;
+@Entity(tableName = "regions")
+public class Region {
 
+    private String name;
+    @SerializedName("region_slug")
+    private String regionSlug;
+    private String slug;
     private String avito;
     private String autoru;
     private String drom;
     private String youla;
-
     @SerializedName("popularCount")
-    private Integer call_count;
-
-    private Boolean isPopular;
+    private int requestCount;
+    private boolean isPopular;
     private String region;
 
-    public City(String name, String region_slug, String slug, String avito, String autoru, String drom, String youla, Integer call_count, Boolean isPopular, String region) {
+    public Region(String name, String regionSlug, String slug, String avito, String autoru, String drom, String youla, int requestCount, boolean isPopular, String region) {
         this.name = name;
-        this.region_slug = region_slug;
+        this.regionSlug = regionSlug;
         this.slug = slug;
         this.avito = avito;
         this.autoru = autoru;
         this.drom = drom;
         this.youla = youla;
-        this.call_count = call_count;
+        this.requestCount = requestCount;
         this.isPopular = isPopular;
         this.region = region;
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
     }
 
     public String getName() {
         return name;
     }
 
-    public String getRegion_slug() {
-        return region_slug;
+    public String getRegionSlug() {
+        return regionSlug;
     }
 
     public String getSlug() {
@@ -62,11 +66,11 @@ public class City {
         return youla;
     }
 
-    public Integer getCall_count() {
-        return call_count;
+    public int getRequestCount() {
+        return requestCount;
     }
 
-    public Boolean getPopular() {
+    public boolean isPopular() {
         return isPopular;
     }
 
