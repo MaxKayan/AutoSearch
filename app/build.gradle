@@ -101,4 +101,6 @@ dependencies {
     implementation "android.arch.lifecycle:runtime:$lifecycle_version"
     //noinspection LifecycleAnnotationProcessorWithJava8
     annotationProcessor "android.arch.lifecycle:compiler:$lifecycle_version"
+
+    implementation 'com.github.wrdlbrnft:sorted-list-adapter:0.3.0.27'
 }

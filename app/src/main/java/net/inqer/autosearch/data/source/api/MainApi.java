@@ -43,7 +43,7 @@ public interface MainApi {
     @DELETE("filters/") // TODO: Implement this
     Completable deleteFilter(@Body Filter filter);
 
-    @DELETE // TODO: Implement this
+    @DELETE("filters/") // TODO: Implement this
     Completable deleteAllFilters(@Body List<Filter> filters);
 
     @POST("filters/") // TODO: Implement this

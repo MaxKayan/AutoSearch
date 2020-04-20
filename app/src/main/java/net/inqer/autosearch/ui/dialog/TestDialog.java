@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +21,7 @@ import net.inqer.autosearch.data.source.api.MainApi;
 import net.inqer.autosearch.databinding.DialogBinding;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -32,11 +35,20 @@ import io.reactivex.schedulers.Schedulers;
 public class TestDialog extends DaggerDialogFragment {
     public static final String REG_NAME = "region_name";
     private static final String TAG = "TestDialog";
+    final Comparator<Region> alphabeticalComparator = new Comparator<Region>() {
+        @Override
+        public int compare(Region a, Region b) {
+            return a.getName().compareTo(b.getName());
+        }
+    };
+
     @Inject
     MainApi api;
+
     private DialogBinding binding;
     private List<Region> arrayList = new ArrayList<>();
-    private DialogListAdapter adapter;
+    //    private SortedAdapter adapter;
+    private DialogRVAdapter adapter;
     private CompositeDisposable disposableBag = new CompositeDisposable();
     private Intent data = new Intent();
 
@@ -51,8 +63,28 @@ public class TestDialog extends DaggerDialogFragment {
         super.onViewCreated(view, savedInstanceState);
         Log.d(TAG, "onViewCreated: ");
 
-        setupRecyclerView();
+        setupSearchInput();
         fetchData();
+        setupRecyclerView();
+    }
+
+    private void setupSearchInput() {
+        binding.dialogLocInput.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                adapter.getFilter().filter(s);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
     }
 
     private void fetchData() {
@@ -60,9 +92,13 @@ public class TestDialog extends DaggerDialogFragment {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .subscribe(regions -> {
-                    Log.d(TAG, "fetchData: received: " + regions);
                     arrayList.addAll(regions);
+                    adapter.setFullList(regions);
                     adapter.notifyDataSetChanged();
+//                    adapter.setFullList(regions);
+//                    adapter.edit()
+//                            .replaceAll(regions)
+//                            .commit();
                 }, throwable -> {
                     Log.e(TAG, "fetchData: Error: ", throwable);
                 });
@@ -105,7 +141,7 @@ public class TestDialog extends DaggerDialogFragment {
     private void setupRecyclerView() {
         binding.dialogLocRv.setHasFixedSize(true);
         binding.dialogLocRv.setLayoutManager(new LinearLayoutManager(getContext()));
-        adapter = new DialogListAdapter(arrayList, position -> {
+        adapter = new DialogRVAdapter(arrayList, position -> {
             Region region = arrayList.get(position);
             Toast.makeText(getContext(), "Pressed: "+region.toString(), Toast.LENGTH_SHORT).show();
 
@@ -115,6 +151,8 @@ public class TestDialog extends DaggerDialogFragment {
             getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, data);
             dismiss();
         });
+
+//        adapter = new SortedAdapter(getContext(), Region.class, alphabeticalComparator);
         binding.dialogLocRv.setAdapter(adapter);
     }
 
@@ -130,7 +168,4 @@ public class TestDialog extends DaggerDialogFragment {
 //        disposableBag.clear();
     }
 
-    public interface OnInputSelected {
-        void sendInput(String input);
-    }
 }

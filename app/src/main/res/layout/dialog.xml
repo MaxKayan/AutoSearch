@@ -31,6 +31,7 @@
         android:drawableTint="@color/background"
         android:hint="Наименование региона"
         android:padding="10dp"
+        android:maxLines="1"
         android:textColor="#000"/>
 
 <!--    <include layout="@layout/hr" />-->
