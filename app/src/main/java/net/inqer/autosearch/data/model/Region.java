@@ -1,17 +1,21 @@
 package net.inqer.autosearch.data.model;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.room.Entity;
+import androidx.room.PrimaryKey;
 
-import com.github.wrdlbrnft.sortedlistadapter.SortedListAdapter;
 import com.google.gson.annotations.SerializedName;
 
 @Entity(tableName = "regions")
-public class Region implements SortedListAdapter.ViewModel {
+public class Region implements ListItem {
 
     private String name;
+
+    @PrimaryKey
     @SerializedName("region_slug")
     private String regionSlug;
+
     private String slug;
     private String avito;
     private String autoru;
@@ -40,6 +44,12 @@ public class Region implements SortedListAdapter.ViewModel {
         return super.hashCode();
     }
 
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        return obj instanceof Region && this.getRegionSlug().equals(((Region) obj).getRegionSlug());
+    }
+
+    @Override
     public String getName() {
         return name;
     }
@@ -83,7 +93,7 @@ public class Region implements SortedListAdapter.ViewModel {
 
     @Override
     public <T> boolean isSameModelAs(@NonNull T model) {
-        return model instanceof Region && this.getRegionSlug().equals(((Region) model).getRegionSlug());
+        return this.equals(model);
     }
 
     @Override

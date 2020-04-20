@@ -9,24 +9,22 @@ import android.widget.Filterable;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import net.inqer.autosearch.data.model.Region;
+import net.inqer.autosearch.data.model.ListItem;
 import net.inqer.autosearch.databinding.DialogSearchItemBinding;
-
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class DialogRVAdapter extends RecyclerView.Adapter<DialogRVAdapter.SearchItemViewHolder> implements Filterable {
+public class DialogRVAdapter extends RecyclerView.Adapter<SearchItemViewHolder> implements Filterable {
     private static final String TAG = "DialogRVAdapter";
     private final SearchItemViewHolder.SearchItemClickListener onItemClickListener;
-    private List<Region> fullList;
-    private List<Region> mainList;
+    private List<ListItem> fullList;
+    private List<ListItem> mainList;
     private Filter locationFilter = new Filter() {
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
             Log.d(TAG, "performFiltering: " + constraint);
-            List<Region> filteredList = new ArrayList<>();
+            List<ListItem> filteredList = new ArrayList<>();
 
             if (constraint == null || constraint.length() == 0) {
                 Log.d(TAG, "performFiltering: adding full: "+fullList.size());
@@ -34,7 +32,7 @@ public class DialogRVAdapter extends RecyclerView.Adapter<DialogRVAdapter.Search
             } else {
                 String filterPattern = constraint.toString().toLowerCase().trim();
 
-                for (Region item : fullList) {
+                for (ListItem item : fullList) {
                     if (item.getName().toLowerCase().contains(filterPattern)) {
                         filteredList.add(item);
                     }
@@ -56,7 +54,7 @@ public class DialogRVAdapter extends RecyclerView.Adapter<DialogRVAdapter.Search
         }
     };
 
-    DialogRVAdapter(List<Region> fullList, SearchItemViewHolder.SearchItemClickListener listener) {
+    DialogRVAdapter(List<ListItem> fullList, SearchItemViewHolder.SearchItemClickListener listener) {
         this.mainList = fullList;
         this.fullList = new ArrayList<>(fullList); // IMPORTANT! if you'll just assign full list to
         //this variable, it would just link to the same list object. So when changing the main list,
@@ -64,7 +62,7 @@ public class DialogRVAdapter extends RecyclerView.Adapter<DialogRVAdapter.Search
         this.onItemClickListener = listener;
     }
 
-    public void setFullList(List<Region> list) {
+    public void setFullList(List<ListItem> list) {
         fullList = list;
     }
 
@@ -77,7 +75,7 @@ public class DialogRVAdapter extends RecyclerView.Adapter<DialogRVAdapter.Search
 
     @Override
     public void onBindViewHolder(@NonNull SearchItemViewHolder holder, int position) {
-        Region currentRegion = mainList.get(position);
+        ListItem currentRegion = mainList.get(position);
         holder.bind(currentRegion, onItemClickListener, position);
     }
 
@@ -89,24 +87,6 @@ public class DialogRVAdapter extends RecyclerView.Adapter<DialogRVAdapter.Search
     @Override
     public Filter getFilter() {
         return locationFilter;
-    }
-
-    static class SearchItemViewHolder extends RecyclerView.ViewHolder {
-        private DialogSearchItemBinding binding;
-
-        SearchItemViewHolder(@NonNull DialogSearchItemBinding itemBinding) {
-            super(itemBinding.getRoot());
-            this.binding = itemBinding;
-        }
-
-        void bind(@NotNull Region region, final SearchItemClickListener listener, final int pos) {
-            binding.dItemLabel.setText(region.getName());
-            binding.dItem.setOnClickListener(v -> listener.onClick(pos));
-        }
-
-        public interface SearchItemClickListener {
-            void onClick(int position);
-        }
     }
 
 
