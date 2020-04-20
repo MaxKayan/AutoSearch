@@ -25,7 +25,7 @@ import javax.inject.Inject;
 
 import dagger.android.support.DaggerFragment;
 
-public class SearchFragment extends DaggerFragment implements TestDialog.OnInputSelected {
+public class SearchFragment extends DaggerFragment {
     private static final String TAG = "SearchFragment";
     private final int REGION = 1;
     @Inject
@@ -101,19 +101,13 @@ public class SearchFragment extends DaggerFragment implements TestDialog.OnInput
                 case REGION:
                     switch (resultCode) {
                         case Activity.RESULT_OK:
-                            binding.fEditRegionValue.setText(data.getStringExtra(TestDialog.RESULT));
+                            binding.fEditRegionValue.setText(data.getStringExtra(TestDialog.REG_NAME));
 
                     }
             }
         }
     }
 
-    @Override
-    public void sendInput(String input) {
-        Log.d(TAG, "sendInput: received: " + input);
-
-        binding.fEditRegionValue.setText(input);
-    }
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {

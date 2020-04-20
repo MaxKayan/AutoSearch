@@ -35,4 +35,7 @@
     <!-- Round Button -->
     <dimen name="rb_corner_radius">24dp</dimen>
     <dimen name="button_radius_large">20dp</dimen>
+
+    <!-- Dialog -->
+    <dimen name="dialog_horizontal_padding">12dp</dimen>
 </resources>

@@ -14,13 +14,13 @@
     </style>
 
 
-
     <!-- Filter Add-Edit view -->
     <style name="EditorCard">
         <item name="cardCornerRadius">6dp</item>
         <item name="cardUseCompatPadding">true</item>
         <item name="cardElevation">1dp</item>
     </style>
+
     <style name="EditorTitle">
         <item name="android:textSize">15sp</item>
         <item name="android:textColor">@android:color/tab_indicator_text</item>
@@ -37,7 +37,7 @@
     </style>
 
 
-<!-- Rounded Action Button -->
+    <!-- Rounded Action Button -->
     <style name="RoundedActionButton">
         <item name="android:minHeight">0dp</item>
         <item name="android:minWidth">0dp</item>
@@ -49,6 +49,13 @@
 
     <style name="EditorItem">
         <item name="android:background">?android:attr/selectableItemBackground</item>
+    </style>
+
+
+    <!-- Search Edit Text -->
+    <style name="SearchEditText">
+        <item name="colorControlNormal">@color/colorPrimary</item>
+        <item name="colorControlActivated">@color/colorPrimary</item>
     </style>
 
 </resources>

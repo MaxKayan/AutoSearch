@@ -1,57 +1,80 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".ui.MainActivity">
 
-    <RelativeLayout
+
+    <TextView
+        android:id="@+id/dialog_loc_header"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:padding="10dp">
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/dialog_horizontal_padding"
+        android:layout_marginVertical="@dimen/dialog_horizontal_padding"
+        android:text="Регион"
+        android:textColor="#000"
+        android:textSize="18sp" />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Your Custom Dialog Heading"
-            android:textSize="18sp"
-            android:textColor="#000"
-            android:id="@+id/heading"/>
+    <EditText
+        android:id="@+id/dialog_loc_input"
+        style="@style/Widget.AppCompat.EditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/dialog_horizontal_padding"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/dialog_edittext_background"
+        android:drawableStart="@drawable/ic_search_white"
+        android:drawableLeft="@drawable/ic_search_white"
+        android:drawableTint="@color/background"
+        android:hint="Наименование региона"
+        android:padding="10dp"
+        android:textColor="#000"/>
 
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/heading"
-            android:layout_marginTop="20dp"
-            android:background="@null"
-            android:textColor="#000"
-            android:hint="enter some text..."
-            android:id="@+id/input"/>
+<!--    <include layout="@layout/hr" />-->
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="OK"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="20dp"
-            android:textSize="18sp"
-            android:textColor="#33bbff"
-            android:id="@+id/action_ok"/>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/dialog_loc_rv"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="10dp"
+        android:layout_weight="1"
+        android:scrollbars="vertical"
+        android:fadeScrollbars="false"
+        android:scrollbarStyle="insideInset"
+        tools:listitem="@layout/dialog_search_item"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="CANCEL"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentLeft="true"
-            android:layout_marginRight="20dp"
-            android:textSize="18sp"
-            android:textColor="#33bbff"
-            android:id="@+id/action_cancel"/>
+<!--    <RelativeLayout-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="30dp">-->
 
-    </RelativeLayout>
+<!--        <TextView-->
+<!--            android:id="@+id/action_cancel"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_alignParentStart="true"-->
+<!--            android:layout_alignParentLeft="true"-->
+<!--            android:layout_alignParentBottom="true"-->
+<!--            android:layout_marginStart="20dp"-->
+<!--            android:layout_marginLeft="20dp"-->
+<!--            android:text="CANCEL"-->
+<!--            android:textColor="#33bbff"-->
+<!--            android:textSize="18sp" />-->
 
+<!--        <TextView-->
+<!--            android:id="@+id/action_ok"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_alignParentEnd="true"-->
+<!--            android:layout_alignParentRight="true"-->
+<!--            android:layout_alignParentBottom="true"-->
+<!--            android:layout_marginEnd="20dp"-->
+<!--            android:layout_marginRight="20dp"-->
+<!--            android:text="OK"-->
+<!--            android:textColor="#33bbff"-->
+<!--            android:textSize="18sp" />-->
+<!--    </RelativeLayout>-->
 
-
-</RelativeLayout>
+</LinearLayout>

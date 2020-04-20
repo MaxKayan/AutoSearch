@@ -3,6 +3,7 @@ package net.inqer.autosearch.data.source.api;
 import net.inqer.autosearch.data.model.AccountProperties;
 import net.inqer.autosearch.data.model.City;
 import net.inqer.autosearch.data.model.Filter;
+import net.inqer.autosearch.data.model.Region;
 import net.inqer.autosearch.data.model.api.PageResponse;
 
 import java.util.List;
@@ -51,6 +52,15 @@ public interface MainApi {
     @GET
     <T> Single<PageResponse<T>> getPage(@Url String fullUrl);
 
+    @GET
+    Flowable<PageResponse<Region>> getPageRegion(@Url String gullUrl);
+
     @GET("cities/")
     Flowable<PageResponse<City>> getCitiesByRegion(@Query("region_slug") String regionSlug);
+
+    @GET("regions/")
+    Flowable<PageResponse<Region>> getRegions();
+
+    @GET("regions/")
+    Single<List<Region>> getListOfRegions();
 }
