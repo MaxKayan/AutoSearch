@@ -8,6 +8,8 @@ import androidx.lifecycle.ViewModel;
 
 import net.inqer.autosearch.data.model.Filter;
 import net.inqer.autosearch.data.source.repository.FiltersRepository;
+import net.inqer.autosearch.util.bus.RxBus;
+import net.inqer.autosearch.util.bus.RxBusEvent;
 
 import java.util.List;
 
@@ -21,15 +23,19 @@ import io.reactivex.schedulers.Schedulers;
 
 public class FiltersViewModel extends ViewModel {
     private static final String TAG = "FiltersViewModel";
-    private final FiltersRepository repository;
-    private MutableLiveData<List<Filter>> filtersEvent = new MutableLiveData<>();
 
+    private final FiltersRepository repository;
+    private final RxBus rxBus;
+
+    private MutableLiveData<List<Filter>> filtersLiveData = new MutableLiveData<>();
     private CompositeDisposable disposeBag = new CompositeDisposable();
 
     @Inject
-    FiltersViewModel(FiltersRepository filtersRepository) {
+    FiltersViewModel(FiltersRepository filtersRepository, RxBus rxBus) {
         this.repository = filtersRepository;
+        this.rxBus = rxBus;
         subscribeObservers();
+        refreshData();
     }
 
     private void subscribeObservers() {
@@ -39,38 +45,33 @@ public class FiltersViewModel extends ViewModel {
                 repository.getAll()
                         .subscribeOn(Schedulers.io())
                         .subscribe(filters -> {
-                            filtersEvent.postValue(filters);
+                            Log.d(TAG, "subscribeObservers: new data received: " + filters.size());
+                            filtersLiveData.postValue(filters);
                         }, throwable -> {
-                            Log.e(TAG, "filtersSub: Error: ", throwable);
+                            Log.e(TAG, "subscribeObservers: Error: " + throwable.getMessage()
+                                    + " " + throwable.getClass(), throwable);
                         }, () -> {
-                            Log.w(TAG, "filtersSub: Flow Completed");
+                            Log.w(TAG, "subscribeObservers: Flow Completed");
                         });
 
         disposeBag.add(filtersSub);
     }
 
     LiveData<List<Filter>> observeFilters() {
-//        return repository.observeFilters();
-//        return LiveDataReactiveStreams.fromPublisher(repository.getAll());
-        return filtersEvent;
-    }
-
-//    LiveData<List<Filter>> observeFilterData() {
-//        return filtersList;
-//    }
-
-    void resetFilterObserver() {
-//        repository.resetFilterObserver();
+        return filtersLiveData;
     }
 
     void refreshData() {
+        rxBus.publish(RxBusEvent.progress("Загрузка фильтров", false));
         Disposable rf = repository.refreshData()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .subscribe(() -> {
                     Log.i(TAG, "refreshData: refreshed data successfully!");
+                    rxBus.publish(RxBusEvent.message("refreshed data successfully!", true));
                 }, throwable -> {
                     Log.e(TAG, "refreshData: Failed to refresh: " + throwable.getMessage() + " " + throwable.getClass(), throwable);
+                    rxBus.publish(RxBusEvent.error(throwable.getMessage(), true, throwable));
                 });
     }
 
@@ -87,6 +88,7 @@ public class FiltersViewModel extends ViewModel {
                             Log.d(TAG, "deleteFilters: Completed!");
                         }, throwable -> {
                             Log.e(TAG, "deleteFilters: Error:", throwable);
+                            rxBus.publish(RxBusEvent.error(throwable.getMessage(), true, throwable));
                         });
     }
 

@@ -54,7 +54,7 @@ public class FiltersRepository implements DataSource<Filter> {
 //                })
 //
 //        );
-        return local.getAll().startWith(refreshData().toFlowable());
+        return local.getAll();
     }
 
 

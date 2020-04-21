@@ -3,7 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:tools="http://schemas.android.com/tools"
     app:cardCornerRadius="3dp"
 
     app:cardUseCompatPadding="true">
@@ -55,14 +54,14 @@
             android:textStyle="bold"
             android:layout_margin="6dp"/>
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/f_item_rv"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            tools:itemCount="5"
-            android:scrollbars="horizontal"
-            android:layout_marginBottom="6dp"/>
+        <!--        <androidx.recyclerview.widget.RecyclerView-->
+        <!--            android:id="@+id/f_item_rv"-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:orientation="horizontal"-->
+        <!--            tools:itemCount="5"-->
+        <!--            android:scrollbars="horizontal"-->
+        <!--            android:layout_marginBottom="6dp"/>-->
 
 
         <RelativeLayout

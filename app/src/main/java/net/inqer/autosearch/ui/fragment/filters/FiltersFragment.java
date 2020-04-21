@@ -20,6 +20,8 @@ import com.google.android.material.snackbar.Snackbar;
 import net.inqer.autosearch.R;
 import net.inqer.autosearch.databinding.FragmentFiltersBinding;
 import net.inqer.autosearch.util.ViewModelProviderFactory;
+import net.inqer.autosearch.util.bus.RxBus;
+import net.inqer.autosearch.util.bus.RxBusEvent;
 
 import javax.inject.Inject;
 
@@ -33,6 +35,9 @@ public class FiltersFragment extends DaggerFragment {
 
     @Inject
     FiltersAdapter adapter;
+
+    @Inject
+    RxBus rxBus;
 
     @Inject
     ViewModelProviderFactory providerFactory;
@@ -89,12 +94,29 @@ public class FiltersFragment extends DaggerFragment {
 
         viewModel.observeFilters().observe(getViewLifecycleOwner(), filters -> {
             adapter.submitList(filters);
-            if (filters!=null && !filters.isEmpty()) {
-                Log.i(TAG, "subscribeObservers: observeFilters size: "+filters.size());
+            if (filters != null && !filters.isEmpty()) {
+                Log.i(TAG, "subscribeObservers: observeFilters size: " + filters.size());
 
             } else Log.w(TAG, "subscribeObservers: observeFilters: invalid data ");
             binding.filtersSwipeLayout.setRefreshing(false);
         });
+
+//        @SuppressWarnings("unchecked")
+        Disposable bus = rxBus.listen(RxBusEvent.class)
+                .subscribe(e -> {
+                    switch (e.status) {
+                        case PROGRESS:
+                            showProgressBar(true);
+                            break;
+                        case MESSAGE:
+                            showProgressBar(false);
+                            Toast.makeText(getContext(), e.message, Toast.LENGTH_SHORT).show();
+                        case ERROR:
+                            showProgressBar(false);
+                            Toast.makeText(getContext(), e.message, Toast.LENGTH_SHORT).show();
+                            break;
+                    }
+                });
     }
 
 
@@ -123,7 +145,6 @@ public class FiltersFragment extends DaggerFragment {
                             showError(throwable.getMessage());
                             adapter.notifyDataSetChanged();
                         });
-
             }
         };
 
@@ -146,7 +167,9 @@ public class FiltersFragment extends DaggerFragment {
     private void showProgressBar(boolean show) {
         if (show) {
             binding.filtersProgressbar.setVisibility(View.VISIBLE);
+            binding.filtersSwipeLayout.setRefreshing(true);
         } else {
+            binding.filtersSwipeLayout.setRefreshing(false);
             binding.filtersProgressbar.setVisibility(View.GONE);
         }
     }
