@@ -116,6 +116,8 @@ public class FiltersFragment extends DaggerFragment {
                             Toast.makeText(getContext(), e.message, Toast.LENGTH_SHORT).show();
                             break;
                     }
+                }, throwable -> {
+                    Log.e(TAG, "subscribeObservers: Error" + throwable.getMessage(), throwable);
                 });
     }
 
@@ -166,7 +168,7 @@ public class FiltersFragment extends DaggerFragment {
 
     private void showProgressBar(boolean show) {
         if (show) {
-            binding.filtersProgressbar.setVisibility(View.VISIBLE);
+//            binding.filtersProgressbar.setVisibility(View.VISIBLE);
             binding.filtersSwipeLayout.setRefreshing(true);
         } else {
             binding.filtersSwipeLayout.setRefreshing(false);
