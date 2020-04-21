@@ -40,11 +40,11 @@ public interface MainApi {
     @POST("filters/") // TODO: Implement this
     Completable createAllFilters(@Body List<Filter> filters);
 
-    @DELETE("filters/") // TODO: Implement this
-    Completable deleteFilter(@Body Filter filter);
+    @DELETE("filters/{itemId}")
+    Completable deleteFilter(@Path("itemId") int id);
 
     @DELETE("filters/") // TODO: Implement this
-    Completable deleteAllFilters(@Body List<Filter> filters);
+    Completable deleteAllFilters();
 
     @POST("filters/") // TODO: Implement this
     Completable clearFilters();
@@ -59,8 +59,5 @@ public interface MainApi {
     Flowable<PageResponse<City>> getCitiesByRegion(@Query("region_slug") String regionSlug);
 
     @GET("regions/")
-    Flowable<PageResponse<Region>> getRegions();
-
-    @GET("regions/")
-    Single<List<Region>> getListOfRegions();
+    Flowable<List<Region>> getRegions();
 }

@@ -14,13 +14,13 @@ import javax.inject.Inject;
 import io.reactivex.Completable;
 import io.reactivex.Flowable;
 
-public class LocalDataSource implements DataSource<Filter> {
-    private static final String TAG = "LocalDataSource";
+public class LocalFilterDataSource implements DataSource<Filter> {
+    private static final String TAG = "LocalFilterDataSource";
 
     private final FilterDao dao;
 
     @Inject
-    public LocalDataSource(AppDatabase database) {
+    public LocalFilterDataSource(AppDatabase database) {
         this.dao = database.filterDao();
     }
 

@@ -24,6 +24,7 @@ import net.inqer.autosearch.util.ViewModelProviderFactory;
 import javax.inject.Inject;
 
 import dagger.android.support.DaggerFragment;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
@@ -113,12 +114,14 @@ public class FiltersFragment extends DaggerFragment {
                 Log.d(TAG, "onSwiped: swiped");
 //                viewModel.deleteFilter(adapter.getFilterAt(viewHolder.getAdapterPosition()));
                 Disposable delSub = viewModel.deleteFilterRx(adapter.getFilterAt(viewHolder.getAdapterPosition()))
-//                        .observeOn(AndroidSchedulers.mainThread())
+                        .observeOn(AndroidSchedulers.mainThread())
                         .subscribeOn(Schedulers.io())
                         .subscribe(() -> {
                             Snackbar.make(view, "Filter deleted!", Snackbar.LENGTH_LONG).show();
                         }, throwable -> {
-                            Log.e(TAG, "onSwiped: Error", throwable);
+                            Log.e(TAG, "onSwiped: Error: " + throwable.getMessage() + " " + throwable.getClass(), throwable);
+                            showError(throwable.getMessage());
+                            adapter.notifyDataSetChanged();
                         });
 
             }

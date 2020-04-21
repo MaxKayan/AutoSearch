@@ -15,16 +15,16 @@ import net.inqer.autosearch.databinding.DialogSearchItemBinding;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DialogRVAdapter extends RecyclerView.Adapter<SearchItemViewHolder> implements Filterable {
+public class DialogRVAdapter<T extends ListItem> extends RecyclerView.Adapter<SearchItemViewHolder> implements Filterable {
     private static final String TAG = "DialogRVAdapter";
     private final SearchItemViewHolder.SearchItemClickListener onItemClickListener;
-    private List<ListItem> fullList;
-    private List<ListItem> mainList;
+    private List<T> fullList;
+    private List<T> mainList;
     private Filter locationFilter = new Filter() {
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
             Log.d(TAG, "performFiltering: " + constraint);
-            List<ListItem> filteredList = new ArrayList<>();
+            List<T> filteredList = new ArrayList<>();
 
             if (constraint == null || constraint.length() == 0) {
                 Log.d(TAG, "performFiltering: adding full: "+fullList.size());
@@ -32,7 +32,7 @@ public class DialogRVAdapter extends RecyclerView.Adapter<SearchItemViewHolder> 
             } else {
                 String filterPattern = constraint.toString().toLowerCase().trim();
 
-                for (ListItem item : fullList) {
+                for (T item : fullList) {
                     if (item.getName().toLowerCase().contains(filterPattern)) {
                         filteredList.add(item);
                     }
@@ -54,7 +54,7 @@ public class DialogRVAdapter extends RecyclerView.Adapter<SearchItemViewHolder> 
         }
     };
 
-    DialogRVAdapter(List<ListItem> fullList, SearchItemViewHolder.SearchItemClickListener listener) {
+    DialogRVAdapter(List<T> fullList, SearchItemViewHolder.SearchItemClickListener listener) {
         this.mainList = fullList;
         this.fullList = new ArrayList<>(fullList); // IMPORTANT! if you'll just assign full list to
         //this variable, it would just link to the same list object. So when changing the main list,
@@ -62,7 +62,7 @@ public class DialogRVAdapter extends RecyclerView.Adapter<SearchItemViewHolder> 
         this.onItemClickListener = listener;
     }
 
-    public void setFullList(List<ListItem> list) {
+    void setFullList(List<T> list) {
         fullList = list;
     }
 
@@ -75,7 +75,7 @@ public class DialogRVAdapter extends RecyclerView.Adapter<SearchItemViewHolder> 
 
     @Override
     public void onBindViewHolder(@NonNull SearchItemViewHolder holder, int position) {
-        ListItem currentRegion = mainList.get(position);
+        T currentRegion = mainList.get(position);
         holder.bind(currentRegion, onItemClickListener, position);
     }
 

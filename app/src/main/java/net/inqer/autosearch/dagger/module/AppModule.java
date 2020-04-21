@@ -13,6 +13,7 @@ import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import net.inqer.autosearch.R;
 import net.inqer.autosearch.data.source.local.AppDatabase;
 import net.inqer.autosearch.data.source.local.dao.FilterDao;
+import net.inqer.autosearch.data.source.local.dao.RegionDao;
 import net.inqer.autosearch.util.Constants;
 import net.inqer.autosearch.util.TokenInjectionInterceptor;
 
@@ -53,6 +54,12 @@ public class AppModule {
     @Provides
     static FilterDao provideFilterDao(AppDatabase appDatabase) {
         return appDatabase.filterDao();
+    }
+
+    @Singleton
+    @Provides
+    static RegionDao provideRegionDao(AppDatabase appDatabase) {
+        return appDatabase.regionDao();
     }
 
     @Singleton

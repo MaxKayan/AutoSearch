@@ -18,7 +18,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import net.inqer.autosearch.R;
 import net.inqer.autosearch.databinding.FragmentSearchBinding;
-import net.inqer.autosearch.ui.dialog.TestDialog;
+import net.inqer.autosearch.ui.dialog.RegionDialog;
 import net.inqer.autosearch.util.ViewModelProviderFactory;
 
 import javax.inject.Inject;
@@ -58,7 +58,7 @@ public class SearchFragment extends DaggerFragment {
         });
 
         binding.fEditRegion.setOnClickListener(v -> {
-            TestDialog dialog = new TestDialog();
+            RegionDialog dialog = new RegionDialog();
             dialog.setTargetFragment(SearchFragment.this, REGION);
             dialog.show(getParentFragmentManager(), "RegionDialog");
         });
@@ -101,7 +101,7 @@ public class SearchFragment extends DaggerFragment {
                 case REGION:
                     switch (resultCode) {
                         case Activity.RESULT_OK:
-                            binding.fEditRegionValue.setText(data.getStringExtra(TestDialog.REG_NAME));
+                            binding.fEditRegionValue.setText(data.getStringExtra(RegionDialog.REG_NAME));
 
                     }
             }

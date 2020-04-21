@@ -1,7 +1,6 @@
 package net.inqer.autosearch.data.model;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
@@ -13,10 +12,9 @@ public class Region implements ListItem {
     private String name;
 
     @PrimaryKey
-    @SerializedName("region_slug")
-    private String regionSlug;
-
+    @NonNull
     private String slug;
+
     private String avito;
     private String autoru;
     private String drom;
@@ -24,11 +22,9 @@ public class Region implements ListItem {
     @SerializedName("popularCount")
     private int requestCount;
     private boolean isPopular;
-    private String region;
 
-    public Region(String name, String regionSlug, String slug, String avito, String autoru, String drom, String youla, int requestCount, boolean isPopular, String region) {
+    public Region(String name, String slug, String avito, String autoru, String drom, String youla, int requestCount, boolean isPopular) {
         this.name = name;
-        this.regionSlug = regionSlug;
         this.slug = slug;
         this.avito = avito;
         this.autoru = autoru;
@@ -36,26 +32,21 @@ public class Region implements ListItem {
         this.youla = youla;
         this.requestCount = requestCount;
         this.isPopular = isPopular;
-        this.region = region;
     }
 
-    @Override
-    public int hashCode() {
-        return super.hashCode();
-    }
-
-    @Override
-    public boolean equals(@Nullable Object obj) {
-        return obj instanceof Region && this.getRegionSlug().equals(((Region) obj).getRegionSlug());
-    }
+    //    @Override
+//    public int hashCode() {
+//        return super.hashCode();
+//    }
+//
+//    @Override
+//    public boolean equals(@Nullable Object obj) {
+//        return obj instanceof Region && this.getRegionSlug().equals(((Region) obj).getRegionSlug());
+//    }
 
     @Override
     public String getName() {
         return name;
-    }
-
-    public String getRegionSlug() {
-        return regionSlug;
     }
 
     public String getSlug() {
@@ -86,18 +77,44 @@ public class Region implements ListItem {
         return isPopular;
     }
 
-    public String getRegion() {
-        return region;
-    }
-
 
     @Override
     public <T> boolean isSameModelAs(@NonNull T model) {
-        return this.equals(model);
+        return model instanceof Region && getSlug().equals(((Region) model).getSlug());
     }
 
     @Override
     public <T> boolean isContentTheSameAs(@NonNull T model) {
-        return false;
+        return this.equals(model);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Region region1 = (Region) o;
+        return requestCount == region1.requestCount &&
+                isPopular == region1.isPopular &&
+                name.equals(region1.name) &&
+                slug.equals(region1.slug) &&
+                avito.equals(region1.avito) &&
+                autoru.equals(region1.autoru) &&
+                drom.equals(region1.drom) &&
+                youla.equals(region1.youla);
+    }
+
+    @Override
+    public int hashCode() {
+//        return Objects.hash(name, regionSlug, slug, avito, autoru, drom, youla, requestCount, isPopular, region);
+        int hash = 12;
+        hash = 26 * hash + getName().hashCode();
+        hash = 26 * hash + getSlug().hashCode();
+        hash = 26 * hash + getAvito().hashCode();
+        hash = 26 * hash + getAutoru().hashCode();
+        hash = 26 * hash + getDrom().hashCode();
+        hash = 26 * hash + getYoula().hashCode();
+        hash = 26 * hash + getRequestCount();
+        hash = 26 * hash + (isPopular() ? 1 : 0);
+        return hash;
     }
 }

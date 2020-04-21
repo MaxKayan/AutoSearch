@@ -40,12 +40,12 @@ public class RemoteFilterDataSource implements DataSource<Filter> {
 
     @Override
     public Completable delete(Filter instance) {
-        return api.deleteFilter(instance);
+        return api.deleteFilter(instance.getId());
     }
 
     @Override
     public Completable deleteAll(List<Filter> list) {
-        return api.deleteAllFilters(list);
+        return api.deleteAllFilters();
     }
 
     @Override

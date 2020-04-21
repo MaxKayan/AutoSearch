@@ -14,10 +14,12 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import net.inqer.autosearch.data.model.Region;
 import net.inqer.autosearch.data.source.api.MainApi;
+import net.inqer.autosearch.data.source.repository.RegionsRepository;
 import net.inqer.autosearch.databinding.DialogBinding;
 
 import java.util.ArrayList;
@@ -32,7 +34,7 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
-public class TestDialog extends DaggerDialogFragment {
+public class RegionDialog extends DaggerDialogFragment {
     public static final String REG_NAME = "region_name";
     private static final String TAG = "TestDialog";
     final Comparator<Region> alphabeticalComparator = new Comparator<Region>() {
@@ -45,10 +47,14 @@ public class TestDialog extends DaggerDialogFragment {
     @Inject
     MainApi api;
 
+    @Inject
+    RegionsRepository repository;
+
     private DialogBinding binding;
     private List<Region> arrayList = new ArrayList<>();
     //    private SortedAdapter adapter;
-    private DialogRVAdapter adapter;
+//    private DialogRVAdapter<Region> adapter;
+    private DialogListAdapter<Region> adapter;
     private CompositeDisposable disposableBag = new CompositeDisposable();
     private Intent data = new Intent();
 
@@ -64,8 +70,8 @@ public class TestDialog extends DaggerDialogFragment {
         Log.d(TAG, "onViewCreated: ");
 
         setupSearchInput();
-        fetchData();
         setupRecyclerView();
+        getData();
     }
 
     private void setupSearchInput() {
@@ -77,32 +83,29 @@ public class TestDialog extends DaggerDialogFragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                adapter.getFilter().filter(s);
+
             }
 
             @Override
             public void afterTextChanged(Editable s) {
-
+                adapter.getFilter().filter(s);
             }
         });
     }
 
-    private void fetchData() {
-        Disposable fetch = api.getListOfRegions()
+    private void getData() {
+        Disposable sub = repository.getAll()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .subscribe(regions -> {
-                    arrayList.addAll(regions);
-                    adapter.setFullList(regions);
-                    adapter.notifyDataSetChanged();
-//                    adapter.setFullList(regions);
-//                    adapter.edit()
-//                            .replaceAll(regions)
-//                            .commit();
+                    adapter.setNewList(regions);
+                    binding.dialogLocRv.setHasFixedSize(true);
                 }, throwable -> {
-                    Log.e(TAG, "fetchData: Error: ", throwable);
+                    Log.e(TAG, "getData: Error", throwable);
                 });
-        disposableBag.add(fetch);
+
+
+//        disposableBag.add(fetch);
 
 //        Disposable fetch = api.getRegions()
 //                .concatMap(page -> {
@@ -139,17 +142,20 @@ public class TestDialog extends DaggerDialogFragment {
 //    }
 
     private void setupRecyclerView() {
-        binding.dialogLocRv.setHasFixedSize(true);
         binding.dialogLocRv.setLayoutManager(new LinearLayoutManager(getContext()));
-        adapter = new DialogRVAdapter(arrayList, position -> {
-            Region region = arrayList.get(position);
-            Toast.makeText(getContext(), "Pressed: "+region.toString(), Toast.LENGTH_SHORT).show();
+        adapter = new DialogListAdapter<>(position -> {
+//            Region region = arrayList.get(position);
+            Region region = adapter.getItemAt(position);
+            Toast.makeText(getContext(), "Pressed: " + region.toString(), Toast.LENGTH_SHORT).show();
 
             data.putExtra(REG_NAME, region.getName());
             // TODO: this is a simple test-implementation. Need to get the actual object, nut just the name string
 
-            getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, data);
-            dismiss();
+            Fragment target = getTargetFragment();
+            if (target != null) {
+                target.onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, data);
+                dismiss();
+            }
         });
 
 //        adapter = new SortedAdapter(getContext(), Region.class, alphabeticalComparator);

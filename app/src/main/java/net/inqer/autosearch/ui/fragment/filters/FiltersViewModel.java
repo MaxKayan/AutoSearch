@@ -7,13 +7,14 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import net.inqer.autosearch.data.model.Filter;
-import net.inqer.autosearch.data.source.FiltersRepository;
+import net.inqer.autosearch.data.source.repository.FiltersRepository;
 
 import java.util.List;
 
 import javax.inject.Inject;
 
 import io.reactivex.Completable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
@@ -63,28 +64,20 @@ public class FiltersViewModel extends ViewModel {
     }
 
     void refreshData() {
-        subscribeObservers();
-//        Disposable refreshSub =
-//                repository.refreshFilters()
-//                        .subscribeOn(Schedulers.io())
-//                        .subscribe(() -> {
-//                            Log.d(TAG, "refreshData: Refreshed successfully");
-//                        }, throwable -> {
-//                            Log.e(TAG, "refreshData: Error: ", throwable);
-//                        });
+        Disposable rf = repository.refreshData()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(() -> {
+                    Log.i(TAG, "refreshData: refreshed data successfully!");
+                }, throwable -> {
+                    Log.e(TAG, "refreshData: Failed to refresh: " + throwable.getMessage() + " " + throwable.getClass(), throwable);
+                });
     }
 
-    void deleteFilter(Filter filter) {
-        Disposable d = repository.delete(filter)
-        .subscribeOn(Schedulers.io())
-        .subscribe(() -> {
-            Log.d(TAG, "deleteFilter: Completed");
-        }, throwable -> {
-            Log.e(TAG, "deleteFilter: Error: ", throwable);
-        });
-    }
 
-    Completable deleteFilterRx(Filter filter) { return repository.delete(filter); }
+    Completable deleteFilterRx(Filter filter) {
+        return repository.delete(filter);
+    }
 
     void deleteFilters() {
         Disposable clearSub =
