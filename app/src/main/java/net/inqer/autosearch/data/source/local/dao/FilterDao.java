@@ -16,10 +16,10 @@ import io.reactivex.Single;
 
 @Dao
 public interface FilterDao {
-    @Query("SELECT * FROM QueryFilter")
+    @Query("SELECT * FROM filters")
     Flowable<List<QueryFilter>> observeFilters();
 
-    @Query("SELECT * FROM QueryFilter")
+    @Query("SELECT * FROM filters")
     Single<List<QueryFilter>> getFilters();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -34,6 +34,6 @@ public interface FilterDao {
     @Delete
     Completable deleteAll(List<QueryFilter> filters);
 
-    @Query("DELETE FROM QueryFilter")
+    @Query("DELETE FROM filters")
     Completable deleteAllFilters();
 }

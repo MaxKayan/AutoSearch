@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/dialog_horizontal_padding"
         android:layout_marginVertical="@dimen/dialog_horizontal_padding"
-        android:text="Регион"
+        android:text="Поиск"
         android:textColor="#000"
         android:textSize="18sp" />
 
@@ -29,7 +29,7 @@
         android:drawableStart="@drawable/ic_search_white"
         android:drawableLeft="@drawable/ic_search_white"
         android:drawableTint="@color/background"
-        android:hint="Наименование региона"
+        android:hint="Введите наименование"
         android:padding="10dp"
         android:maxLines="1"
         android:textColor="#000"/>

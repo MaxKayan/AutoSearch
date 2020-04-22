@@ -19,9 +19,12 @@ import androidx.lifecycle.ViewModelProvider;
 
 import net.inqer.autosearch.R;
 import net.inqer.autosearch.data.model.EditableFilter;
+import net.inqer.autosearch.data.model.Region;
 import net.inqer.autosearch.databinding.FragmentSearchBinding;
-import net.inqer.autosearch.ui.dialog.RegionDialog;
+import net.inqer.autosearch.ui.dialog.DialogListSearch;
 import net.inqer.autosearch.util.ViewModelProviderFactory;
+
+import java.util.ArrayList;
 
 import javax.inject.Inject;
 
@@ -63,7 +66,7 @@ public class SearchFragment extends DaggerFragment {
     private void setupViewByFilter(EditableFilter filter) {
         binding.fEditMarkValue.setText(filter.getCarMark());
         binding.fEditModelValue.setText(filter.getCarModel());
-        binding.fEditRegionValue.setText(filter.getRegion().getName());
+        binding.fEditRegionValue.setText(filter.getRegion() == null ? "" : filter.getRegion().getName());
         binding.fEditCityValue.setText(filter.getCities());
         binding.fEditPriceValue.setText(filter.getPriceMinimum() +
                 " до: " + filter.getPriceMaximum());
@@ -72,7 +75,7 @@ public class SearchFragment extends DaggerFragment {
         binding.fEditHullValue.setText(filter.getHull());
         binding.fEditFuelValue.setText(filter.getFuel());
         binding.fEditDisplacementValue.setText(filter.getEngineDisplacementMin() + " до: " + filter.getEngineDisplacementMax());
-        binding.fEditRadiusValue.setText(filter.getRadius());
+        binding.fEditRadiusValue.setText(String.valueOf(filter.getRadius()));
     }
 
 
@@ -85,7 +88,7 @@ public class SearchFragment extends DaggerFragment {
         });
 
         binding.fEditRegion.setOnClickListener(v -> {
-            RegionDialog dialog = new RegionDialog();
+            DialogListSearch dialog = DialogListSearch.newInstance("Регион", "Наименование региона", new ArrayList<Region>());
             dialog.setTargetFragment(SearchFragment.this, REGION);
             dialog.show(getParentFragmentManager(), "RegionDialog");
         });
@@ -127,7 +130,7 @@ public class SearchFragment extends DaggerFragment {
             switch (requestCode) {
                 case REGION:
                     if (resultCode == Activity.RESULT_OK) {
-                        String rSlug = data.getStringExtra(RegionDialog.REG_ID);
+                        String rSlug = data.getStringExtra(DialogListSearch.REG_ID);
                         viewModel.setRegion(rSlug);
 //                        viewModel.getCurrentFilter().getValue().setRegion();
                     }

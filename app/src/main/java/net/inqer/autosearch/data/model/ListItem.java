@@ -1,7 +1,12 @@
 package net.inqer.autosearch.data.model;
 
-import com.github.wrdlbrnft.sortedlistadapter.SortedListAdapter;
+import android.os.Parcelable;
 
-public interface ListItem extends SortedListAdapter.ViewModel {
+import androidx.annotation.NonNull;
+
+public interface ListItem extends Parcelable {
     String getName();
+    String getSlug();
+    <T> boolean isSameModelAs(@NonNull T model);
+    <T> boolean isContentTheSameAs(@NonNull T model);
 }

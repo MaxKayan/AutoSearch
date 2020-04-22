@@ -3,7 +3,6 @@ package net.inqer.autosearch.dagger.module;
 import net.inqer.autosearch.dagger.module.viewmodel.FiltersViewModelModule;
 import net.inqer.autosearch.dagger.module.viewmodel.ParametersViewModelModule;
 import net.inqer.autosearch.dagger.module.viewmodel.SearchViewModelModule;
-import net.inqer.autosearch.ui.dialog.RegionDialog;
 import net.inqer.autosearch.ui.fragment.filters.FiltersFragment;
 import net.inqer.autosearch.ui.fragment.filters.ResultsFragment;
 import net.inqer.autosearch.ui.fragment.parameters.ParametersFragment;
@@ -29,6 +28,6 @@ public abstract class FragmentBuilderModule {
 
 
     // Dialogs
-    @ContributesAndroidInjector(modules = {MainModule.class})
-    abstract RegionDialog contributeTestDialogFragment();
+//    @ContributesAndroidInjector(modules = {MainModule.class})
+//    abstract DialogListSearch contributeTestDialogFragment();
 }

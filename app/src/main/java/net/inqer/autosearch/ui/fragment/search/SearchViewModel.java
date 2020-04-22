@@ -41,8 +41,10 @@ public class SearchViewModel extends ViewModel {
         Disposable d = regionsRepository.getById(rSlug)
                 .subscribe(region -> {
                     EditableFilter filter = currentEditableFilter.getValue();
-                    filter.setRegion(region);
-                    currentEditableFilter.setValue(filter);
+                    if (filter != null && region != null) {
+                        filter.setRegion(region);
+                        currentEditableFilter.postValue(filter);
+                    } else Log.d(TAG, "setRegion: editable filter should never be null");
                 }, throwable -> {
                     Log.e(TAG, "setRegion: Error: ", throwable);
                 });

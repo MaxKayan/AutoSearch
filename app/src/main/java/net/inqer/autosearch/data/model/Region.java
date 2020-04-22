@@ -1,5 +1,8 @@
 package net.inqer.autosearch.data.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
@@ -7,7 +10,7 @@ import androidx.room.PrimaryKey;
 import com.google.gson.annotations.SerializedName;
 
 @Entity(tableName = "regions")
-public class Region implements ListItem {
+public class Region implements ListItem, Parcelable {
 
     private String name;
 
@@ -117,4 +120,45 @@ public class Region implements ListItem {
         hash = 26 * hash + (isPopular() ? 1 : 0);
         return hash;
     }
+
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.name);
+        dest.writeString(this.slug);
+        dest.writeString(this.avito);
+        dest.writeString(this.autoru);
+        dest.writeString(this.drom);
+        dest.writeString(this.youla);
+        dest.writeInt(this.requestCount);
+        dest.writeByte(this.isPopular ? (byte) 1 : (byte) 0);
+    }
+
+    protected Region(Parcel in) {
+        this.name = in.readString();
+        this.slug = in.readString();
+        this.avito = in.readString();
+        this.autoru = in.readString();
+        this.drom = in.readString();
+        this.youla = in.readString();
+        this.requestCount = in.readInt();
+        this.isPopular = in.readByte() != 0;
+    }
+
+    public static final Creator<Region> CREATOR = new Creator<Region>() {
+        @Override
+        public Region createFromParcel(Parcel source) {
+            return new Region(source);
+        }
+
+        @Override
+        public Region[] newArray(int size) {
+            return new Region[size];
+        }
+    };
 }
