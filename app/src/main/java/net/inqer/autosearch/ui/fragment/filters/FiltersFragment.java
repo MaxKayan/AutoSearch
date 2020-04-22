@@ -45,10 +45,6 @@ public class FiltersFragment extends DaggerFragment {
 
     private FragmentFiltersBinding binding;
 
-    public static FiltersFragment newInstance() {
-        return new FiltersFragment();
-    }
-
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
@@ -69,48 +65,27 @@ public class FiltersFragment extends DaggerFragment {
     }
 
     private void subscribeObservers() {
-//        viewModel.observeFilterData().observe(getViewLifecycleOwner(),
-//                filters -> adapter.submitList(filters));
-
-//        viewModel.observeFilterEvents().observe(getViewLifecycleOwner(), event -> {
-//            switch (event.status) {
-//                case LOADING:
-//                    showProgressBar(true);
-//                    break;
-//                case SUCCESS:
-//                    if (event.data != null) {
-//                        Log.d(TAG, "subscribeObservers: submitting: "+event.data.size());
-//                        adapter.submitList(event.data);
-//                    }
-//                    showProgressBar(false);
-//                    break;
-//                case ERROR:
-//                    showError(event.message);
-//                    viewModel.resetFilterObserver();
-//                    showProgressBar(false);
-//                    break;
-//            }
-//        });
-
         viewModel.observeFilters().observe(getViewLifecycleOwner(), filters -> {
             adapter.submitList(filters);
             if (filters != null && !filters.isEmpty()) {
                 Log.i(TAG, "subscribeObservers: observeFilters size: " + filters.size());
 
             } else Log.w(TAG, "subscribeObservers: observeFilters: invalid data ");
-            binding.filtersSwipeLayout.setRefreshing(false);
+            showProgressBar(false);
         });
 
 //        @SuppressWarnings("unchecked")
         Disposable bus = rxBus.listen(RxBusEvent.class)
                 .subscribe(e -> {
                     switch (e.status) {
-                        case PROGRESS:
+                        case LOADING:
                             showProgressBar(true);
                             break;
-                        case MESSAGE:
+                        case SUCCESS:
                             showProgressBar(false);
+                        case MESSAGE:
                             Toast.makeText(getContext(), e.message, Toast.LENGTH_SHORT).show();
+                            break;
                         case ERROR:
                             showProgressBar(false);
                             Toast.makeText(getContext(), e.message, Toast.LENGTH_SHORT).show();
@@ -141,7 +116,7 @@ public class FiltersFragment extends DaggerFragment {
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribeOn(Schedulers.io())
                         .subscribe(() -> {
-                            Snackbar.make(view, "Filter deleted!", Snackbar.LENGTH_LONG).show();
+                            Snackbar.make(view, "QueryFilter deleted!", Snackbar.LENGTH_LONG).show();
                         }, throwable -> {
                             Log.e(TAG, "onSwiped: Error: " + throwable.getMessage() + " " + throwable.getClass(), throwable);
                             showError(throwable.getMessage());
@@ -172,7 +147,7 @@ public class FiltersFragment extends DaggerFragment {
             binding.filtersSwipeLayout.setRefreshing(true);
         } else {
             binding.filtersSwipeLayout.setRefreshing(false);
-            binding.filtersProgressbar.setVisibility(View.GONE);
+//            binding.filtersProgressbar.setVisibility(View.GONE);
         }
     }
 

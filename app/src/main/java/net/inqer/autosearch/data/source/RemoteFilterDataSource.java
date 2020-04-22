@@ -1,6 +1,6 @@
 package net.inqer.autosearch.data.source;
 
-import net.inqer.autosearch.data.model.Filter;
+import net.inqer.autosearch.data.model.QueryFilter;
 import net.inqer.autosearch.data.model.api.PageResponse;
 import net.inqer.autosearch.data.source.api.MainApi;
 import net.inqer.autosearch.data.source.testing.DataSource;
@@ -12,7 +12,7 @@ import javax.inject.Inject;
 import io.reactivex.Completable;
 import io.reactivex.Flowable;
 
-public class RemoteFilterDataSource implements DataSource<Filter> {
+public class RemoteFilterDataSource implements DataSource<QueryFilter> {
     private static final String TAG = "RemoteFilterDataSource";
 
     private final MainApi api;
@@ -23,28 +23,28 @@ public class RemoteFilterDataSource implements DataSource<Filter> {
     }
 
     @Override
-    public Flowable<List<Filter>> getAll() {
+    public Flowable<List<QueryFilter>> getAll() {
         return api.getFilters()
                 .map(PageResponse::getResults);
     }
 
     @Override
-    public Completable save(Filter instance) {
+    public Completable save(QueryFilter instance) {
         return api.createFilter(instance);
     }
 
     @Override
-    public Completable saveAll(List<Filter> list) {
+    public Completable saveAll(List<QueryFilter> list) {
         return api.createAllFilters(list);
     }
 
     @Override
-    public Completable delete(Filter instance) {
+    public Completable delete(QueryFilter instance) {
         return api.deleteFilter(instance.getId());
     }
 
     @Override
-    public Completable deleteAll(List<Filter> list) {
+    public Completable deleteAll(List<QueryFilter> list) {
         return api.deleteAllFilters();
     }
 

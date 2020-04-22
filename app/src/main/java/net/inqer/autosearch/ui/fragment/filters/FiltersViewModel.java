@@ -6,7 +6,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import net.inqer.autosearch.data.model.Filter;
+import net.inqer.autosearch.data.model.QueryFilter;
 import net.inqer.autosearch.data.source.repository.FiltersRepository;
 import net.inqer.autosearch.util.bus.RxBus;
 import net.inqer.autosearch.util.bus.RxBusEvent;
@@ -27,7 +27,7 @@ public class FiltersViewModel extends ViewModel {
     private final FiltersRepository repository;
     private final RxBus rxBus;
 
-    private MutableLiveData<List<Filter>> filtersLiveData = new MutableLiveData<>();
+    private MutableLiveData<List<QueryFilter>> filtersLiveData = new MutableLiveData<>();
     private CompositeDisposable disposeBag = new CompositeDisposable();
 
     @Inject
@@ -57,12 +57,12 @@ public class FiltersViewModel extends ViewModel {
         disposeBag.add(filtersSub);
     }
 
-    LiveData<List<Filter>> observeFilters() {
+    LiveData<List<QueryFilter>> observeFilters() {
         return filtersLiveData;
     }
 
     void refreshData() {
-        rxBus.publish(RxBusEvent.progress("Загрузка фильтров", false));
+        rxBus.publish(RxBusEvent.loading("Загрузка фильтров", false));
         Disposable rf = repository.refreshData()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
@@ -76,7 +76,7 @@ public class FiltersViewModel extends ViewModel {
     }
 
 
-    Completable deleteFilterRx(Filter filter) {
+    Completable deleteFilterRx(QueryFilter filter) {
         return repository.delete(filter);
     }
 

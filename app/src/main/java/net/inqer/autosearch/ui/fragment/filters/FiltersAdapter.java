@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
-import net.inqer.autosearch.data.model.Filter;
+import net.inqer.autosearch.data.model.QueryFilter;
 import net.inqer.autosearch.databinding.FilterItemBinding;
 
 import org.jetbrains.annotations.NotNull;
@@ -18,18 +18,18 @@ import java.text.SimpleDateFormat;
 
 import javax.inject.Inject;
 
-public class FiltersAdapter extends ListAdapter<Filter, FiltersAdapter.FilterViewHolder> {
+public class FiltersAdapter extends ListAdapter<QueryFilter, FiltersAdapter.FilterViewHolder> {
     private static final String TAG = "FiltersAdapter";
 
-    private static final DiffUtil.ItemCallback<Filter> DIFF_CALLBACK = new DiffUtil.ItemCallback<Filter>() {
+    private static final DiffUtil.ItemCallback<QueryFilter> DIFF_CALLBACK = new DiffUtil.ItemCallback<QueryFilter>() {
         @Override
-        public boolean areItemsTheSame(@NonNull Filter oldItem, @NonNull Filter newItem) {
+        public boolean areItemsTheSame(@NonNull QueryFilter oldItem, @NonNull QueryFilter newItem) {
 //            Log.d(TAG, "areItemsTheSame: "+oldItem.getId().equals(newItem.getId()));
             return oldItem.getId().equals(newItem.getId());
         }
 
         @Override
-        public boolean areContentsTheSame(@NonNull Filter oldItem, @NonNull Filter newItem) {
+        public boolean areContentsTheSame(@NonNull QueryFilter oldItem, @NonNull QueryFilter newItem) {
             boolean isEqual = oldItem.equals(newItem);
 //            Log.d(TAG, "areContentsTheSame: "+isEqual);
             return isEqual;
@@ -44,7 +44,7 @@ public class FiltersAdapter extends ListAdapter<Filter, FiltersAdapter.FilterVie
         this.dateFormat = dateFormat;
     }
 
-    public Filter getFilterAt(int position) {
+    public QueryFilter getFilterAt(int position) {
         return getItem(position);
     }
 
@@ -57,7 +57,7 @@ public class FiltersAdapter extends ListAdapter<Filter, FiltersAdapter.FilterVie
 
     @Override
     public void onBindViewHolder(@NonNull FilterViewHolder holder, int position) {
-        Filter currentItem = getItem(position);
+        QueryFilter currentItem = getItem(position);
         holder.bind(currentItem);
     }
 
@@ -75,7 +75,7 @@ public class FiltersAdapter extends ListAdapter<Filter, FiltersAdapter.FilterVie
             resultCount = itemBinding.fItemResultCountValue;
         }
 
-        void bind(@NotNull Filter filter) {
+        void bind(@NotNull QueryFilter filter) {
             carMark.setText(filter.getCarMark());
             carModel.setText(filter.getCarModel());
             city.setText(filter.getCities());

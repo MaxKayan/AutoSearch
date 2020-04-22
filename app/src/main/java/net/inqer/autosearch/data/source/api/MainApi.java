@@ -2,7 +2,7 @@ package net.inqer.autosearch.data.source.api;
 
 import net.inqer.autosearch.data.model.AccountProperties;
 import net.inqer.autosearch.data.model.City;
-import net.inqer.autosearch.data.model.Filter;
+import net.inqer.autosearch.data.model.QueryFilter;
 import net.inqer.autosearch.data.model.Region;
 import net.inqer.autosearch.data.model.api.PageResponse;
 
@@ -32,13 +32,13 @@ public interface MainApi {
 
     // TODO: Move filter-related request to sub-component?
     @GET("filters/")
-    Flowable<PageResponse<Filter>> getFilters();
+    Flowable<PageResponse<QueryFilter>> getFilters();
 
     @POST("filters/")
-    Completable createFilter(@Body Filter filter);
+    Completable createFilter(@Body QueryFilter filter);
 
     @POST("filters/") // TODO: Implement this
-    Completable createAllFilters(@Body List<Filter> filters);
+    Completable createAllFilters(@Body List<QueryFilter> filters);
 
     @DELETE("filters/{itemId}")
     Completable deleteFilter(@Path("itemId") int id);

@@ -2,9 +2,10 @@ package net.inqer.autosearch.util.bus;
 
 import androidx.annotation.Nullable;
 
-public class RxBusEventTest {
+public abstract class RxBusEventTest {
 
     public static class Progress {
+        RxBusEvent.RxEventStatus status;
         Boolean showDialog;
         String message;
 
@@ -21,7 +22,7 @@ public class RxBusEventTest {
         @Nullable
         Throwable throwable;
 
-        public Error(Boolean showDialog, String message) {
+        public Error(String message, Boolean showDialog) {
             this.showDialog = showDialog;
             this.message = message;
         }

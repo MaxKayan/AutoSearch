@@ -22,6 +22,9 @@ public interface RegionDao {
     @Query("SELECT * FROM regions")
     Single<List<Region>> getRegions();
 
+    @Query("SELECT * FROM regions WHERE slug = :slug")
+    Single<Region> getRegionById(String slug);
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     Completable insertRegion(Region region);
 

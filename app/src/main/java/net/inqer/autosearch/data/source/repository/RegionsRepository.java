@@ -12,6 +12,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import io.reactivex.Flowable;
+import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
 
 
@@ -51,5 +52,10 @@ public class RegionsRepository {
                 })
 
         );
+    }
+
+    public Single<Region> getById(String slug) {
+        return local.getRegionById(slug)
+                .subscribeOn(Schedulers.io());
     }
 }

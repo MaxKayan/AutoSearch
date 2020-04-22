@@ -21,6 +21,7 @@ import net.inqer.autosearch.data.model.Region;
 import net.inqer.autosearch.data.source.api.MainApi;
 import net.inqer.autosearch.data.source.repository.RegionsRepository;
 import net.inqer.autosearch.databinding.DialogBinding;
+import net.inqer.autosearch.ui.dialog.adapter.DialogListAdapter;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -35,7 +36,7 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
 public class RegionDialog extends DaggerDialogFragment {
-    public static final String REG_NAME = "region_name";
+    public static final String REG_ID = "region_slug";
     private static final String TAG = "TestDialog";
     final Comparator<Region> alphabeticalComparator = new Comparator<Region>() {
         @Override
@@ -144,12 +145,10 @@ public class RegionDialog extends DaggerDialogFragment {
     private void setupRecyclerView() {
         binding.dialogLocRv.setLayoutManager(new LinearLayoutManager(getContext()));
         adapter = new DialogListAdapter<>(position -> {
-//            Region region = arrayList.get(position);
             Region region = adapter.getItemAt(position);
             Toast.makeText(getContext(), "Pressed: " + region.toString(), Toast.LENGTH_SHORT).show();
 
-            data.putExtra(REG_NAME, region.getName());
-            // TODO: this is a simple test-implementation. Need to get the actual object, nut just the name string
+            data.putExtra(REG_ID, region.getSlug());
 
             Fragment target = getTargetFragment();
             if (target != null) {

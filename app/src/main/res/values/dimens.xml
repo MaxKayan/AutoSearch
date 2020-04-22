@@ -21,7 +21,7 @@
     <dimen name="price">13dp</dimen>
 
 
-    <!-- Filter Add-Edit view -->
+    <!-- QueryFilter Add-Edit view -->
     <dimen name="card_horizontal_margin">8dp</dimen>
     <dimen name="card_vertical_margin">4dp</dimen>
     <dimen name="card_corner_radius">6dp</dimen>

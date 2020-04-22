@@ -1,4 +1,4 @@
-package net.inqer.autosearch.ui.dialog;
+package net.inqer.autosearch.ui.dialog.adapter;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -53,7 +53,7 @@ public class DialogListAdapter<T extends ListItem> extends ListAdapter<T, Search
         }
     };
 
-    protected DialogListAdapter(SearchItemViewHolder.SearchItemClickListener listener) {
+    public DialogListAdapter(SearchItemViewHolder.SearchItemClickListener listener) {
         super(new ListItemDiffUtil<T>());
         this.itemClickListener = listener;
     }

@@ -11,8 +11,8 @@ import net.inqer.autosearch.util.Util;
 import java.util.Date;
 
 @Entity(tableName = "filters")
-public class Filter {
-    private static final String TAG = "Filter";
+public class QueryFilter {
+    private static final String TAG = "QueryFilter";
 
     @PrimaryKey
     private Integer id;
@@ -61,24 +61,24 @@ public class Filter {
     @SerializedName("refresh_count")
     private Integer refreshCount;
 
-    public Filter(Integer id,
-                  String slug,
-                  Integer quantity,
-                  Date created_at,
-                  String cities,
-                  String carMark,
-                  String carModel,
-                  String hull,
-                  String fuel,
-                  String transmission,
-                  Integer radius,
-                  @Nullable Integer priceMinimum,
-                  @Nullable Integer priceMaximum,
-                  @Nullable Integer manufactureYearMin,
-                  @Nullable Integer manufactureYearMax,
-                  String engineDisplacementMin,
-                  String engineDisplacementMax,
-                  Integer refreshCount) {
+    public QueryFilter(Integer id,
+                       String slug,
+                       Integer quantity,
+                       Date created_at,
+                       String cities,
+                       String carMark,
+                       String carModel,
+                       String hull,
+                       String fuel,
+                       String transmission,
+                       Integer radius,
+                       @Nullable Integer priceMinimum,
+                       @Nullable Integer priceMaximum,
+                       @Nullable Integer manufactureYearMin,
+                       @Nullable Integer manufactureYearMax,
+                       String engineDisplacementMin,
+                       String engineDisplacementMax,
+                       Integer refreshCount) {
         this.id = id;
         this.slug = slug;
         this.quantity = quantity;
@@ -100,6 +100,7 @@ public class Filter {
     }
 
 
+    // --- GETTERS ---
     public Integer getId() {
         return id;
     }
@@ -179,8 +180,8 @@ public class Filter {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof Filter) {
-            Filter secFilter = (Filter) obj;
+        if (obj instanceof QueryFilter) {
+            QueryFilter secFilter = (QueryFilter) obj;
 
             return
                     this.id.equals(secFilter.id) &&

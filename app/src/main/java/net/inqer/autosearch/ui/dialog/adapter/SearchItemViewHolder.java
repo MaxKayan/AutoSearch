@@ -1,4 +1,4 @@
-package net.inqer.autosearch.ui.dialog;
+package net.inqer.autosearch.ui.dialog.adapter;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;

@@ -14,7 +14,7 @@
     </style>
 
 
-    <!-- Filter Add-Edit view -->
+    <!-- QueryFilter Add-Edit view -->
     <style name="EditorCard">
         <item name="cardCornerRadius">6dp</item>
         <item name="cardUseCompatPadding">true</item>

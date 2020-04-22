@@ -2,7 +2,7 @@ package net.inqer.autosearch.data.source.local;
 
 import android.util.Log;
 
-import net.inqer.autosearch.data.model.Filter;
+import net.inqer.autosearch.data.model.QueryFilter;
 import net.inqer.autosearch.data.source.local.dao.FilterDao;
 import net.inqer.autosearch.data.source.testing.DataSource;
 
@@ -14,7 +14,7 @@ import javax.inject.Inject;
 import io.reactivex.Completable;
 import io.reactivex.Flowable;
 
-public class LocalFilterDataSource implements DataSource<Filter> {
+public class LocalFilterDataSource implements DataSource<QueryFilter> {
     private static final String TAG = "LocalFilterDataSource";
 
     private final FilterDao dao;
@@ -26,22 +26,22 @@ public class LocalFilterDataSource implements DataSource<Filter> {
 
 
     @Override
-    public Flowable<List<Filter>> getAll() {
+    public Flowable<List<QueryFilter>> getAll() {
         return dao.observeFilters();
     }
 
     @Override
-    public Completable save(Filter instance) {
+    public Completable save(QueryFilter instance) {
         return dao.insertFilter(instance);
     }
 
     @Override
-    public Completable saveAll(List<Filter> list) {
+    public Completable saveAll(List<QueryFilter> list) {
         // get current filters from db
         return dao.getFilters()
                 .flatMapCompletable(filters -> {
                     // find difference compared to new list
-                    List<Filter> diff = new ArrayList<>(filters);
+                    List<QueryFilter> diff = new ArrayList<>(filters);
                     diff.removeAll(list);
 
                     // if current items are not in the new list, delete them, then save passed list
@@ -57,12 +57,12 @@ public class LocalFilterDataSource implements DataSource<Filter> {
     }
 
     @Override
-    public Completable delete(Filter instance) {
+    public Completable delete(QueryFilter instance) {
         return dao.deleteFilter(instance);
     }
 
     @Override
-    public Completable deleteAll(List<Filter> list) {
+    public Completable deleteAll(List<QueryFilter> list) {
         return dao.deleteAll(list);
     }
 

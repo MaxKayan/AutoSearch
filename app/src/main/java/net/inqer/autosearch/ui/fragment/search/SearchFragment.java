@@ -1,5 +1,6 @@
 package net.inqer.autosearch.ui.fragment.search;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -17,6 +18,7 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProvider;
 
 import net.inqer.autosearch.R;
+import net.inqer.autosearch.data.model.EditableFilter;
 import net.inqer.autosearch.databinding.FragmentSearchBinding;
 import net.inqer.autosearch.ui.dialog.RegionDialog;
 import net.inqer.autosearch.util.ViewModelProviderFactory;
@@ -46,8 +48,33 @@ public class SearchFragment extends DaggerFragment {
         viewModel = new ViewModelProvider(this, providerFactory).get(SearchViewModel.class);
         setHasOptionsMenu(true);
 
+        subscribeObservers();
         setupClickListeners();
     }
+
+    private void subscribeObservers() {
+        viewModel.getCurrentFilter().observe(getViewLifecycleOwner(), queryFilter -> {
+            Log.d(TAG, "subscribeObservers: current filter changed");
+            setupViewByFilter(queryFilter);
+        });
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void setupViewByFilter(EditableFilter filter) {
+        binding.fEditMarkValue.setText(filter.getCarMark());
+        binding.fEditModelValue.setText(filter.getCarModel());
+        binding.fEditRegionValue.setText(filter.getRegion().getName());
+        binding.fEditCityValue.setText(filter.getCities());
+        binding.fEditPriceValue.setText(filter.getPriceMinimum() +
+                " до: " + filter.getPriceMaximum());
+        binding.fEditYearValue.setText(filter.getManufactureYearMin() + " до: " + filter.getManufactureYearMax());
+        binding.fEditTransmissionValue.setText(filter.getTransmission());
+        binding.fEditHullValue.setText(filter.getHull());
+        binding.fEditFuelValue.setText(filter.getFuel());
+        binding.fEditDisplacementValue.setText(filter.getEngineDisplacementMin() + " до: " + filter.getEngineDisplacementMax());
+        binding.fEditRadiusValue.setText(filter.getRadius());
+    }
+
 
     private void setupClickListeners() {
         binding.fEditMark.setOnClickListener(v -> {
@@ -99,10 +126,10 @@ public class SearchFragment extends DaggerFragment {
         if (data != null) {
             switch (requestCode) {
                 case REGION:
-                    switch (resultCode) {
-                        case Activity.RESULT_OK:
-                            binding.fEditRegionValue.setText(data.getStringExtra(RegionDialog.REG_NAME));
-
+                    if (resultCode == Activity.RESULT_OK) {
+                        String rSlug = data.getStringExtra(RegionDialog.REG_ID);
+                        viewModel.setRegion(rSlug);
+//                        viewModel.getCurrentFilter().getValue().setRegion();
                     }
             }
         }

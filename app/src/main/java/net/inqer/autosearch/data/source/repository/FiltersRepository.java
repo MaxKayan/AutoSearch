@@ -3,7 +3,7 @@ package net.inqer.autosearch.data.source.repository;
 import androidx.lifecycle.MediatorLiveData;
 
 import net.inqer.autosearch.data.model.Event;
-import net.inqer.autosearch.data.model.Filter;
+import net.inqer.autosearch.data.model.QueryFilter;
 import net.inqer.autosearch.data.source.RemoteFilterDataSource;
 import net.inqer.autosearch.data.source.local.LocalFilterDataSource;
 import net.inqer.autosearch.data.source.testing.DataSource;
@@ -16,14 +16,14 @@ import javax.inject.Inject;
 import io.reactivex.Completable;
 import io.reactivex.Flowable;
 
-public class FiltersRepository implements DataSource<Filter> {
+public class FiltersRepository implements DataSource<QueryFilter> {
     private static final String TAG = "FiltersRepository";
 
     private final LocalFilterDataSource local;
     private final RemoteFilterDataSource remote;
     private final NetworkManager nm;
 
-    private MediatorLiveData<Event<List<Filter>>> observableFilters = new MediatorLiveData<>();
+    private MediatorLiveData<Event<List<QueryFilter>>> observableFilters = new MediatorLiveData<>();
 
     @Inject
     public FiltersRepository(LocalFilterDataSource local, RemoteFilterDataSource remote, NetworkManager nm) {
@@ -36,7 +36,7 @@ public class FiltersRepository implements DataSource<Filter> {
 
     @SuppressWarnings("unchecked")
     @Override
-    public Flowable<List<Filter>> getAll() {
+    public Flowable<List<QueryFilter>> getAll() {
 //        return Flowable.concatArrayEager(
 //                // get items from db first
 //                local.getAll(),
@@ -73,24 +73,24 @@ public class FiltersRepository implements DataSource<Filter> {
     }
 
     @Override
-    public Completable save(Filter instance) {
+    public Completable save(QueryFilter instance) {
         return null;
     }
 
     @Override
-    public Completable saveAll(List<Filter> list) {
+    public Completable saveAll(List<QueryFilter> list) {
         return null;
     }
 
     @Override
-    public Completable delete(Filter instance) {
+    public Completable delete(QueryFilter instance) {
         return remote.delete(instance)
                 .andThen(local.delete(instance));
 //        return local.delete(instance).startWith(remote.delete(instance));
     }
 
     @Override
-    public Completable deleteAll(List<Filter> list) {
+    public Completable deleteAll(List<QueryFilter> list) {
         return null;
     }
 

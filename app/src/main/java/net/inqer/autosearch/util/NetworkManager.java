@@ -4,7 +4,7 @@ import android.net.ConnectivityManager;
 import android.util.Log;
 
 import net.inqer.autosearch.util.bus.RxBus;
-import net.inqer.autosearch.util.bus.RxBusEventTest;
+import net.inqer.autosearch.util.bus.RxBusEvent;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -29,7 +29,7 @@ public class NetworkManager {
         Log.d(TAG, "isNetworkAvailable: " + result);
         lastResult = result;
         if (!result) {
-            rxBus.publish(new RxBusEventTest.Error(true, "Потеряна связь с Интернетом"));
+            rxBus.publish(RxBusEvent.error("Потеряно соединение с Интернетом!", true));
         }
         return result;
     }

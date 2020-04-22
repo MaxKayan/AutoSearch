@@ -1,4 +1,4 @@
-package net.inqer.autosearch.ui.dialog;
+package net.inqer.autosearch.ui.dialog.adapter;
 
 import android.util.Log;
 import android.view.LayoutInflater;

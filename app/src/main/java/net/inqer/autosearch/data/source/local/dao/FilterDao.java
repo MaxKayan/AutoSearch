@@ -6,7 +6,7 @@ import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 
-import net.inqer.autosearch.data.model.Filter;
+import net.inqer.autosearch.data.model.QueryFilter;
 
 import java.util.List;
 
@@ -16,24 +16,24 @@ import io.reactivex.Single;
 
 @Dao
 public interface FilterDao {
-    @Query("SELECT * FROM filters")
-    Flowable<List<Filter>> observeFilters();
+    @Query("SELECT * FROM QueryFilter")
+    Flowable<List<QueryFilter>> observeFilters();
 
-    @Query("SELECT * FROM filters")
-    Single<List<Filter>> getFilters();
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    Completable insertFilter(Filter filter);
+    @Query("SELECT * FROM QueryFilter")
+    Single<List<QueryFilter>> getFilters();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    Completable insertAllFilters(List<Filter> filters);
+    Completable insertFilter(QueryFilter filter);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    Completable insertAllFilters(List<QueryFilter> filters);
 
     @Delete
-    Completable deleteFilter(Filter filter);
+    Completable deleteFilter(QueryFilter filter);
 
     @Delete
-    Completable deleteAll(List<Filter> filters);
+    Completable deleteAll(List<QueryFilter> filters);
 
-    @Query("DELETE FROM filters")
+    @Query("DELETE FROM QueryFilter")
     Completable deleteAllFilters();
 }
