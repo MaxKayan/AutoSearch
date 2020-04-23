@@ -19,12 +19,9 @@ import androidx.lifecycle.ViewModelProvider;
 
 import net.inqer.autosearch.R;
 import net.inqer.autosearch.data.model.EditableFilter;
-import net.inqer.autosearch.data.model.Region;
 import net.inqer.autosearch.databinding.FragmentSearchBinding;
 import net.inqer.autosearch.ui.dialog.DialogListSearch;
 import net.inqer.autosearch.util.ViewModelProviderFactory;
-
-import java.util.ArrayList;
 
 import javax.inject.Inject;
 
@@ -88,7 +85,7 @@ public class SearchFragment extends DaggerFragment {
         });
 
         binding.fEditRegion.setOnClickListener(v -> {
-            DialogListSearch dialog = DialogListSearch.newInstance("Регион", "Наименование региона", new ArrayList<Region>());
+            DialogListSearch dialog = DialogListSearch.newInstance("Регион", "Наименование региона", viewModel.observeRegions());
             dialog.setTargetFragment(SearchFragment.this, REGION);
             dialog.show(getParentFragmentManager(), "RegionDialog");
         });

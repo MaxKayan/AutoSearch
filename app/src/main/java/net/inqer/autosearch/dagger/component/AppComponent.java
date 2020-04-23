@@ -4,7 +4,6 @@ import android.app.Application;
 import android.net.ConnectivityManager;
 
 import net.inqer.autosearch.BaseApplication;
-import net.inqer.autosearch.SessionManager;
 import net.inqer.autosearch.dagger.module.ActivityBuilderModule;
 import net.inqer.autosearch.dagger.module.AppModule;
 import net.inqer.autosearch.dagger.module.FragmentBuilderModule;
@@ -26,8 +25,6 @@ import dagger.android.AndroidInjector;
         AppModule.class
 })
 public interface AppComponent extends AndroidInjector<BaseApplication> {
-
-    SessionManager sessionManager();
 
     @Component.Builder
     interface Builder {

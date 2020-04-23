@@ -5,18 +5,20 @@ import android.util.Log;
 import net.inqer.autosearch.data.model.Region;
 import net.inqer.autosearch.data.source.api.MainApi;
 import net.inqer.autosearch.data.source.local.dao.RegionDao;
+import net.inqer.autosearch.data.source.testing.DataSource;
 import net.inqer.autosearch.util.NetworkManager;
 
 import java.util.List;
 
 import javax.inject.Inject;
 
+import io.reactivex.Completable;
 import io.reactivex.Flowable;
 import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
 
 
-public class RegionsRepository {
+public class RegionsRepository implements DataSource<Region> {
     private static final String TAG = "RegionsRepository";
 
     private final RegionDao local;
@@ -32,6 +34,7 @@ public class RegionsRepository {
     }
 
     @SuppressWarnings("unchecked")
+    @Override
     public Flowable<List<Region>> getAll() {
         return Flowable.concatArrayEager(
                 // get items from db first
@@ -52,6 +55,31 @@ public class RegionsRepository {
                 })
 
         );
+    }
+
+    @Override
+    public Completable save(Region instance) {
+        return null;
+    }
+
+    @Override
+    public Completable saveAll(List<Region> list) {
+        return null;
+    }
+
+    @Override
+    public Completable delete(Region instance) {
+        return null;
+    }
+
+    @Override
+    public Completable deleteAll(List<Region> list) {
+        return null;
+    }
+
+    @Override
+    public Completable clear() {
+        return null;
     }
 
     public Single<Region> getById(String slug) {

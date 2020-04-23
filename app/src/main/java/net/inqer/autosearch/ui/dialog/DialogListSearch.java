@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -16,6 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import net.inqer.autosearch.data.model.ListItem;
@@ -23,13 +25,16 @@ import net.inqer.autosearch.data.model.Region;
 import net.inqer.autosearch.databinding.DialogListSearchBinding;
 import net.inqer.autosearch.ui.dialog.adapter.DialogListAdapter;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+import io.reactivex.Flowable;
 import io.reactivex.disposables.CompositeDisposable;
 
-public class DialogListSearch<T extends ListItem> extends DialogFragment {
+public class DialogListSearch<T extends ListItem & Parcelable> extends DialogFragment {
     public static final String REG_ID = "region_slug";
     private static final String TAG = "TestDialog";
     private static final String TITLE = "dialog_header";
@@ -43,10 +48,12 @@ public class DialogListSearch<T extends ListItem> extends DialogFragment {
         }
     };
 
-//    @Inject
+
+    //    @Inject
 //    MainApi api;
 //    @Inject
 //    RegionsRepository repository;
+    private DialogListSearchViewModel<T> viewModel;
     private DialogListSearchBinding binding;
     private DialogListAdapter<T> adapter;
     private CompositeDisposable disposableBag = new CompositeDisposable();
@@ -54,15 +61,17 @@ public class DialogListSearch<T extends ListItem> extends DialogFragment {
     private String title;
     private String hint;
     private List<T> dataList = new ArrayList<>();
+    private Flowable<List<T>> dataSource;
 
     private Intent resultData = new Intent();
 
-    public static <T extends ListItem> DialogListSearch<T> newInstance(String title, String hint, ArrayList<T> list) {
+
+    public static <T extends ListItem> DialogListSearch<T> newInstance(String title, String hint, Flowable<List<T>> observer) {
         DialogListSearch<T> instance = new DialogListSearch<>();
+        instance.dataSource = observer;
         Bundle args = new Bundle();
         args.putString(TITLE, title);
         args.putString(HINT, hint);
-        args.putParcelableArrayList(LIST, list);
 
         return instance;
     }
@@ -73,30 +82,40 @@ public class DialogListSearch<T extends ListItem> extends DialogFragment {
         return binding.getRoot();
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         Log.d(TAG, "onViewCreated: ");
 
-        unpackBundleArgs(savedInstanceState == null ? new Bundle() : savedInstanceState);
+        DialogListSearchViewModelFactory<T> viewModelFactory = new DialogListSearchViewModelFactory<>(title, dataSource);
+        viewModel = new ViewModelProvider(this, viewModelFactory).get(DialogListSearchViewModel.class);
+
+//        unpackBundleArgs(savedInstanceState);
+        unpackBundleArgs(getArguments());
         setupView();
         setupSearchInput();
         setupRecyclerView();
-//        getData();
+        getData();
     }
 
 
-    private void unpackBundleArgs(Bundle bundle) {
-        title = bundle.getString(TITLE);
-        hint = bundle.getString(HINT);
-        dataList = bundle.getParcelableArrayList(LIST);
-        Log.d(TAG, "unpackBundleArgs: " + title + '\n' +
-                "list : " + dataList);
+    private void unpackBundleArgs(@Nullable Bundle bundle) {
+        if (bundle != null) {
+            title = bundle.getString(TITLE);
+            hint = bundle.getString(HINT);
+            dataList = bundle.getParcelableArrayList(LIST);
+            Log.d(TAG, "unpackBundleArgs: " + title + '\n' +
+                    "data source : " + dataSource + '\n' +
+                    "data list: " + dataList);
+        } else {
+            Log.w(TAG, "unpackBundleArgs: args bundle is null!");
+        }
     }
 
     private void setupView() {
-        binding.dialogLocHeader.setText(title);
-        binding.dialogLocInput.setHint(hint);
+        if (title != null && !title.isEmpty()) binding.dialogLocHeader.setText(title);
+        if (hint != null && !hint.isEmpty()) binding.dialogLocInput.setHint(hint);
     }
 
 
@@ -119,17 +138,22 @@ public class DialogListSearch<T extends ListItem> extends DialogFragment {
         });
     }
 
-//    private void getData() {
-//        Disposable sub = repository.getAll()
+    private void getData() {
+        viewModel.observerLiveData().observe(getViewLifecycleOwner(), list -> {
+            Log.d(TAG, "getData: " + list.size());
+            adapter.setNewList(list);
+            binding.dialogLocRv.setHasFixedSize(true);
+        });
+//        Disposable sub = dataSource
 //                .observeOn(AndroidSchedulers.mainThread())
 //                .subscribeOn(Schedulers.io())
-//                .subscribe(regions -> {
-//                    adapter.setNewList((List<T>) regions);
+//                .subscribe(list -> {
+//                    adapter.setNewList(list);
 //                    binding.dialogLocRv.setHasFixedSize(true);
 //                }, throwable -> {
 //                    Log.e(TAG, "getData: Error", throwable);
 //                });
-//    }
+    }
 
 
     private void setupRecyclerView() {
@@ -151,7 +175,14 @@ public class DialogListSearch<T extends ListItem> extends DialogFragment {
     }
 
     @Override
-    public void onAttach(Context context) {
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Log.d(TAG, "onSaveInstanceState: ");
+//        outState.putParcelableArray(LIST, (Parcelable[]) adapter.getCurrentList().toArray());
+    }
+
+    @Override
+    public void onAttach(@NotNull Context context) {
         super.onAttach(context);
     }
 

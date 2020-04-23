@@ -10,8 +10,11 @@ import net.inqer.autosearch.data.model.EditableFilter;
 import net.inqer.autosearch.data.model.Region;
 import net.inqer.autosearch.data.source.repository.RegionsRepository;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
+import io.reactivex.Flowable;
 import io.reactivex.Single;
 import io.reactivex.disposables.Disposable;
 
@@ -35,6 +38,10 @@ public class SearchViewModel extends ViewModel {
 
     public Single<Region> getRegionById(String slug) {
         return regionsRepository.getById(slug);
+    }
+
+    public Flowable<List<Region>> observeRegions() {
+        return regionsRepository.getAll();
     }
 
     public void setRegion(String rSlug) {
