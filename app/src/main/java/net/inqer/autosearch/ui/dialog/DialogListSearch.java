@@ -1,7 +1,6 @@
 package net.inqer.autosearch.ui.dialog;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -21,14 +20,9 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import net.inqer.autosearch.data.model.ListItem;
-import net.inqer.autosearch.data.model.Region;
 import net.inqer.autosearch.databinding.DialogListSearchBinding;
 import net.inqer.autosearch.ui.dialog.adapter.DialogListAdapter;
 
-import org.jetbrains.annotations.NotNull;
-
-import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 import io.reactivex.Flowable;
@@ -39,20 +33,7 @@ public class DialogListSearch<T extends ListItem & Parcelable> extends DialogFra
     private static final String TAG = "TestDialog";
     private static final String TITLE = "dialog_header";
     private static final String HINT = "dialog_search_hint";
-    private static final String LIST = "dialog_search_hint";
 
-    final Comparator<Region> alphabeticalComparator = new Comparator<Region>() {
-        @Override
-        public int compare(Region a, Region b) {
-            return a.getName().compareTo(b.getName());
-        }
-    };
-
-
-    //    @Inject
-//    MainApi api;
-//    @Inject
-//    RegionsRepository repository;
     private DialogListSearchViewModel<T> viewModel;
     private DialogListSearchBinding binding;
     private DialogListAdapter<T> adapter;
@@ -60,7 +41,6 @@ public class DialogListSearch<T extends ListItem & Parcelable> extends DialogFra
 
     private String title;
     private String hint;
-    private List<T> dataList = new ArrayList<>();
     private Flowable<List<T>> dataSource;
 
     private Intent resultData = new Intent();
@@ -72,9 +52,11 @@ public class DialogListSearch<T extends ListItem & Parcelable> extends DialogFra
         Bundle args = new Bundle();
         args.putString(TITLE, title);
         args.putString(HINT, hint);
+        instance.setArguments(args);
 
         return instance;
     }
+
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -104,14 +86,13 @@ public class DialogListSearch<T extends ListItem & Parcelable> extends DialogFra
         if (bundle != null) {
             title = bundle.getString(TITLE);
             hint = bundle.getString(HINT);
-            dataList = bundle.getParcelableArrayList(LIST);
             Log.d(TAG, "unpackBundleArgs: " + title + '\n' +
-                    "data source : " + dataSource + '\n' +
-                    "data list: " + dataList);
+                    "data source : " + dataSource + '\n');
         } else {
             Log.w(TAG, "unpackBundleArgs: args bundle is null!");
         }
     }
+
 
     private void setupView() {
         if (title != null && !title.isEmpty()) binding.dialogLocHeader.setText(title);
@@ -138,25 +119,22 @@ public class DialogListSearch<T extends ListItem & Parcelable> extends DialogFra
         });
     }
 
+
     private void getData() {
         viewModel.observerLiveData().observe(getViewLifecycleOwner(), list -> {
             Log.d(TAG, "getData: " + list.size());
+//            binding.dialogLocRv.setHasFixedSize(false);
             adapter.setNewList(list);
-            binding.dialogLocRv.setHasFixedSize(true);
+//            binding.dialogLocRv.setHasFixedSize(true);
+            if (adapter.getCurrentList().size() > 0) {
+                binding.dialogLocRv.setHasFixedSize(true);
+            }
         });
-//        Disposable sub = dataSource
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribeOn(Schedulers.io())
-//                .subscribe(list -> {
-//                    adapter.setNewList(list);
-//                    binding.dialogLocRv.setHasFixedSize(true);
-//                }, throwable -> {
-//                    Log.e(TAG, "getData: Error", throwable);
-//                });
     }
 
 
     private void setupRecyclerView() {
+//        binding.dialogLocRv.setHasFixedSize(false);
         binding.dialogLocRv.setLayoutManager(new LinearLayoutManager(getContext()));
         adapter = new DialogListAdapter<T>(position -> {
             T region = adapter.getItemAt(position);
@@ -174,16 +152,11 @@ public class DialogListSearch<T extends ListItem & Parcelable> extends DialogFra
         binding.dialogLocRv.setAdapter(adapter);
     }
 
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        Log.d(TAG, "onSaveInstanceState: ");
-//        outState.putParcelableArray(LIST, (Parcelable[]) adapter.getCurrentList().toArray());
-    }
 
     @Override
-    public void onAttach(@NotNull Context context) {
-        super.onAttach(context);
+    public void onPause() {
+        binding.dialogLocRv.setHasFixedSize(false);
+        super.onPause();
     }
 
     @Override

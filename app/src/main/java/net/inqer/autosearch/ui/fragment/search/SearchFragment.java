@@ -30,6 +30,8 @@ import dagger.android.support.DaggerFragment;
 public class SearchFragment extends DaggerFragment {
     private static final String TAG = "SearchFragment";
     private final int REGION = 1;
+    private final int CITY = 2;
+
     @Inject
     ViewModelProviderFactory providerFactory;
     private SearchViewModel viewModel;
@@ -90,7 +92,9 @@ public class SearchFragment extends DaggerFragment {
             dialog.show(getParentFragmentManager(), "RegionDialog");
         });
         binding.fEditCity.setOnClickListener(v -> {
-
+            DialogListSearch dialog = DialogListSearch.newInstance("Город", "Наименование города", viewModel.observeRegions());
+            dialog.setTargetFragment(this, CITY);
+            dialog.show(getParentFragmentManager(), "CityDialog");
         });
 
         binding.fEditPrice.setOnClickListener(v -> {
@@ -130,6 +134,10 @@ public class SearchFragment extends DaggerFragment {
                         String rSlug = data.getStringExtra(DialogListSearch.REG_ID);
                         viewModel.setRegion(rSlug);
 //                        viewModel.getCurrentFilter().getValue().setRegion();
+                    }
+                case CITY:
+                    if (resultCode == Activity.RESULT_OK) {
+
                     }
             }
         }
