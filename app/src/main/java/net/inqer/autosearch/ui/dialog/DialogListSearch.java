@@ -3,7 +3,6 @@ package net.inqer.autosearch.ui.dialog;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -28,7 +27,7 @@ import java.util.List;
 import io.reactivex.Flowable;
 import io.reactivex.disposables.CompositeDisposable;
 
-public class DialogListSearch<T extends ListItem & Parcelable> extends DialogFragment {
+public class DialogListSearch<T extends ListItem> extends DialogFragment {
     public static final String REG_ID = "region_slug";
     private static final String TAG = "TestDialog";
     private static final String TITLE = "dialog_header";
