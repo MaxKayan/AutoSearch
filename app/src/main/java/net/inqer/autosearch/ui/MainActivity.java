@@ -3,6 +3,7 @@ package net.inqer.autosearch.ui;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -16,10 +17,14 @@ import net.inqer.autosearch.dagger.annotation.MainActivityScope;
 import net.inqer.autosearch.data.source.local.AuthParametersProvider;
 import net.inqer.autosearch.databinding.ActivityMainBinding;
 import net.inqer.autosearch.ui.login.LoginActivity;
+import net.inqer.autosearch.util.bus.RxBus;
+import net.inqer.autosearch.util.bus.RxBusEvent;
 
 import javax.inject.Inject;
 
 import dagger.android.support.DaggerAppCompatActivity;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
 
 @MainActivityScope
 public class MainActivity extends DaggerAppCompatActivity {
@@ -29,6 +34,9 @@ public class MainActivity extends DaggerAppCompatActivity {
 
     @Inject
     AuthParametersProvider parametersProvider;
+
+    @Inject
+    RxBus rxBus;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,30 +54,38 @@ public class MainActivity extends DaggerAppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
+
+        subscribeObservers();
     }
 
 
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        getMenuInflater().inflate(R.menu.action_bar_menu, menu);
-//        return true;
-//    }
-//
-//
-//    @Override
-//    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-//        switch (item.getItemId()) {
-//            case R.id.action_profile:
-//                Toast.makeText(this, "Profile button pressed", Toast.LENGTH_SHORT).show();
-//                return true;
-//            case R.id.action_settings:
-//                Toast.makeText(this, "Settings button pressed", Toast.LENGTH_SHORT).show();
-//                return true;
-//            default:
-//                return super.onOptionsItemSelected(item);
-//        }
-//    }
+    private void subscribeObservers() {
+        //        @SuppressWarnings("unchecked")
+        Disposable bus = rxBus.listen(RxBusEvent.class)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(e -> {
+                    switch (e.status) {
+                        case LOADING:
+                            showProgressBar(true);
+                            break;
+                        case SUCCESS:
+                            showProgressBar(false);
+                        case MESSAGE:
+                            Toast.makeText(this, e.message, Toast.LENGTH_SHORT).show();
+                            break;
+                        case ERROR:
+                            showProgressBar(false);
+                            Toast.makeText(this, e.message, Toast.LENGTH_SHORT).show();
+                            break;
+                    }
+                }, throwable -> {
+                    Log.e(TAG, "subscribeObservers: Error: " + throwable.getMessage(), throwable);
+                });
+    }
 
+    private void showProgressBar(boolean show) {
+
+    }
 
     public void signOut() {
         Log.d(TAG, "signOut: called");

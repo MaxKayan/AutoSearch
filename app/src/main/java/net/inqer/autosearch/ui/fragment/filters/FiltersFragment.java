@@ -1,5 +1,6 @@
 package net.inqer.autosearch.ui.fragment.filters;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,7 +22,6 @@ import net.inqer.autosearch.R;
 import net.inqer.autosearch.databinding.FragmentFiltersBinding;
 import net.inqer.autosearch.util.ViewModelProviderFactory;
 import net.inqer.autosearch.util.bus.RxBus;
-import net.inqer.autosearch.util.bus.RxBusEvent;
 
 import javax.inject.Inject;
 
@@ -44,6 +44,8 @@ public class FiltersFragment extends DaggerFragment {
     private FiltersViewModel viewModel;
 
     private FragmentFiltersBinding binding;
+
+    private Context context;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -74,26 +76,6 @@ public class FiltersFragment extends DaggerFragment {
             showProgressBar(false);
         });
 
-//        @SuppressWarnings("unchecked")
-        Disposable bus = rxBus.listen(RxBusEvent.class)
-                .subscribe(e -> {
-                    switch (e.status) {
-                        case LOADING:
-                            showProgressBar(true);
-                            break;
-                        case SUCCESS:
-                            showProgressBar(false);
-                        case MESSAGE:
-                            Toast.makeText(getContext(), e.message, Toast.LENGTH_SHORT).show();
-                            break;
-                        case ERROR:
-                            showProgressBar(false);
-                            Toast.makeText(getContext(), e.message, Toast.LENGTH_SHORT).show();
-                            break;
-                    }
-                }, throwable -> {
-                    Log.e(TAG, "subscribeObservers: Error" + throwable.getMessage(), throwable);
-                });
     }
 
 
@@ -163,6 +145,11 @@ public class FiltersFragment extends DaggerFragment {
         super.onResume();
     }
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        this.context = context;
+    }
 
     @Override
     public void onPause() {

@@ -1,4 +1,4 @@
-package net.inqer.autosearch.ui.dialog;
+package net.inqer.autosearch.ui.dialog.listsearch;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;

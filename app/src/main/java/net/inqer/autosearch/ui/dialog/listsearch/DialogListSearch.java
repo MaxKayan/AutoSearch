@@ -1,4 +1,4 @@
-package net.inqer.autosearch.ui.dialog;
+package net.inqer.autosearch.ui.dialog.listsearch;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -20,7 +20,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import net.inqer.autosearch.data.model.ListItem;
 import net.inqer.autosearch.databinding.DialogListSearchBinding;
-import net.inqer.autosearch.ui.dialog.adapter.DialogListAdapter;
+import net.inqer.autosearch.ui.dialog.listsearch.adapter.DialogListAdapter;
 
 import java.util.List;
 

@@ -9,7 +9,6 @@ import net.inqer.autosearch.data.model.api.PageResponse;
 import java.util.List;
 
 import io.reactivex.Completable;
-import io.reactivex.Flowable;
 import io.reactivex.Single;
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -32,7 +31,7 @@ public interface MainApi {
 
     // TODO: Move filter-related request to sub-component?
     @GET("filters/")
-    Flowable<PageResponse<QueryFilter>> getFilters();
+    Single<PageResponse<QueryFilter>> getFilters();
 
     @POST("filters/")
     Completable createFilter(@Body QueryFilter filter);
@@ -53,11 +52,14 @@ public interface MainApi {
     <T> Single<PageResponse<T>> getPage(@Url String fullUrl);
 
     @GET
-    Flowable<PageResponse<Region>> getPageRegion(@Url String gullUrl);
-
-    @GET("cities/")
-    Flowable<PageResponse<City>> getCitiesByRegion(@Query("region_slug") String regionSlug);
+    Single<PageResponse<Region>> getPageRegion(@Url String fullUrl);
 
     @GET("regions/")
-    Flowable<List<Region>> getRegions();
+    Single<List<Region>> getRegions();
+
+    @GET("cities/")
+    Single<PageResponse<City>> getCitiesByRegion(@Query("region_slug") String regionSlug);
+
+    @GET()
+    Single<PageResponse<City>> getCitiesPage(@Url String fullUrl);
 }

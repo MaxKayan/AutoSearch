@@ -20,7 +20,7 @@ import androidx.lifecycle.ViewModelProvider;
 import net.inqer.autosearch.R;
 import net.inqer.autosearch.data.model.EditableFilter;
 import net.inqer.autosearch.databinding.FragmentSearchBinding;
-import net.inqer.autosearch.ui.dialog.DialogListSearch;
+import net.inqer.autosearch.ui.dialog.listsearch.DialogListSearch;
 import net.inqer.autosearch.util.ViewModelProviderFactory;
 
 import javax.inject.Inject;
@@ -55,6 +55,7 @@ public class SearchFragment extends DaggerFragment {
     }
 
     private void subscribeObservers() {
+
         viewModel.getCurrentFilter().observe(getViewLifecycleOwner(), queryFilter -> {
             Log.d(TAG, "subscribeObservers: current filter changed");
             setupViewByFilter(queryFilter);
@@ -123,6 +124,7 @@ public class SearchFragment extends DaggerFragment {
             Toast.makeText(getContext(), "Search button clicked", Toast.LENGTH_SHORT).show();
         });
     }
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {

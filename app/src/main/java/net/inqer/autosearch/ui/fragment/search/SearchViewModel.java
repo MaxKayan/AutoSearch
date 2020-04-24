@@ -6,9 +6,11 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import net.inqer.autosearch.data.model.City;
 import net.inqer.autosearch.data.model.EditableFilter;
 import net.inqer.autosearch.data.model.Region;
-import net.inqer.autosearch.data.source.repository.RegionsRepository;
+import net.inqer.autosearch.data.model.api.PageResponse;
+import net.inqer.autosearch.data.source.repository.LocationsRepository;
 
 import java.util.List;
 
@@ -20,12 +22,12 @@ import io.reactivex.disposables.Disposable;
 
 public class SearchViewModel extends ViewModel {
     private static final String TAG = "SearchViewModel";
-    private final RegionsRepository regionsRepository;
+    private final LocationsRepository locationsRepository;
     private MutableLiveData<EditableFilter> currentEditableFilter = new MutableLiveData<>(new EditableFilter());
 
     @Inject
-    SearchViewModel(RegionsRepository regionsRepository) {
-        this.regionsRepository = regionsRepository;
+    SearchViewModel(LocationsRepository locationsRepository) {
+        this.locationsRepository = locationsRepository;
     }
 
     LiveData<EditableFilter> getCurrentFilter() {
@@ -37,15 +39,20 @@ public class SearchViewModel extends ViewModel {
     }
 
     public Single<Region> getRegionById(String slug) {
-        return regionsRepository.getById(slug);
+        return locationsRepository.getRegionById(slug);
+    }
+
+    public Single<List<City>> getCitiesByRegion(Region region) {
+        return locationsRepository.getCitiesPageByRegion(region)
+                .map(PageResponse::getResults);
     }
 
     public Flowable<List<Region>> observeRegions() {
-        return regionsRepository.getAll();
+        return locationsRepository.getAllRegions();
     }
 
     public void setRegion(String rSlug) {
-        Disposable d = regionsRepository.getById(rSlug)
+        Disposable d = locationsRepository.getRegionById(rSlug)
                 .subscribe(region -> {
                     EditableFilter filter = currentEditableFilter.getValue();
                     if (filter != null && region != null) {

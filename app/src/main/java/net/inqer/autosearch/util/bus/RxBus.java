@@ -1,7 +1,5 @@
 package net.inqer.autosearch.util.bus;
 
-import android.util.Log;
-
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -18,7 +16,7 @@ public class RxBus {
     }
 
     public void publish(Object event) {
-        Log.d(TAG, "publish: new event: " + event.toString());
+//        Log.d(TAG, "publish: new event: " + event.toString());
         publisher.onNext(event);
     }
 
