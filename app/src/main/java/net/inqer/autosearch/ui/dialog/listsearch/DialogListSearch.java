@@ -9,7 +9,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,6 +19,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import net.inqer.autosearch.data.model.ListItem;
 import net.inqer.autosearch.databinding.DialogListSearchBinding;
+import net.inqer.autosearch.ui.dialog.listsearch.adapter.AutoCompleteListItemAdapter;
 import net.inqer.autosearch.ui.dialog.listsearch.adapter.DialogListAdapter;
 
 import java.util.List;
@@ -29,13 +29,14 @@ import io.reactivex.disposables.CompositeDisposable;
 
 public class DialogListSearch<T extends ListItem> extends DialogFragment {
     public static final String REG_ID = "region_slug";
-    private static final String TAG = "TestDialog";
+    public static final String TAG = "DialogListSearch";
     private static final String TITLE = "dialog_header";
     private static final String HINT = "dialog_search_hint";
 
     private DialogListSearchViewModel<T> viewModel;
     private DialogListSearchBinding binding;
     private DialogListAdapter<T> adapter;
+    private AutoCompleteListItemAdapter<T> autoCompleteAdapter;
     private CompositeDisposable disposableBag = new CompositeDisposable();
 
     private String title;
@@ -96,6 +97,13 @@ public class DialogListSearch<T extends ListItem> extends DialogFragment {
     private void setupView() {
         if (title != null && !title.isEmpty()) binding.dialogLocHeader.setText(title);
         if (hint != null && !hint.isEmpty()) binding.dialogLocInput.setHint(hint);
+        binding.dialogLocInput.setOnItemClickListener((parent, view, position, id) -> {
+            Log.d(TAG, "setupView: "+autoCompleteAdapter.getItem(position));
+            ListItem item = autoCompleteAdapter.getItem(position);
+            if (item != null) {
+                finishWithResult(item.getSlug());
+            }
+        });
     }
 
 
@@ -113,7 +121,7 @@ public class DialogListSearch<T extends ListItem> extends DialogFragment {
 
             @Override
             public void afterTextChanged(Editable s) {
-                adapter.getFilter().filter(s);
+//                adapter.getFilter().filter(s);
             }
         });
     }
@@ -124,6 +132,11 @@ public class DialogListSearch<T extends ListItem> extends DialogFragment {
             Log.d(TAG, "getData: " + list.size());
 //            binding.dialogLocRv.setHasFixedSize(false);
             adapter.setNewList(list);
+            autoCompleteAdapter = new AutoCompleteListItemAdapter<>(getContext(), list);
+            binding.dialogLocInput.setAdapter(autoCompleteAdapter);
+//            binding.dialogLocInput.setAdapter(new ArrayAdapter<T>(getContext(), android.R.layout.simple_list_item_1, list));
+            Log.d(TAG, binding.dialogLocInput.getAdapter().toString()+"\n"+
+                    binding.dialogLocInput.getAdapter().getCount());
 //            binding.dialogLocRv.setHasFixedSize(true);
             if (adapter.getCurrentList().size() > 0) {
                 binding.dialogLocRv.setHasFixedSize(true);
@@ -135,18 +148,7 @@ public class DialogListSearch<T extends ListItem> extends DialogFragment {
     private void setupRecyclerView() {
 //        binding.dialogLocRv.setHasFixedSize(false);
         binding.dialogLocRv.setLayoutManager(new LinearLayoutManager(getContext()));
-        adapter = new DialogListAdapter<T>(position -> {
-            T region = adapter.getItemAt(position);
-            Toast.makeText(getContext(), "Pressed: " + region.toString(), Toast.LENGTH_SHORT).show();
-
-            resultData.putExtra(REG_ID, region.getSlug());
-
-            Fragment target = getTargetFragment();
-            if (target != null) {
-                target.onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, resultData);
-                dismiss();
-            }
-        });
+        adapter = new DialogListAdapter<T>(this::finishWithResult);
 
         binding.dialogLocRv.setAdapter(adapter);
     }
@@ -163,6 +165,16 @@ public class DialogListSearch<T extends ListItem> extends DialogFragment {
         super.onDetach();
         Log.d(TAG, "onDetach: Called");
 //        disposableBag.clear();
+    }
+
+
+    private void finishWithResult(String slug) {
+        Fragment target = getTargetFragment();
+        if (target != null) {
+            resultData.putExtra(REG_ID, slug);
+            target.onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, resultData);
+            dismiss();
+        }
     }
 
 }

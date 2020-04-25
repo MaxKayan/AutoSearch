@@ -161,4 +161,10 @@ public class Region implements ListItem, Parcelable {
             return new Region[size];
         }
     };
+
+    @NonNull
+    @Override
+    public String toString() {
+        return this.getName();
+    }
 }

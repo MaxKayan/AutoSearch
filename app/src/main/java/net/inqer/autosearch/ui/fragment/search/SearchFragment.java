@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 
 import net.inqer.autosearch.R;
@@ -26,6 +27,7 @@ import net.inqer.autosearch.util.ViewModelProviderFactory;
 import javax.inject.Inject;
 
 import dagger.android.support.DaggerFragment;
+import io.reactivex.Flowable;
 
 public class SearchFragment extends DaggerFragment {
     private static final String TAG = "SearchFragment";
@@ -55,7 +57,6 @@ public class SearchFragment extends DaggerFragment {
     }
 
     private void subscribeObservers() {
-
         viewModel.getCurrentFilter().observe(getViewLifecycleOwner(), queryFilter -> {
             Log.d(TAG, "subscribeObservers: current filter changed");
             setupViewByFilter(queryFilter);
@@ -76,6 +77,9 @@ public class SearchFragment extends DaggerFragment {
         binding.fEditFuelValue.setText(filter.getFuel());
         binding.fEditDisplacementValue.setText(filter.getEngineDisplacementMin() + " до: " + filter.getEngineDisplacementMax());
         binding.fEditRadiusValue.setText(String.valueOf(filter.getRadius()));
+
+        if (filter.getRegion() == null) binding.fEditCityLabel.setEnabled(false);
+        else binding.fEditCityLabel.setEnabled(true);
     }
 
 
@@ -88,14 +92,14 @@ public class SearchFragment extends DaggerFragment {
         });
 
         binding.fEditRegion.setOnClickListener(v -> {
-            DialogListSearch dialog = DialogListSearch.newInstance("Регион", "Наименование региона", viewModel.observeRegions());
-            dialog.setTargetFragment(SearchFragment.this, REGION);
-            dialog.show(getParentFragmentManager(), "RegionDialog");
+            showListSearchDialog(REGION, "Регион", "", "Наименование региона", viewModel.observeRegions());
         });
         binding.fEditCity.setOnClickListener(v -> {
-            DialogListSearch dialog = DialogListSearch.newInstance("Город", "Наименование города", viewModel.observeRegions());
-            dialog.setTargetFragment(this, CITY);
-            dialog.show(getParentFragmentManager(), "CityDialog");
+            EditableFilter currentFilter = getCurrentFilter();
+            if (currentFilter != null && currentFilter.getRegion() != null) {
+                showListSearchDialog(CITY, "Город", "", "Наименование города",
+                        viewModel.getCitiesByRegion(currentFilter.getRegion()).toFlowable());
+            } else Log.e(TAG, "setupClickListeners: fEditCity: current filter is null!");
         });
 
         binding.fEditPrice.setOnClickListener(v -> {
@@ -124,6 +128,11 @@ public class SearchFragment extends DaggerFragment {
             Toast.makeText(getContext(), "Search button clicked", Toast.LENGTH_SHORT).show();
         });
     }
+    
+    @Nullable
+    private EditableFilter getCurrentFilter() {
+        return viewModel.getCurrentFilter().getValue();
+    }
 
 
     @Override
@@ -139,10 +148,23 @@ public class SearchFragment extends DaggerFragment {
                     }
                 case CITY:
                     if (resultCode == Activity.RESULT_OK) {
-
+                        Log.d(TAG, "onActivityResult: city success");
                     }
             }
         }
+    }
+
+    private void showListSearchDialog(int requestCode, String title, String subtitle, String hint, Flowable dataSource) {
+        FragmentManager manager = getParentFragmentManager();
+        manager.executePendingTransactions();
+        if (manager.findFragmentByTag(DialogListSearch.TAG) != null) {
+            Log.w(TAG, "setupClickListeners: fEditRegion already exists");
+            return;
+        }
+
+        DialogListSearch dialog = DialogListSearch.newInstance(title, hint, dataSource);
+        dialog.setTargetFragment(SearchFragment.this, requestCode);
+        dialog.show(manager, DialogListSearch.TAG);
     }
 
 

@@ -25,7 +25,7 @@ public class RemoteFilterDataSource implements DataSource<QueryFilter> {
     @Override
     public Flowable<List<QueryFilter>> getAll() {
         return api.getFilters()
-                .map(PageResponse::getResults);
+                .map(PageResponse::getResults).toFlowable();
     }
 
     @Override

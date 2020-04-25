@@ -1,11 +1,14 @@
 package net.inqer.autosearch.data.model;
 
+import androidx.annotation.NonNull;
 import androidx.room.Entity;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.Objects;
+
 @Entity(tableName = "cities")
-public class City {
+public class City implements ListItem {
     private String name;
     private String region_slug;
     private String slug;
@@ -46,6 +49,16 @@ public class City {
         return slug;
     }
 
+    @Override
+    public <T> boolean isSameModelAs(@NonNull T model) {
+        return model instanceof City && this.slug.equals(((City) model).slug);
+    }
+
+    @Override
+    public <T> boolean isContentTheSameAs(@NonNull T model) {
+        return this.equals(model);
+    }
+
     public String getAvito() {
         return avito;
     }
@@ -72,5 +85,33 @@ public class City {
 
     public String getRegion() {
         return region;
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return this.getName();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        City city = (City) o;
+        return Objects.equals(name, city.name) &&
+                Objects.equals(region_slug, city.region_slug) &&
+                Objects.equals(slug, city.slug) &&
+                Objects.equals(avito, city.avito) &&
+                Objects.equals(autoru, city.autoru) &&
+                Objects.equals(drom, city.drom) &&
+                Objects.equals(youla, city.youla) &&
+                Objects.equals(call_count, city.call_count) &&
+                Objects.equals(isPopular, city.isPopular) &&
+                Objects.equals(region, city.region);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, region_slug, slug, avito, autoru, drom, youla, call_count, isPopular, region);
     }
 }

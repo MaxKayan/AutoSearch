@@ -17,7 +17,7 @@
         android:textColor="#000"
         android:textSize="18sp" />
 
-    <EditText
+    <AutoCompleteTextView
         android:id="@+id/dialog_loc_input"
         style="@style/Widget.AppCompat.EditText"
         android:layout_width="match_parent"

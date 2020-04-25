@@ -1,10 +1,8 @@
 package net.inqer.autosearch.data.model;
 
-import android.os.Parcelable;
-
 import androidx.annotation.NonNull;
 
-public interface ListItem extends Parcelable {
+public interface ListItem {
     String getName();
     String getSlug();
     <T> boolean isSameModelAs(@NonNull T model);

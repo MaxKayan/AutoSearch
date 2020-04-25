@@ -17,6 +17,7 @@ import javax.inject.Inject;
 import io.reactivex.Completable;
 import io.reactivex.Flowable;
 import io.reactivex.Single;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
 
@@ -39,12 +40,20 @@ public class LocationsRepository {
         return local.observeRegions()
                 .doOnSubscribe(subscription -> {
                     Log.d(TAG, "getAllRegions: new sub: " + subscription.toString());
+                    Disposable r = refreshRegions()
+                            .subscribe(() -> {
+                                Log.d(TAG, "getAllRegions: refreshed");
+                            }, throwable -> {
+                                Log.e(TAG, "getAllRegions: Error: "+throwable.getMessage(), throwable);
+                            });
                 });
     }
+
 
     public Completable refreshRegions() {
         // get new data from backend
         return remote.getRegions()
+                .subscribeOn(Schedulers.io())
                 // get current data from database
                 .flatMapCompletable(newRegions -> local.getRegions()
                         .flatMapCompletable(savedRegions -> {
@@ -63,13 +72,15 @@ public class LocationsRepository {
                         }));
     }
 
+
     public Single<Region> getRegionById(String slug) {
         return local.getRegionById(slug)
                 .subscribeOn(Schedulers.io());
     }
 
     public Single<PageResponse<City>> getCitiesPageByRegion(Region region) {
-        return remote.getCitiesByRegion(region.getSlug());
+        return remote.getCitiesByRegion(region.getSlug())
+                .subscribeOn(Schedulers.io());
     }
 
     public Single<PageResponse<City>> getCitiesPage(String fullUrl) {

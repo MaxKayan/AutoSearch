@@ -9,6 +9,7 @@ import net.inqer.autosearch.databinding.DialogSearchItemBinding;
 import org.jetbrains.annotations.NotNull;
 
 class SearchItemViewHolder extends RecyclerView.ViewHolder {
+    private static final String TAG = "SearchItemViewHolder";
     private DialogSearchItemBinding binding;
 
     SearchItemViewHolder(@NonNull DialogSearchItemBinding itemBinding) {
@@ -18,10 +19,10 @@ class SearchItemViewHolder extends RecyclerView.ViewHolder {
 
     void bind(@NotNull ListItem item, final SearchItemClickListener listener, final int pos) {
         binding.dItemLabel.setText(item.getName());
-        binding.dItem.setOnClickListener(v -> listener.onClick(pos));
+        binding.dItem.setOnClickListener(v -> listener.onClick(item.getSlug()));
     }
 
     public interface SearchItemClickListener {
-        void onClick(int position);
+        void onClick(String slug);
     }
 }

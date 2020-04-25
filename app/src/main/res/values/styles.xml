@@ -6,6 +6,7 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="ripple_selectable_background">?android:attr/selectableItemBackground</item>
     </style>
 
     <style name="SplashTheme" parent="@style/Theme.AppCompat.NoActionBar">
@@ -21,6 +22,10 @@
         <item name="cardElevation">1dp</item>
     </style>
 
+    <style name="EditorItem">
+        <item name="android:background">?selectableItemBackground</item>
+    </style>
+
     <style name="EditorTitle">
         <item name="android:textSize">15sp</item>
         <item name="android:textColor">@android:color/tab_indicator_text</item>
@@ -28,7 +33,7 @@
 
     <style name="EditorLabel">
         <item name="android:textSize">17sp</item>
-        <item name="android:textColor">@android:color/secondary_text_light</item>
+        <item name="android:textColor">@color/text_color</item>
     </style>
 
     <style name="EditorValue">
@@ -45,10 +50,6 @@
         <item name="android:textColor">@android:color/white</item>
         <item name="android:textAllCaps">false</item>
         <item name="android:textSize">20sp</item>
-    </style>
-
-    <style name="EditorItem">
-        <item name="android:background">?android:attr/selectableItemBackground</item>
     </style>
 
 

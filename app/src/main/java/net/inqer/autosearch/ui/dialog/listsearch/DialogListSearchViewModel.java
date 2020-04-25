@@ -30,6 +30,9 @@ public class DialogListSearchViewModel<T extends ListItem> extends ViewModel {
     }
 
     LiveData<List<T>> observerLiveData() {
-        return LiveDataReactiveStreams.fromPublisher(dataSource);
+        return LiveDataReactiveStreams.fromPublisher(dataSource
+        .doOnError(throwable -> {
+            Log.e(TAG, "observerLiveData: Error: "+throwable.getMessage(), throwable);
+        }));
     }
 }
