@@ -85,7 +85,7 @@ public class SearchFragment extends DaggerFragment {
 
     private void setupClickListeners() {
         binding.fEditMark.setOnClickListener(v -> {
-            Toast.makeText(getContext(), "Mark clicked!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "CarMark clicked!", Toast.LENGTH_SHORT).show();
         });
         binding.fEditModel.setOnClickListener(v -> {
             Toast.makeText(getContext(), "Model clicked!", Toast.LENGTH_SHORT).show();

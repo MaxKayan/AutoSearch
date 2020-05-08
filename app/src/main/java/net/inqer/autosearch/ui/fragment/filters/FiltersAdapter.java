@@ -76,9 +76,9 @@ public class FiltersAdapter extends ListAdapter<QueryFilter, FiltersAdapter.Filt
         }
 
         void bind(@NotNull QueryFilter filter) {
-            carMark.setText(filter.getCarMark());
-            carModel.setText(filter.getCarModel());
-            city.setText(filter.getCities());
+            carMark.setText(filter.getCarMarks().get(0));
+            carModel.setText(filter.getCarModels().get(0));
+            city.setText(filter.getCities().get(0));
             createdAt.setText(dateFormat.format(filter.getCreated_at()));
             resultCount.setText(String.valueOf(filter.getQuantity()));
         }
