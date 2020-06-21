@@ -1,5 +1,7 @@
 package net.inqer.autosearch.data.model;
 
+import android.os.Parcel;
+
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
 
@@ -114,4 +116,49 @@ public class City implements ListItem {
     public int hashCode() {
         return Objects.hash(name, region_slug, slug, avito, autoru, drom, youla, call_count, isPopular, region);
     }
+
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.name);
+        dest.writeString(this.region_slug);
+        dest.writeString(this.slug);
+        dest.writeString(this.avito);
+        dest.writeString(this.autoru);
+        dest.writeString(this.drom);
+        dest.writeString(this.youla);
+        dest.writeValue(this.call_count);
+        dest.writeValue(this.isPopular);
+        dest.writeString(this.region);
+    }
+
+    private City(Parcel in) {
+        this.name = in.readString();
+        this.region_slug = in.readString();
+        this.slug = in.readString();
+        this.avito = in.readString();
+        this.autoru = in.readString();
+        this.drom = in.readString();
+        this.youla = in.readString();
+        this.call_count = (Integer) in.readValue(Integer.class.getClassLoader());
+        this.isPopular = (Boolean) in.readValue(Boolean.class.getClassLoader());
+        this.region = in.readString();
+    }
+
+    public static final Creator<City> CREATOR = new Creator<City>() {
+        @Override
+        public City createFromParcel(Parcel source) {
+            return new City(source);
+        }
+
+        @Override
+        public City[] newArray(int size) {
+            return new City[size];
+        }
+    };
 }

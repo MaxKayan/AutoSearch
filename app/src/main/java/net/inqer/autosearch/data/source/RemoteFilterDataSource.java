@@ -1,5 +1,6 @@
 package net.inqer.autosearch.data.source;
 
+import net.inqer.autosearch.data.model.EditableFilter;
 import net.inqer.autosearch.data.model.QueryFilter;
 import net.inqer.autosearch.data.model.api.PageResponse;
 import net.inqer.autosearch.data.source.api.MainApi;
@@ -28,9 +29,14 @@ public class RemoteFilterDataSource implements DataSource<QueryFilter> {
                 .map(PageResponse::getResults).toFlowable();
     }
 
+
+    public Completable save(EditableFilter instance) {
+        return api.createFilter(instance);
+    }
+
     @Override
     public Completable save(QueryFilter instance) {
-        return api.createFilter(instance);
+        return null;
     }
 
     @Override

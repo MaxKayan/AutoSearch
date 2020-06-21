@@ -33,6 +33,8 @@ public class SearchFragment extends DaggerFragment {
     private static final String TAG = "SearchFragment";
     private final int REGION = 1;
     private final int CITY = 2;
+    private final int MARK = 3;
+    private final int MODEL = 4;
 
     @Inject
     ViewModelProviderFactory providerFactory;
@@ -65,10 +67,10 @@ public class SearchFragment extends DaggerFragment {
 
     @SuppressLint("SetTextI18n")
     private void setupViewByFilter(EditableFilter filter) {
-        binding.fEditMarkValue.setText(filter.getCarMark());
-        binding.fEditModelValue.setText(filter.getCarModel());
+        binding.fEditMarkValue.setText(filter.getCarMark() == null ? "" : filter.getCarMark().getName());
+        binding.fEditModelValue.setText(filter.getCarModel() == null ? "" : filter.getCarModel().getName());
         binding.fEditRegionValue.setText(filter.getRegion() == null ? "" : filter.getRegion().getName());
-        binding.fEditCityValue.setText(filter.getCities());
+        binding.fEditCityValue.setText(filter.getCity() == null ? "" : filter.getCity().getName());
         binding.fEditPriceValue.setText(filter.getPriceMinimum() +
                 " до: " + filter.getPriceMaximum());
         binding.fEditYearValue.setText(filter.getManufactureYearMin() + " до: " + filter.getManufactureYearMax());
@@ -85,21 +87,27 @@ public class SearchFragment extends DaggerFragment {
 
     private void setupClickListeners() {
         binding.fEditMark.setOnClickListener(v -> {
-            Toast.makeText(getContext(), "Mark clicked!", Toast.LENGTH_SHORT).show();
+            showListSearchDialog(MARK, "Марка Авто", "", "Наименование марки",
+                    viewModel.observeMarks());
         });
         binding.fEditModel.setOnClickListener(v -> {
-            Toast.makeText(getContext(), "Model clicked!", Toast.LENGTH_SHORT).show();
+            EditableFilter currentFilter = getCurrentFilter();
+            if (currentFilter != null && currentFilter.getCarMark() != null) {
+                showListSearchDialog(MODEL, "Модель Авто", "", "Наименование модели",
+                        viewModel.observerModelsByMark(currentFilter.getCarMark()));
+            } else Log.e(TAG, "setupClickListeners: fEditModel: null data");
         });
 
         binding.fEditRegion.setOnClickListener(v -> {
-            showListSearchDialog(REGION, "Регион", "", "Наименование региона", viewModel.observeRegions());
+            showListSearchDialog(REGION, "Регион", "", "Наименование региона",
+                    viewModel.observeRegions());
         });
         binding.fEditCity.setOnClickListener(v -> {
             EditableFilter currentFilter = getCurrentFilter();
             if (currentFilter != null && currentFilter.getRegion() != null) {
                 showListSearchDialog(CITY, "Город", "", "Наименование города",
                         viewModel.getCitiesByRegion(currentFilter.getRegion()).toFlowable());
-            } else Log.e(TAG, "setupClickListeners: fEditCity: current filter is null!");
+            } else Log.e(TAG, "setupClickListeners: fEditCity: null data");
         });
 
         binding.fEditPrice.setOnClickListener(v -> {
@@ -125,7 +133,7 @@ public class SearchFragment extends DaggerFragment {
         });
 
         binding.fEditSearchButton.setOnClickListener(v -> {
-            Toast.makeText(getContext(), "Search button clicked", Toast.LENGTH_SHORT).show();
+            viewModel.submitFilter();
         });
     }
     
@@ -140,19 +148,30 @@ public class SearchFragment extends DaggerFragment {
         Log.d(TAG, "onActivityResult: requestCode: " + requestCode + " ; resultCode: " + resultCode + " intent data: " + data);
         if (data != null) {
             switch (requestCode) {
+                case MARK:
+                    if (resultCode == Activity.RESULT_OK) {
+                        viewModel.setMark(data.getParcelableExtra(DialogListSearch.RESULT));
+                    }
+                    break;
+                case MODEL:
+                    if (resultCode == Activity.RESULT_OK) {
+                        viewModel.setModel(data.getParcelableExtra(DialogListSearch.RESULT));
+                    }
+                    break;
                 case REGION:
                     if (resultCode == Activity.RESULT_OK) {
-                        String rSlug = data.getStringExtra(DialogListSearch.REG_ID);
-                        viewModel.setRegion(rSlug);
-//                        viewModel.getCurrentFilter().getValue().setRegion();
+                        viewModel.setRegion(data.getParcelableExtra(DialogListSearch.RESULT));
                     }
+                    break;
                 case CITY:
                     if (resultCode == Activity.RESULT_OK) {
-                        Log.d(TAG, "onActivityResult: city success");
+                        viewModel.setCity(data.getParcelableExtra(DialogListSearch.RESULT));
                     }
+                    break;
             }
         }
     }
+
 
     private void showListSearchDialog(int requestCode, String title, String subtitle, String hint, Flowable dataSource) {
         FragmentManager manager = getParentFragmentManager();

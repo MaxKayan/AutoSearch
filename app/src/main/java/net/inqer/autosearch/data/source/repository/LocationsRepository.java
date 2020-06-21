@@ -36,6 +36,7 @@ public class LocationsRepository {
         this.nm = nm;
     }
 
+
     public Flowable<List<Region>> getAllRegions() {
         return local.observeRegions()
                 .doOnSubscribe(subscription -> {

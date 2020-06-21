@@ -1,7 +1,10 @@
 package net.inqer.autosearch.data.source.api;
 
 import net.inqer.autosearch.data.model.AccountProperties;
+import net.inqer.autosearch.data.model.CarMark;
+import net.inqer.autosearch.data.model.CarModel;
 import net.inqer.autosearch.data.model.City;
+import net.inqer.autosearch.data.model.EditableFilter;
 import net.inqer.autosearch.data.model.QueryFilter;
 import net.inqer.autosearch.data.model.Region;
 import net.inqer.autosearch.data.model.api.PageResponse;
@@ -34,12 +37,19 @@ public interface MainApi {
     Single<PageResponse<QueryFilter>> getFilters();
 
     @POST("filters/")
-    Completable createFilter(@Body QueryFilter filter);
+    Completable createFilter(@Body EditableFilter filter);
 
     @POST("filters/") // TODO: Implement this
     Completable createAllFilters(@Body List<QueryFilter> filters);
 
-    @DELETE("filters/{itemId}")
+
+
+
+
+
+
+
+    @DELETE("filters/{itemId}/")
     Completable deleteFilter(@Path("itemId") int id);
 
     @DELETE("filters/") // TODO: Implement this
@@ -60,6 +70,13 @@ public interface MainApi {
     @GET("cities/")
     Single<PageResponse<City>> getCitiesByRegion(@Query("region_slug") String regionSlug);
 
-    @GET()
+    @GET
     Single<PageResponse<City>> getCitiesPage(@Url String fullUrl);
+
+
+    @GET("carmarks/")
+    Single<PageResponse<CarMark>> getCarMarks();
+
+    @GET("carmodels/")
+    Single<PageResponse<CarModel>> getCarModelsByMark(@Query("parentMark__slug") String markSlug);
 }

@@ -2,28 +2,45 @@ package net.inqer.autosearch.data.model;
 
 import androidx.annotation.Nullable;
 
+import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
+
+import net.inqer.autosearch.data.converter.CitySerializer;
 
 import java.util.Objects;
 
 
 public class EditableFilter {
 
-    private String cities;
+    @SerializedName("cities")
+    @JsonAdapter(CitySerializer.class)
+    @Nullable
+    private City city;
 
+    @Nullable
+    @JsonAdapter(CitySerializer.class)
     private Region region;
 
     @SerializedName("carname_mark")
-    private String carMark;
-    @SerializedName("carname_model")
-    private String carModel;
+    @Nullable
+    @JsonAdapter(CitySerializer.class)
+    private CarMark carMark;
 
+    @SerializedName("carname_model")
+    @Nullable
+    @JsonAdapter(CitySerializer.class)
+    private CarModel carModel;
+
+    @Nullable
     private String hull;
+    @Nullable
     private String fuel;
 
     @SerializedName("transm")
+    @Nullable
     private String transmission;
 
+    @Nullable
     private Integer radius;
 
     @Nullable
@@ -50,70 +67,78 @@ public class EditableFilter {
 
 
     public EditableFilter() {
-
     }
 
+
+    @Nullable
     public Region getRegion() {
         return region;
     }
 
-    public void setRegion(Region region) {
+    public void setRegion(@Nullable Region region) {
         this.region = region;
     }
 
-    public String getCities() {
-        return cities;
+    @Nullable
+    public City getCity() {
+        return city;
     }
 
-    public void setCities(String cities) {
-        this.cities = cities;
+    public void setCity(@Nullable City city) {
+        this.city = city;
     }
 
-    public String getCarMark() {
+    @Nullable
+    public CarMark getCarMark() {
         return carMark;
     }
 
-    public void setCarMark(String carMark) {
+    public void setCarMark(@Nullable CarMark carMark) {
         this.carMark = carMark;
     }
 
-    public String getCarModel() {
+    @Nullable
+    public CarModel getCarModel() {
         return carModel;
     }
 
-    public void setCarModel(String carModel) {
+    public void setCarModel(@Nullable CarModel carModel) {
         this.carModel = carModel;
     }
 
+    @Nullable
     public String getHull() {
         return hull;
     }
 
-    public void setHull(String hull) {
+    public void setHull(@Nullable String hull) {
         this.hull = hull;
     }
 
+    @Nullable
     public String getFuel() {
         return fuel;
     }
 
-    public void setFuel(String fuel) {
+    public void setFuel(@Nullable String fuel) {
         this.fuel = fuel;
     }
 
+    @Nullable
     public String getTransmission() {
         return transmission;
     }
 
-    public void setTransmission(String transmission) {
+    public void setTransmission(@Nullable String transmission) {
         this.transmission = transmission;
     }
 
+    @Nullable
     public Integer getRadius() {
         return radius;
     }
 
-    public void setRadius(Integer radius) {
+    public void setRadius(@Nullable Integer radius) {
         this.radius = radius;
     }
 
@@ -169,12 +194,14 @@ public class EditableFilter {
         this.engineDisplacementMax = engineDisplacementMax;
     }
 
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         EditableFilter that = (EditableFilter) o;
-        return Objects.equals(cities, that.cities) &&
+        return Objects.equals(city, that.city) &&
+                Objects.equals(region, that.region) &&
                 Objects.equals(carMark, that.carMark) &&
                 Objects.equals(carModel, that.carModel) &&
                 Objects.equals(hull, that.hull) &&
@@ -191,6 +218,6 @@ public class EditableFilter {
 
     @Override
     public int hashCode() {
-        return Objects.hash(cities, carMark, carModel, hull, fuel, transmission, radius, priceMinimum, priceMaximum, manufactureYearMin, manufactureYearMax, engineDisplacementMin, engineDisplacementMax);
+        return Objects.hash(city, region, carMark, carModel, hull, fuel, transmission, radius, priceMinimum, priceMaximum, manufactureYearMin, manufactureYearMax, engineDisplacementMin, engineDisplacementMax);
     }
 }

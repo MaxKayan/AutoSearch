@@ -28,7 +28,7 @@ import io.reactivex.Flowable;
 import io.reactivex.disposables.CompositeDisposable;
 
 public class DialogListSearch<T extends ListItem> extends DialogFragment {
-    public static final String REG_ID = "region_slug";
+    public static final String RESULT = "DialogListSearch_result";
     public static final String TAG = "DialogListSearch";
     private static final String TITLE = "dialog_header";
     private static final String HINT = "dialog_search_hint";
@@ -99,9 +99,9 @@ public class DialogListSearch<T extends ListItem> extends DialogFragment {
         if (hint != null && !hint.isEmpty()) binding.dialogLocInput.setHint(hint);
         binding.dialogLocInput.setOnItemClickListener((parent, view, position, id) -> {
             Log.d(TAG, "setupView: "+autoCompleteAdapter.getItem(position));
-            ListItem item = autoCompleteAdapter.getItem(position);
+            T item = autoCompleteAdapter.getItem(position);
             if (item != null) {
-                finishWithResult(item.getSlug());
+                finishWithResult(item);
             }
         });
     }
@@ -145,10 +145,13 @@ public class DialogListSearch<T extends ListItem> extends DialogFragment {
     }
 
 
+    @SuppressWarnings("unchecked")
     private void setupRecyclerView() {
 //        binding.dialogLocRv.setHasFixedSize(false);
         binding.dialogLocRv.setLayoutManager(new LinearLayoutManager(getContext()));
-        adapter = new DialogListAdapter<T>(this::finishWithResult);
+        adapter = new DialogListAdapter<T>(item -> {
+            finishWithResult((T) item);
+        });
 
         binding.dialogLocRv.setAdapter(adapter);
     }
@@ -168,10 +171,19 @@ public class DialogListSearch<T extends ListItem> extends DialogFragment {
     }
 
 
-    private void finishWithResult(String slug) {
+//    private void finishWithResult(String slug) {
+//        Fragment target = getTargetFragment();
+//        if (target != null) {
+//            resultData.putExtra(RESULT, slug);
+//            target.onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, resultData);
+//            dismiss();
+//        }
+//    }
+
+    private void finishWithResult(T result) {
         Fragment target = getTargetFragment();
-        if (target != null) {
-            resultData.putExtra(REG_ID, slug);
+        if (result != null && target != null) {
+            resultData.putExtra(RESULT, result);
             target.onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, resultData);
             dismiss();
         }
