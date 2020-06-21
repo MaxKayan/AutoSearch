@@ -6,9 +6,9 @@ import androidx.room.PrimaryKey;
 
 import com.google.gson.annotations.SerializedName;
 
-import net.inqer.autosearch.util.Util;
-
 import java.util.Date;
+import java.util.List;
+import java.util.Objects;
 
 @Entity(tableName = "filters")
 public class QueryFilter {
@@ -21,12 +21,13 @@ public class QueryFilter {
 
     @SerializedName("created_at")
     private Date created_at;
-    private String cities;
+    private List<Region> regions;
+    private List<City> cities;
 
-    @SerializedName("carname_mark")
-    private String carMark;
-    @SerializedName("carname_model")
-    private String carModel;
+    @SerializedName("car_marks")
+    private List<String> carMarks;
+    @SerializedName("car_models")
+    private List<String> carModels;
 
     private String hull;
     private String fuel;
@@ -65,9 +66,10 @@ public class QueryFilter {
                        String slug,
                        Integer quantity,
                        Date created_at,
-                       String cities,
-                       String carMark,
-                       String carModel,
+                       List<String> regions,
+                       List<String> cities,
+                       List<String> carMarks,
+                       List<String> carModels,
                        String hull,
                        String fuel,
                        String transmission,
@@ -83,9 +85,10 @@ public class QueryFilter {
         this.slug = slug;
         this.quantity = quantity;
         this.created_at = created_at;
+        this.regions = regions;
         this.cities = cities;
-        this.carMark = carMark;
-        this.carModel = carModel;
+        this.carMarks = carMarks;
+        this.carModels = carModels;
         this.hull = hull;
         this.fuel = fuel;
         this.transmission = transmission;
@@ -117,16 +120,20 @@ public class QueryFilter {
         return created_at;
     }
 
-    public String getCities() {
+    public List<String> getRegions() {
+        return regions;
+    }
+
+    public List<String> getCities() {
         return cities;
     }
 
-    public String getCarMark() {
-        return carMark;
+    public List<String> getCarMarks() {
+        return carMarks;
     }
 
-    public String getCarModel() {
-        return carModel;
+    public List<String> getCarModels() {
+        return carModels;
     }
 
     public String getHull() {
@@ -179,37 +186,68 @@ public class QueryFilter {
 
 
     @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof QueryFilter) {
-            QueryFilter secFilter = (QueryFilter) obj;
-
-            return
-                    this.id.equals(secFilter.id) &&
-                            this.slug.equals(secFilter.slug) &&
-                            this.quantity.equals(secFilter.quantity) &&
-                            this.created_at.equals(secFilter.created_at) &&
-                            this.cities.equals(secFilter.cities) &&
-                            this.carMark.equals(secFilter.carMark) &&
-                            this.carModel.equals(secFilter.carModel) &&
-                            this.hull.equals(secFilter.hull) &&
-                            this.fuel.equals(secFilter.fuel) &&
-                            this.transmission.equals(secFilter.transmission) &&
-                            this.radius.equals(secFilter.radius) &&
-                            Util.equals(this.priceMinimum, secFilter.priceMinimum) &&
-                            Util.equals(this.priceMaximum, secFilter.priceMaximum) &&
-                            Util.equals(this.manufactureYearMin, secFilter.manufactureYearMin) &&
-                            Util.equals(this.manufactureYearMax, secFilter.manufactureYearMax) &&
-                            this.engineDisplacementMin.equals(secFilter.engineDisplacementMin) &&
-                            this.engineDisplacementMax.equals(secFilter.engineDisplacementMax) &&
-                            this.refreshCount.equals(secFilter.refreshCount);
-        }
-        return false;
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        QueryFilter that = (QueryFilter) o;
+        return Objects.equals(id, that.id) &&
+                Objects.equals(slug, that.slug) &&
+                Objects.equals(quantity, that.quantity) &&
+                Objects.equals(created_at, that.created_at) &&
+                Objects.equals(regions, that.regions) &&
+                Objects.equals(cities, that.cities) &&
+                Objects.equals(carMarks, that.carMarks) &&
+                Objects.equals(carModels, that.carModels) &&
+                Objects.equals(hull, that.hull) &&
+                Objects.equals(fuel, that.fuel) &&
+                Objects.equals(transmission, that.transmission) &&
+                Objects.equals(radius, that.radius) &&
+                Objects.equals(priceMinimum, that.priceMinimum) &&
+                Objects.equals(priceMaximum, that.priceMaximum) &&
+                Objects.equals(manufactureYearMin, that.manufactureYearMin) &&
+                Objects.equals(manufactureYearMax, that.manufactureYearMax) &&
+                Objects.equals(engineDisplacementMin, that.engineDisplacementMin) &&
+                Objects.equals(engineDisplacementMax, that.engineDisplacementMax) &&
+                Objects.equals(refreshCount, that.refreshCount);
     }
 
     @Override
     public int hashCode() {
-        return id;
+        return Objects.hash(id, slug, quantity, created_at, regions, cities, carMarks, carModels, hull, fuel, transmission, radius, priceMinimum, priceMaximum, manufactureYearMin, manufactureYearMax, engineDisplacementMin, engineDisplacementMax, refreshCount);
     }
+
+    //    @Override
+//    public boolean equals(Object obj) {
+//        if (obj instanceof QueryFilter) {
+//            QueryFilter secFilter = (QueryFilter) obj;
+//
+//            return
+//                    this.id.equals(secFilter.id) &&
+//                            this.slug.equals(secFilter.slug) &&
+//                            this.quantity.equals(secFilter.quantity) &&
+//                            this.created_at.equals(secFilter.created_at) &&
+//                            this.cities.equals(secFilter.cities) &&
+//                            this.carMarks.equals(secFilter.carMarks) &&
+//                            this.carModels.equals(secFilter.carModels) &&
+//                            this.hull.equals(secFilter.hull) &&
+//                            this.fuel.equals(secFilter.fuel) &&
+//                            this.transmission.equals(secFilter.transmission) &&
+//                            this.radius.equals(secFilter.radius) &&
+//                            Util.equals(this.priceMinimum, secFilter.priceMinimum) &&
+//                            Util.equals(this.priceMaximum, secFilter.priceMaximum) &&
+//                            Util.equals(this.manufactureYearMin, secFilter.manufactureYearMin) &&
+//                            Util.equals(this.manufactureYearMax, secFilter.manufactureYearMax) &&
+//                            this.engineDisplacementMin.equals(secFilter.engineDisplacementMin) &&
+//                            this.engineDisplacementMax.equals(secFilter.engineDisplacementMax) &&
+//                            this.refreshCount.equals(secFilter.refreshCount);
+//        }
+//        return false;
+//    }
+//
+//    @Override
+//    public int hashCode() {
+//        return id;
+//    }
 
     //    @Override
 //    public int hashCode() {
