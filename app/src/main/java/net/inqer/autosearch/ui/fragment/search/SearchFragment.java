@@ -86,10 +86,8 @@ public class SearchFragment extends DaggerFragment {
 
 
     private void setupClickListeners() {
-        binding.fEditMark.setOnClickListener(v -> {
-            showListSearchDialog(MARK, "Марка Авто", "", "Наименование марки",
-                    viewModel.observeMarks());
-        });
+        binding.fEditMark.setOnClickListener(v -> showListSearchDialog(MARK, "Марка Авто", "", "Наименование марки",
+                viewModel.observeMarks()));
         binding.fEditModel.setOnClickListener(v -> {
             EditableFilter currentFilter = getCurrentFilter();
             if (currentFilter != null && currentFilter.getCarMark() != null) {
@@ -136,7 +134,7 @@ public class SearchFragment extends DaggerFragment {
             viewModel.submitFilter();
         });
     }
-    
+
     @Nullable
     private EditableFilter getCurrentFilter() {
         return viewModel.getCurrentFilter().getValue();

@@ -66,8 +66,8 @@ public class QueryFilter {
                        String slug,
                        Integer quantity,
                        Date created_at,
-                       List<String> regions,
-                       List<String> cities,
+                       List<Region> regions,
+                       List<City> cities,
                        List<String> carMarks,
                        List<String> carModels,
                        String hull,
@@ -120,11 +120,11 @@ public class QueryFilter {
         return created_at;
     }
 
-    public List<String> getRegions() {
+    public List<Region> getRegions() {
         return regions;
     }
 
-    public List<String> getCities() {
+    public List<City> getCities() {
         return cities;
     }
 

@@ -4,12 +4,14 @@ import android.os.Parcel;
 
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
+import androidx.room.ForeignKey;
 
 import com.google.gson.annotations.SerializedName;
 
 import java.util.Objects;
 
-@Entity(tableName = "cities")
+@Entity(tableName = "cities",
+        foreignKeys = @ForeignKey(entity = Region.class, parentColumns = "slug", childColumns = "region"))
 public class City implements ListItem {
     private String name;
     private String region_slug;
