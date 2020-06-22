@@ -19,10 +19,10 @@ class SearchItemViewHolder extends RecyclerView.ViewHolder {
 
     void bind(@NotNull ListItem item, final SearchItemClickListener listener, final int pos) {
         binding.dItemLabel.setText(item.getName());
-        binding.dItem.setOnClickListener(v -> listener.onClick(item.getSlug()));
+        binding.dItem.setOnClickListener(v -> listener.onClick(item));
     }
 
     public interface SearchItemClickListener {
-        void onClick(String slug);
+        void onClick(ListItem item);
     }
 }
