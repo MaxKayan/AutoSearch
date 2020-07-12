@@ -6,7 +6,7 @@ import androidx.annotation.NonNull;
 
 public interface ListItem extends Parcelable {
     String getName();
-    String getSlug();
+    long getId();
     <T> boolean isSameModelAs(@NonNull T model);
     <T> boolean isContentTheSameAs(@NonNull T model);
 }

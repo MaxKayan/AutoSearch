@@ -29,8 +29,8 @@ public class OptionsRepository {
                 .toFlowable();
     }
 
-    public Flowable<List<CarModel>> observerModelsByMark(CarMark carMark) {
-        return api.getCarModelsByMark(carMark.getSlug())
+    public Flowable<List<CarModel>> observeModelsByMark(CarMark carMark) {
+        return api.getCarModelsByMark(carMark.getId())
                 .subscribeOn(Schedulers.io())
                 .map(PageResponse::getResults)
                 .toFlowable();

@@ -9,15 +9,14 @@ import androidx.room.PrimaryKey;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.Objects;
+
 @Entity(tableName = "regions")
 public class Region implements ListItem, Parcelable {
 
-    private String name;
-
     @PrimaryKey
-    @NonNull
-    private String slug;
-
+    private long id;
+    private String name;
     private String avito;
     private String autoru;
     private String drom;
@@ -26,9 +25,9 @@ public class Region implements ListItem, Parcelable {
     private int requestCount;
     private boolean isPopular;
 
-    public Region(String name, String slug, String avito, String autoru, String drom, String youla, int requestCount, boolean isPopular) {
+    public Region(long id, String name, String avito, String autoru, String drom, String youla, int requestCount, boolean isPopular) {
+        this.id = id;
         this.name = name;
-        this.slug = slug;
         this.avito = avito;
         this.autoru = autoru;
         this.drom = drom;
@@ -37,23 +36,13 @@ public class Region implements ListItem, Parcelable {
         this.isPopular = isPopular;
     }
 
-    //    @Override
-//    public int hashCode() {
-//        return super.hashCode();
-//    }
-//
-//    @Override
-//    public boolean equals(@Nullable Object obj) {
-//        return obj instanceof Region && this.getRegionSlug().equals(((Region) obj).getRegionSlug());
-//    }
-
     @Override
     public String getName() {
         return name;
     }
 
-    public String getSlug() {
-        return slug;
+    public long getId() {
+        return id;
     }
 
     public String getAvito() {
@@ -80,10 +69,15 @@ public class Region implements ListItem, Parcelable {
         return isPopular;
     }
 
+    @NonNull
+    @Override
+    public String toString() {
+        return this.getName();
+    }
 
     @Override
     public <T> boolean isSameModelAs(@NonNull T model) {
-        return model instanceof Region && getSlug().equals(((Region) model).getSlug());
+        return model instanceof Region && this.id == ((Region) model).id;
     }
 
     @Override
@@ -95,32 +89,21 @@ public class Region implements ListItem, Parcelable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Region region1 = (Region) o;
-        return requestCount == region1.requestCount &&
-                isPopular == region1.isPopular &&
-                name.equals(region1.name) &&
-                slug.equals(region1.slug) &&
-                avito.equals(region1.avito) &&
-                autoru.equals(region1.autoru) &&
-                drom.equals(region1.drom) &&
-                youla.equals(region1.youla);
+        Region region = (Region) o;
+        return id == region.id &&
+                requestCount == region.requestCount &&
+                isPopular == region.isPopular &&
+                Objects.equals(name, region.name) &&
+                Objects.equals(avito, region.avito) &&
+                Objects.equals(autoru, region.autoru) &&
+                Objects.equals(drom, region.drom) &&
+                Objects.equals(youla, region.youla);
     }
 
     @Override
     public int hashCode() {
-//        return Objects.hash(name, regionSlug, slug, avito, autoru, drom, youla, requestCount, isPopular, region);
-        int hash = 12;
-        hash = 26 * hash + getName().hashCode();
-        hash = 26 * hash + getSlug().hashCode();
-        hash = 26 * hash + getAvito().hashCode();
-        hash = 26 * hash + getAutoru().hashCode();
-        hash = 26 * hash + getDrom().hashCode();
-        hash = 26 * hash + getYoula().hashCode();
-        hash = 26 * hash + getRequestCount();
-        hash = 26 * hash + (isPopular() ? 1 : 0);
-        return hash;
+        return Objects.hash(id, name, avito, autoru, drom, youla, requestCount, isPopular);
     }
-
 
     @Override
     public int describeContents() {
@@ -129,8 +112,8 @@ public class Region implements ListItem, Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(this.id);
         dest.writeString(this.name);
-        dest.writeString(this.slug);
         dest.writeString(this.avito);
         dest.writeString(this.autoru);
         dest.writeString(this.drom);
@@ -140,8 +123,8 @@ public class Region implements ListItem, Parcelable {
     }
 
     protected Region(Parcel in) {
+        this.id = in.readLong();
         this.name = in.readString();
-        this.slug = in.readString();
         this.avito = in.readString();
         this.autoru = in.readString();
         this.drom = in.readString();
@@ -161,10 +144,4 @@ public class Region implements ListItem, Parcelable {
             return new Region[size];
         }
     };
-
-    @NonNull
-    @Override
-    public String toString() {
-        return this.getName();
-    }
 }

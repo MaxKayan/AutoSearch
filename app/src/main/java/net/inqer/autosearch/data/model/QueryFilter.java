@@ -7,7 +7,6 @@ import androidx.room.PrimaryKey;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.Date;
-import java.util.List;
 import java.util.Objects;
 
 @Entity(tableName = "filters")
@@ -21,13 +20,13 @@ public class QueryFilter {
 
     @SerializedName("created_at")
     private Date created_at;
-    private List<Region> regions;
-    private List<City> cities;
+//    private List<Region> regions;
+//    private List<City> cities;
 
-    @SerializedName("car_marks")
-    private List<String> carMarks;
-    @SerializedName("car_models")
-    private List<String> carModels;
+//    @SerializedName("car_marks")
+//    private List<String> carMarks;
+//    @SerializedName("car_models")
+//    private List<String> carModels;
 
     private String hull;
     private String fuel;
@@ -66,10 +65,10 @@ public class QueryFilter {
                        String slug,
                        Integer quantity,
                        Date created_at,
-                       List<Region> regions,
-                       List<City> cities,
-                       List<String> carMarks,
-                       List<String> carModels,
+//                       List<Region> regions,
+//                       List<City> cities,
+//                       List<String> carMarks,
+//                       List<String> carModels,
                        String hull,
                        String fuel,
                        String transmission,
@@ -85,10 +84,10 @@ public class QueryFilter {
         this.slug = slug;
         this.quantity = quantity;
         this.created_at = created_at;
-        this.regions = regions;
-        this.cities = cities;
-        this.carMarks = carMarks;
-        this.carModels = carModels;
+//        this.regions = regions;
+//        this.cities = cities;
+//        this.carMarks = carMarks;
+//        this.carModels = carModels;
         this.hull = hull;
         this.fuel = fuel;
         this.transmission = transmission;
@@ -120,21 +119,21 @@ public class QueryFilter {
         return created_at;
     }
 
-    public List<Region> getRegions() {
-        return regions;
-    }
-
-    public List<City> getCities() {
-        return cities;
-    }
-
-    public List<String> getCarMarks() {
-        return carMarks;
-    }
-
-    public List<String> getCarModels() {
-        return carModels;
-    }
+//    public List<Region> getRegions() {
+//        return regions;
+//    }
+//
+//    public List<City> getCities() {
+//        return cities;
+//    }
+//
+//    public List<String> getCarMarks() {
+//        return carMarks;
+//    }
+//
+//    public List<String> getCarModels() {
+//        return carModels;
+//    }
 
     public String getHull() {
         return hull;
@@ -194,10 +193,10 @@ public class QueryFilter {
                 Objects.equals(slug, that.slug) &&
                 Objects.equals(quantity, that.quantity) &&
                 Objects.equals(created_at, that.created_at) &&
-                Objects.equals(regions, that.regions) &&
-                Objects.equals(cities, that.cities) &&
-                Objects.equals(carMarks, that.carMarks) &&
-                Objects.equals(carModels, that.carModels) &&
+//                Objects.equals(regions, that.regions) &&
+//                Objects.equals(cities, that.cities) &&
+//                Objects.equals(carMarks, that.carMarks) &&
+//                Objects.equals(carModels, that.carModels) &&
                 Objects.equals(hull, that.hull) &&
                 Objects.equals(fuel, that.fuel) &&
                 Objects.equals(transmission, that.transmission) &&
@@ -213,7 +212,7 @@ public class QueryFilter {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, slug, quantity, created_at, regions, cities, carMarks, carModels, hull, fuel, transmission, radius, priceMinimum, priceMaximum, manufactureYearMin, manufactureYearMax, engineDisplacementMin, engineDisplacementMax, refreshCount);
+        return Objects.hash(id, slug, quantity, created_at, hull, fuel, transmission, radius, priceMinimum, priceMaximum, manufactureYearMin, manufactureYearMax, engineDisplacementMin, engineDisplacementMax, refreshCount);
     }
 
     //    @Override

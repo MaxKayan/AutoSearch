@@ -14,16 +14,15 @@ import java.util.Objects;
 public class CarModel implements ListItem {
 
     @PrimaryKey
-    private Integer id;
+    private long id;
     private String name;
-    private String slug;
     private Boolean isPopular;
     @SerializedName("popularCount")
     private Integer requestCount;
 
-    public CarModel(String name, String slug, Boolean isPopular, Integer requestCount) {
+    public CarModel(long id, String name, Boolean isPopular, Integer requestCount) {
+        this.id = id;
         this.name = name;
-        this.slug = slug;
         this.isPopular = isPopular;
         this.requestCount = requestCount;
     }
@@ -32,14 +31,14 @@ public class CarModel implements ListItem {
         return name;
     }
 
-    public String getSlug() {
-        return slug;
+    public long getId() {
+        return id;
     }
 
 
     @Override
     public <T> boolean isSameModelAs(@NonNull T model) {
-        return model instanceof CarModel && this.slug.equals(((CarModel) model).slug);
+        return model instanceof CarModel && this.id == ((CarModel) model).id;
     }
 
     @Override
@@ -59,16 +58,16 @@ public class CarModel implements ListItem {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        CarModel carMark = (CarModel) o;
-        return name.equals(carMark.name) &&
-                slug.equals(carMark.slug) &&
-                isPopular.equals(carMark.isPopular) &&
-                requestCount.equals(carMark.requestCount);
+        CarModel carModel = (CarModel) o;
+        return id == carModel.id &&
+                Objects.equals(name, carModel.name) &&
+                Objects.equals(isPopular, carModel.isPopular) &&
+                Objects.equals(requestCount, carModel.requestCount);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, slug, isPopular, requestCount);
+        return Objects.hash(id, name, isPopular, requestCount);
     }
 
 
@@ -79,17 +78,15 @@ public class CarModel implements ListItem {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeValue(this.id);
+        dest.writeLong(this.id);
         dest.writeString(this.name);
-        dest.writeString(this.slug);
         dest.writeValue(this.isPopular);
         dest.writeValue(this.requestCount);
     }
 
-    private CarModel(Parcel in) {
-        this.id = (Integer) in.readValue(Integer.class.getClassLoader());
+    protected CarModel(Parcel in) {
+        this.id = in.readLong();
         this.name = in.readString();
-        this.slug = in.readString();
         this.isPopular = (Boolean) in.readValue(Boolean.class.getClassLoader());
         this.requestCount = (Integer) in.readValue(Integer.class.getClassLoader());
     }

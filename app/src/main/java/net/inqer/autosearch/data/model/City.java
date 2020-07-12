@@ -4,18 +4,19 @@ import android.os.Parcel;
 
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
-import androidx.room.ForeignKey;
+import androidx.room.PrimaryKey;
 
 import com.google.gson.annotations.SerializedName;
 
 import java.util.Objects;
 
-@Entity(tableName = "cities",
-        foreignKeys = @ForeignKey(entity = Region.class, parentColumns = "slug", childColumns = "region"))
+@Entity(tableName = "cities")
 public class City implements ListItem {
+
+    @PrimaryKey
+    private long id;
     private String name;
     private String region_slug;
-    private String slug;
 
     private String avito;
     private String autoru;
@@ -28,10 +29,10 @@ public class City implements ListItem {
     private Boolean isPopular;
     private String region;
 
-    public City(String name, String region_slug, String slug, String avito, String autoru, String drom, String youla, Integer call_count, Boolean isPopular, String region) {
+    public City(long id, String name, String region_slug, String avito, String autoru, String drom, String youla, Integer call_count, Boolean isPopular, String region) {
+        this.id = id;
         this.name = name;
         this.region_slug = region_slug;
-        this.slug = slug;
         this.avito = avito;
         this.autoru = autoru;
         this.drom = drom;
@@ -39,6 +40,10 @@ public class City implements ListItem {
         this.call_count = call_count;
         this.isPopular = isPopular;
         this.region = region;
+    }
+
+    public long getId() {
+        return id;
     }
 
     public String getName() {
@@ -49,13 +54,9 @@ public class City implements ListItem {
         return region_slug;
     }
 
-    public String getSlug() {
-        return slug;
-    }
-
     @Override
     public <T> boolean isSameModelAs(@NonNull T model) {
-        return model instanceof City && this.slug.equals(((City) model).slug);
+        return model instanceof City && this.id == ((City) model).id;
     }
 
     @Override
@@ -102,9 +103,9 @@ public class City implements ListItem {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         City city = (City) o;
-        return Objects.equals(name, city.name) &&
+        return id == city.id &&
+                Objects.equals(name, city.name) &&
                 Objects.equals(region_slug, city.region_slug) &&
-                Objects.equals(slug, city.slug) &&
                 Objects.equals(avito, city.avito) &&
                 Objects.equals(autoru, city.autoru) &&
                 Objects.equals(drom, city.drom) &&
@@ -116,9 +117,8 @@ public class City implements ListItem {
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, region_slug, slug, avito, autoru, drom, youla, call_count, isPopular, region);
+        return Objects.hash(id, name, region_slug, avito, autoru, drom, youla, call_count, isPopular, region);
     }
-
 
     @Override
     public int describeContents() {
@@ -129,7 +129,6 @@ public class City implements ListItem {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(this.name);
         dest.writeString(this.region_slug);
-        dest.writeString(this.slug);
         dest.writeString(this.avito);
         dest.writeString(this.autoru);
         dest.writeString(this.drom);
@@ -142,7 +141,6 @@ public class City implements ListItem {
     private City(Parcel in) {
         this.name = in.readString();
         this.region_slug = in.readString();
-        this.slug = in.readString();
         this.avito = in.readString();
         this.autoru = in.readString();
         this.drom = in.readString();

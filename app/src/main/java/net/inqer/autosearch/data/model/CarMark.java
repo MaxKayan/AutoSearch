@@ -5,6 +5,7 @@ import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
+import androidx.room.PrimaryKey;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -13,31 +14,31 @@ import java.util.Objects;
 @Entity(tableName = "car_marks")
 public class CarMark implements ListItem, Parcelable {
 
+    @PrimaryKey
+    private long id;
     private String name;
-    private String slug;
     private Boolean isPopular;
     @SerializedName("popularCount")
     private Integer requestCount;
 
-    public CarMark(String name, String slug, Boolean isPopular, Integer requestCount) {
+    public CarMark(long id, String name, Boolean isPopular, Integer requestCount) {
+        this.id = id;
         this.name = name;
-        this.slug = slug;
         this.isPopular = isPopular;
         this.requestCount = requestCount;
+    }
+
+    public long getId() {
+        return id;
     }
 
     public String getName() {
         return name;
     }
 
-    public String getSlug() {
-        return slug;
-    }
-
-
     @Override
     public <T> boolean isSameModelAs(@NonNull T model) {
-        return model instanceof CarMark && this.slug.equals(((CarMark) model).slug);
+        return model instanceof CarMark && this.id == ((CarMark) model).id;
     }
 
     @Override
@@ -58,17 +59,16 @@ public class CarMark implements ListItem, Parcelable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         CarMark carMark = (CarMark) o;
-        return name.equals(carMark.name) &&
-                slug.equals(carMark.slug) &&
-                isPopular.equals(carMark.isPopular) &&
-                requestCount.equals(carMark.requestCount);
+        return id == carMark.id &&
+                Objects.equals(name, carMark.name) &&
+                Objects.equals(isPopular, carMark.isPopular) &&
+                Objects.equals(requestCount, carMark.requestCount);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, slug, isPopular, requestCount);
+        return Objects.hash(id, name, isPopular, requestCount);
     }
-
 
     @Override
     public int describeContents() {
@@ -77,15 +77,15 @@ public class CarMark implements ListItem, Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(this.id);
         dest.writeString(this.name);
-        dest.writeString(this.slug);
         dest.writeValue(this.isPopular);
         dest.writeValue(this.requestCount);
     }
 
-    private CarMark(Parcel in) {
+    protected CarMark(Parcel in) {
+        this.id = in.readLong();
         this.name = in.readString();
-        this.slug = in.readString();
         this.isPopular = (Boolean) in.readValue(Boolean.class.getClassLoader());
         this.requestCount = (Integer) in.readValue(Integer.class.getClassLoader());
     }

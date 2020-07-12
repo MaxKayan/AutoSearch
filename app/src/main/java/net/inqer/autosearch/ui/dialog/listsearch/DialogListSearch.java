@@ -1,6 +1,5 @@
 package net.inqer.autosearch.ui.dialog.listsearch;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
@@ -13,7 +12,6 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -163,6 +161,7 @@ public class DialogListSearch<T extends ListItem> extends DialogFragment {
         super.onPause();
     }
 
+
     @Override
     public void onDetach() {
         super.onDetach();
@@ -171,20 +170,13 @@ public class DialogListSearch<T extends ListItem> extends DialogFragment {
     }
 
 
-//    private void finishWithResult(String slug) {
-//        Fragment target = getTargetFragment();
-//        if (target != null) {
-//            resultData.putExtra(RESULT, slug);
-//            target.onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, resultData);
-//            dismiss();
-//        }
-//    }
-
     private void finishWithResult(T result) {
-        Fragment target = getTargetFragment();
-        if (result != null && target != null) {
-            resultData.putExtra(RESULT, result);
-            target.onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, resultData);
+//        Fragment target = getTargetFragment();
+        if (result != null) {
+            Bundle bundle = new Bundle();
+            bundle.putString(RESULT, result.getName());
+//            target.onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, resultData);
+            getParentFragmentManager().setFragmentResult("listener", bundle);
             dismiss();
         }
     }

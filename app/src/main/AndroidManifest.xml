@@ -29,6 +29,10 @@
             android:label="@string/title_activity_login">
         </activity>
         <activity
+            android:name=".ui.dev.DevActivity"
+            android:label="Development Activity">
+        </activity>
+        <activity
             android:name=".ui.MainActivity"
             android:label="@string/app_name">
         </activity>

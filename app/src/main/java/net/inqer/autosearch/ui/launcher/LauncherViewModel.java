@@ -43,10 +43,11 @@ public class LauncherViewModel extends ViewModel {
     }
 
     void checkAuthenticationByToken(final String token) {
+        // TODO: Rework this block, seems to be more complex than needed
         sessionManager.authenticateWithCredentials(LiveDataReactiveStreams.fromPublisher(
                 authApi.checkAuthentication("Token " + token)
                         .onErrorReturn(throwable -> {
-                            Log.d(TAG, "apply: ");
+                            Log.w(TAG, "checkAuthenticationByToken: Error", throwable);
                             return new User(throwable.getMessage());
                         })
                         .map((Function<User, AuthResource<User>>) loggedInUser -> {

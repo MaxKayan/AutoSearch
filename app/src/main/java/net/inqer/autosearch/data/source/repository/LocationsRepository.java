@@ -74,13 +74,13 @@ public class LocationsRepository {
     }
 
 
-    public Single<Region> getRegionById(String slug) {
-        return local.getRegionById(slug)
+    public Single<Region> getRegionById(long id) {
+        return local.getRegionById(id)
                 .subscribeOn(Schedulers.io());
     }
 
     public Single<PageResponse<City>> getCitiesPageByRegion(Region region) {
-        return remote.getCitiesByRegion(region.getSlug())
+        return remote.getCitiesByRegion(region.getId())
                 .subscribeOn(Schedulers.io());
     }
 

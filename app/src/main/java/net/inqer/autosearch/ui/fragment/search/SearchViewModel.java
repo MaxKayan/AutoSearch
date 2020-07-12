@@ -47,8 +47,8 @@ public class SearchViewModel extends ViewModel {
         currentEditableFilter.setValue(instance);
     }
 
-    public Single<Region> getRegionById(String slug) {
-        return locationsRepository.getRegionById(slug);
+    public Single<Region> getRegionById(long id) {
+        return locationsRepository.getRegionById(id);
     }
 
     Single<List<City>> getCitiesByRegion(Region region) {
@@ -64,8 +64,8 @@ public class SearchViewModel extends ViewModel {
         return optionsRepository.observeAllMarks();
     }
 
-    Flowable<List<CarModel>> observerModelsByMark(CarMark carMark) {
-        return optionsRepository.observerModelsByMark(carMark);
+    Flowable<List<CarModel>> observeModelsByMark(CarMark carMark) {
+        return optionsRepository.observeModelsByMark(carMark);
     }
 
 //    public void setRegion(String rSlug) {
@@ -81,6 +81,9 @@ public class SearchViewModel extends ViewModel {
 //                });
 //    }
 
+    /**
+     * Submit new filter to backend via POST request.
+     */
     void submitFilter() {
         EditableFilter filter = currentEditableFilter.getValue();
         if (filter != null) {

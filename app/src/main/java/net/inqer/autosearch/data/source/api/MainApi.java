@@ -39,23 +39,20 @@ public interface MainApi {
     @POST("filters/")
     Completable createFilter(@Body EditableFilter filter);
 
-    @POST("filters/") // TODO: Implement this
+    @POST("filters/")
+        // TODO: Implement this
     Completable createAllFilters(@Body List<QueryFilter> filters);
-
-
-
-
-
-
 
 
     @DELETE("filters/{itemId}/")
     Completable deleteFilter(@Path("itemId") int id);
 
-    @DELETE("filters/") // TODO: Implement this
+    @DELETE("filters/")
+        // TODO: Implement this
     Completable deleteAllFilters();
 
-    @POST("filters/") // TODO: Implement this
+    @POST("filters/")
+        // TODO: Implement this
     Completable clearFilters();
 
     @GET
@@ -68,15 +65,15 @@ public interface MainApi {
     Single<List<Region>> getRegions();
 
     @GET("cities/")
-    Single<PageResponse<City>> getCitiesByRegion(@Query("region_slug") String regionSlug);
+    Single<PageResponse<City>> getCitiesByRegion(@Query("region") long regionId);
 
     @GET
     Single<PageResponse<City>> getCitiesPage(@Url String fullUrl);
 
 
-    @GET("carmarks/")
+    @GET("car_marks/")
     Single<PageResponse<CarMark>> getCarMarks();
 
-    @GET("carmodels/")
-    Single<PageResponse<CarModel>> getCarModelsByMark(@Query("parentMark__slug") String markSlug);
+    @GET("car_models/")
+    Single<PageResponse<CarModel>> getCarModelsByMark(@Query("parentMark") long markId);
 }

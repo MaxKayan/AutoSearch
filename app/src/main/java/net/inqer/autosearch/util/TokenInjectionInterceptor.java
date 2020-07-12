@@ -35,7 +35,7 @@ public class TokenInjectionInterceptor implements Interceptor {
 
         Request.Builder requestBuilder = request.newBuilder();
 
-        if (request.header(Constants.NO_AUTHENTICATION_COOKIE)==null) {
+        if (request.header(Config.NO_AUTHENTICATION_COOKIE)==null) {
             Log.d(TAG, "intercept: getting token...");
             // get token
             if (sessionToken == null) {

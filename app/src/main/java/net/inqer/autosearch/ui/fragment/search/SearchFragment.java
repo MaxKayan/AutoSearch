@@ -1,7 +1,6 @@
 package net.inqer.autosearch.ui.fragment.search;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,11 +15,13 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentResultListener;
 import androidx.lifecycle.ViewModelProvider;
 
 import net.inqer.autosearch.R;
 import net.inqer.autosearch.data.model.EditableFilter;
 import net.inqer.autosearch.databinding.FragmentSearchBinding;
+import net.inqer.autosearch.ui.dev.DevActivity;
 import net.inqer.autosearch.ui.dialog.listsearch.DialogListSearch;
 import net.inqer.autosearch.util.ViewModelProviderFactory;
 
@@ -31,6 +32,7 @@ import io.reactivex.Flowable;
 
 public class SearchFragment extends DaggerFragment {
     private static final String TAG = "SearchFragment";
+    // Dialog fragment id
     private final int REGION = 1;
     private final int CITY = 2;
     private final int MARK = 3;
@@ -56,8 +58,14 @@ public class SearchFragment extends DaggerFragment {
 
         subscribeObservers();
         setupClickListeners();
+        setResultListeners();
     }
 
+
+    /**
+     * Subscribes to needed live data.
+     * Current filter - instance of editable filter that is currently being viewed/edited
+     */
     private void subscribeObservers() {
         viewModel.getCurrentFilter().observe(getViewLifecycleOwner(), queryFilter -> {
             Log.d(TAG, "subscribeObservers: current filter changed");
@@ -65,6 +73,11 @@ public class SearchFragment extends DaggerFragment {
         });
     }
 
+    /**
+     * Sets all values of an existing EditableFilter instance to the view.
+     *
+     * @param filter Saved filter that contains some values
+     */
     @SuppressLint("SetTextI18n")
     private void setupViewByFilter(EditableFilter filter) {
         binding.fEditMarkValue.setText(filter.getCarMark() == null ? "" : filter.getCarMark().getName());
@@ -85,6 +98,9 @@ public class SearchFragment extends DaggerFragment {
     }
 
 
+    /**
+     * Sets on-click listeners for all parameters of the filter editor.
+     */
     private void setupClickListeners() {
         binding.fEditMark.setOnClickListener(v -> showListSearchDialog(MARK, "Марка Авто", "", "Наименование марки",
                 viewModel.observeMarks()));
@@ -92,7 +108,7 @@ public class SearchFragment extends DaggerFragment {
             EditableFilter currentFilter = getCurrentFilter();
             if (currentFilter != null && currentFilter.getCarMark() != null) {
                 showListSearchDialog(MODEL, "Модель Авто", "", "Наименование модели",
-                        viewModel.observerModelsByMark(currentFilter.getCarMark()));
+                        viewModel.observeModelsByMark(currentFilter.getCarMark()));
             } else Log.e(TAG, "setupClickListeners: fEditModel: null data");
         });
 
@@ -141,33 +157,43 @@ public class SearchFragment extends DaggerFragment {
     }
 
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        Log.d(TAG, "onActivityResult: requestCode: " + requestCode + " ; resultCode: " + resultCode + " intent data: " + data);
-        if (data != null) {
-            switch (requestCode) {
-                case MARK:
-                    if (resultCode == Activity.RESULT_OK) {
-                        viewModel.setMark(data.getParcelableExtra(DialogListSearch.RESULT));
-                    }
-                    break;
-                case MODEL:
-                    if (resultCode == Activity.RESULT_OK) {
-                        viewModel.setModel(data.getParcelableExtra(DialogListSearch.RESULT));
-                    }
-                    break;
-                case REGION:
-                    if (resultCode == Activity.RESULT_OK) {
-                        viewModel.setRegion(data.getParcelableExtra(DialogListSearch.RESULT));
-                    }
-                    break;
-                case CITY:
-                    if (resultCode == Activity.RESULT_OK) {
-                        viewModel.setCity(data.getParcelableExtra(DialogListSearch.RESULT));
-                    }
-                    break;
+//    @Override
+//    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+//        Log.d(TAG, "onActivityResult: requestCode: " + requestCode + " ; resultCode: " + resultCode + " intent data: " + data);
+//        if (data != null) {
+//            switch (requestCode) {
+//                case MARK:
+//                    if (resultCode == Activity.RESULT_OK) {
+//                        viewModel.setMark(data.getParcelableExtra(DialogListSearch.RESULT));
+//                    }
+//                    break;
+//                case MODEL:
+//                    if (resultCode == Activity.RESULT_OK) {
+//                        viewModel.setModel(data.getParcelableExtra(DialogListSearch.RESULT));
+//                    }
+//                    break;
+//                case REGION:
+//                    if (resultCode == Activity.RESULT_OK) {
+//                        viewModel.setRegion(data.getParcelableExtra(DialogListSearch.RESULT));
+//                    }
+//                    break;
+//                case CITY:
+//                    if (resultCode == Activity.RESULT_OK) {
+//                        viewModel.setCity(data.getParcelableExtra(DialogListSearch.RESULT));
+//                    }
+//                    break;
+//            }
+//        }
+//    }
+
+
+    private void setResultListeners() {
+        getParentFragmentManager().setFragmentResultListener("listener", this, new FragmentResultListener() {
+            @Override
+            public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+                Log.i(TAG, "onFragmentResult: " + requestKey + " - " + result.toString() + " - " + result.getString(DialogListSearch.RESULT));
             }
-        }
+        });
     }
 
 
@@ -180,7 +206,7 @@ public class SearchFragment extends DaggerFragment {
         }
 
         DialogListSearch dialog = DialogListSearch.newInstance(title, hint, dataSource);
-        dialog.setTargetFragment(SearchFragment.this, requestCode);
+//        dialog.setTargetFragment(SearchFragment.this, requestCode);
         dialog.show(manager, DialogListSearch.TAG);
     }
 
@@ -198,7 +224,7 @@ public class SearchFragment extends DaggerFragment {
                 Toast.makeText(getContext(), "Profile button pressed", Toast.LENGTH_SHORT).show();
                 return true;
             case R.id.action_settings:
-                Toast.makeText(getContext(), "Settings button pressed", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(getContext(), DevActivity.class));
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

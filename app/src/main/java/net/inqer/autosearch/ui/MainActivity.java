@@ -60,7 +60,6 @@ public class MainActivity extends DaggerAppCompatActivity {
 
 
     private void subscribeObservers() {
-        //        @SuppressWarnings("unchecked")
         Disposable bus = rxBus.listen(RxBusEvent.class)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(e -> {

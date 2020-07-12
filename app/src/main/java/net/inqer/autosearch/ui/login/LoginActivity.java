@@ -158,7 +158,7 @@ public class LoginActivity extends DaggerAppCompatActivity {
         authSettings.saveValue(getString(R.string.saved_token_key), model.getToken());
         interceptor.setSessionToken(model.getToken());
         proceedToMain();
-        Log.i(TAG, "updateUiWithUser: Token saved! -- " + model.getToken());
+        Log.i(TAG, "updateUiWithUser: Token saved! -- " + model.getDisplayName());
         Toast.makeText(getApplicationContext(), welcome + " - " + model.getToken(), Toast.LENGTH_LONG).show();
     }
 
@@ -174,7 +174,10 @@ public class LoginActivity extends DaggerAppCompatActivity {
 
 
     private void attemptLogin() {
-        loginViewModel.authenticate(binding.username.getText().toString(), binding.password.getText().toString());
+        loginViewModel.authenticate(
+                binding.username.getText().toString(),
+                binding.password.getText().toString()
+        );
 //        loginViewModel.login(binding.username.getText().toString(), binding.password.getText().toString());
     }
 
