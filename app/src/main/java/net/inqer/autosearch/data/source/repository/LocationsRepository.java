@@ -58,7 +58,7 @@ public class LocationsRepository {
                 // get current data from database
                 .flatMapCompletable(newRegions -> local.getRegions()
                         .flatMapCompletable(savedRegions -> {
-//                            find difference between old list and new list
+                            // find difference between old list and new list
                             List<Region> diff = new ArrayList<>(savedRegions);
                             diff.removeAll(newRegions);
 

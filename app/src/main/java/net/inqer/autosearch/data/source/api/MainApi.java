@@ -75,5 +75,5 @@ public interface MainApi {
     Single<PageResponse<CarMark>> getCarMarks();
 
     @GET("car_models/")
-    Single<PageResponse<CarModel>> getCarModelsByMark(@Query("parentMark") long markId);
+    Single<PageResponse<CarModel>> getCarModelsByMark(@Query("mark") long markId);
 }

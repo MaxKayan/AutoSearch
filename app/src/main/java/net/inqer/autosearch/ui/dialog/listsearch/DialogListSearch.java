@@ -30,6 +30,7 @@ public class DialogListSearch<T extends ListItem> extends DialogFragment {
     public static final String TAG = "DialogListSearch";
     private static final String TITLE = "dialog_header";
     private static final String HINT = "dialog_search_hint";
+    private static final String CODE = "dialog_search_request_code";
 
     private DialogListSearchViewModel<T> viewModel;
     private DialogListSearchBinding binding;
@@ -37,6 +38,7 @@ public class DialogListSearch<T extends ListItem> extends DialogFragment {
     private AutoCompleteListItemAdapter<T> autoCompleteAdapter;
     private CompositeDisposable disposableBag = new CompositeDisposable();
 
+    private String requestKey;
     private String title;
     private String hint;
     private Flowable<List<T>> dataSource;
@@ -44,12 +46,13 @@ public class DialogListSearch<T extends ListItem> extends DialogFragment {
     private Intent resultData = new Intent();
 
 
-    public static <T extends ListItem> DialogListSearch<T> newInstance(String title, String hint, Flowable<List<T>> observer) {
+    public static <T extends ListItem> DialogListSearch<T> newInstance(String requestCode, String title, String hint, Flowable<List<T>> observer) {
         DialogListSearch<T> instance = new DialogListSearch<>();
         instance.dataSource = observer;
         Bundle args = new Bundle();
         args.putString(TITLE, title);
         args.putString(HINT, hint);
+        args.putString(CODE, requestCode);
         instance.setArguments(args);
 
         return instance;
@@ -71,7 +74,6 @@ public class DialogListSearch<T extends ListItem> extends DialogFragment {
         DialogListSearchViewModelFactory<T> viewModelFactory = new DialogListSearchViewModelFactory<>(title, dataSource);
         viewModel = new ViewModelProvider(this, viewModelFactory).get(DialogListSearchViewModel.class);
 
-//        unpackBundleArgs(savedInstanceState);
         unpackBundleArgs(getArguments());
         setupView();
         setupSearchInput();
@@ -82,6 +84,7 @@ public class DialogListSearch<T extends ListItem> extends DialogFragment {
 
     private void unpackBundleArgs(@Nullable Bundle bundle) {
         if (bundle != null) {
+            requestKey = bundle.getString(CODE);
             title = bundle.getString(TITLE);
             hint = bundle.getString(HINT);
             Log.d(TAG, "unpackBundleArgs: " + title + '\n' +
@@ -128,14 +131,11 @@ public class DialogListSearch<T extends ListItem> extends DialogFragment {
     private void getData() {
         viewModel.observerLiveData().observe(getViewLifecycleOwner(), list -> {
             Log.d(TAG, "getData: " + list.size());
-//            binding.dialogLocRv.setHasFixedSize(false);
             adapter.setNewList(list);
             autoCompleteAdapter = new AutoCompleteListItemAdapter<>(getContext(), list);
             binding.dialogLocInput.setAdapter(autoCompleteAdapter);
-//            binding.dialogLocInput.setAdapter(new ArrayAdapter<T>(getContext(), android.R.layout.simple_list_item_1, list));
             Log.d(TAG, binding.dialogLocInput.getAdapter().toString()+"\n"+
                     binding.dialogLocInput.getAdapter().getCount());
-//            binding.dialogLocRv.setHasFixedSize(true);
             if (adapter.getCurrentList().size() > 0) {
                 binding.dialogLocRv.setHasFixedSize(true);
             }
@@ -145,7 +145,6 @@ public class DialogListSearch<T extends ListItem> extends DialogFragment {
 
     @SuppressWarnings("unchecked")
     private void setupRecyclerView() {
-//        binding.dialogLocRv.setHasFixedSize(false);
         binding.dialogLocRv.setLayoutManager(new LinearLayoutManager(getContext()));
         adapter = new DialogListAdapter<T>(item -> {
             finishWithResult((T) item);
@@ -171,12 +170,10 @@ public class DialogListSearch<T extends ListItem> extends DialogFragment {
 
 
     private void finishWithResult(T result) {
-//        Fragment target = getTargetFragment();
         if (result != null) {
             Bundle bundle = new Bundle();
-            bundle.putString(RESULT, result.getName());
-//            target.onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, resultData);
-            getParentFragmentManager().setFragmentResult("listener", bundle);
+            bundle.putParcelable(RESULT, result);
+            getParentFragmentManager().setFragmentResult(requestKey, bundle);
             dismiss();
         }
     }
