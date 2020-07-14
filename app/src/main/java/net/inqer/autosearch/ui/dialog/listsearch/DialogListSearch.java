@@ -43,9 +43,6 @@ public class DialogListSearch<T extends ListItem> extends DialogFragment {
     private String hint;
     private Flowable<List<T>> dataSource;
 
-    private Intent resultData = new Intent();
-
-
     public static <T extends ListItem> DialogListSearch<T> newInstance(String requestCode, String title, String hint, Flowable<List<T>> observer) {
         DialogListSearch<T> instance = new DialogListSearch<>();
         instance.dataSource = observer;
@@ -69,7 +66,6 @@ public class DialogListSearch<T extends ListItem> extends DialogFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        Log.d(TAG, "onViewCreated: ");
 
         DialogListSearchViewModelFactory<T> viewModelFactory = new DialogListSearchViewModelFactory<>(title, dataSource);
         viewModel = new ViewModelProvider(this, viewModelFactory).get(DialogListSearchViewModel.class);
@@ -164,7 +160,6 @@ public class DialogListSearch<T extends ListItem> extends DialogFragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        Log.d(TAG, "onDetach: Called");
 //        disposableBag.clear();
     }
 

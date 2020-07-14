@@ -1,6 +1,7 @@
 package net.inqer.autosearch.ui.fragment.search;
 
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -23,6 +24,7 @@ import net.inqer.autosearch.data.model.ListItem;
 import net.inqer.autosearch.databinding.FragmentSearchBinding;
 import net.inqer.autosearch.ui.dev.DevActivity;
 import net.inqer.autosearch.ui.dialog.listsearch.DialogListSearch;
+import net.inqer.autosearch.ui.dialog.valuespicker.DialogValuesPicker;
 import net.inqer.autosearch.util.ViewModelProviderFactory;
 
 import java.util.List;
@@ -39,6 +41,7 @@ public class SearchFragment extends DaggerFragment {
     private final String CITY = "list_search_city";
     private final String MARK = "list_search_mark";
     private final String MODEL = "list_search_model";
+    private final String PRICE = "values_picker_price";
 
     @Inject
     ViewModelProviderFactory providerFactory;
@@ -133,7 +136,7 @@ public class SearchFragment extends DaggerFragment {
         });
 
         binding.fEditPrice.setOnClickListener(v -> {
-
+            showValuesPickerDialog(PRICE, "Цена", "Выберите интервал стоимости (р.)");
         });
         binding.fEditYear.setOnClickListener(v -> {
 
@@ -167,16 +170,17 @@ public class SearchFragment extends DaggerFragment {
 
 
     private void setupResultListeners() {
-        getParentFragmentManager().setFragmentResultListener(REGION, this, (requestKey, result) -> {
+        FragmentManager manager = getParentFragmentManager();
+        manager.setFragmentResultListener(REGION, this, (requestKey, result) -> {
             viewModel.setRegion(result.getParcelable(DialogListSearch.RESULT));
         });
-        getParentFragmentManager().setFragmentResultListener(CITY, this, (requestKey, result) -> {
+        manager.setFragmentResultListener(CITY, this, (requestKey, result) -> {
             viewModel.setCity(result.getParcelable(DialogListSearch.RESULT));
         });
-        getParentFragmentManager().setFragmentResultListener(MARK, this, (requestKey, result) -> {
+        manager.setFragmentResultListener(MARK, this, (requestKey, result) -> {
             viewModel.setMark(result.getParcelable(DialogListSearch.RESULT));
         });
-        getParentFragmentManager().setFragmentResultListener(MODEL, this, (requestKey, result) -> {
+        manager.setFragmentResultListener(MODEL, this, (requestKey, result) -> {
             viewModel.setModel(result.getParcelable(DialogListSearch.RESULT));
         });
     }
@@ -192,6 +196,14 @@ public class SearchFragment extends DaggerFragment {
 
         DialogListSearch<T> dialog = DialogListSearch.newInstance(requestCode, title, hint, dataSource);
         dialog.show(manager, DialogListSearch.TAG);
+    }
+
+    private void showValuesPickerDialog(String requestCode, String title, String hint) {
+        FragmentManager manager = getParentFragmentManager();
+        manager.executePendingTransactions();
+
+        DialogValuesPicker dialog = DialogValuesPicker.newInstance(requestCode, title, hint);
+        dialog.show(manager, DialogValuesPicker.TAG);
     }
 
 
