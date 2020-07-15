@@ -14,8 +14,8 @@ import net.inqer.autosearch.R;
 import net.inqer.autosearch.data.source.local.AppDatabase;
 import net.inqer.autosearch.data.source.local.dao.FilterDao;
 import net.inqer.autosearch.data.source.local.dao.RegionDao;
-import net.inqer.autosearch.util.Config;
 import net.inqer.autosearch.util.TokenInjectionInterceptor;
+import net.inqer.autosearch.util.Util;
 
 import java.text.SimpleDateFormat;
 
@@ -66,7 +66,7 @@ public class AppModule {
     @Provides
     static Retrofit provideRetrofitInstance(OkHttpClient httpClient) {
         return new Retrofit.Builder()
-                .baseUrl(Config.BASE_URL)
+                .baseUrl(Util.getActiveServerUrl(httpClient))
                 .addConverterFactory(GsonConverterFactory.create(new GsonBuilder()
                         .setDateFormat("yyyy-MM-dd'T'HH:mm:ss")
                         .create()))

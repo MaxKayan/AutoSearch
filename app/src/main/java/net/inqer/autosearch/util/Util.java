@@ -1,8 +1,41 @@
 package net.inqer.autosearch.util;
 
-public class Util {
+import android.util.Log;
 
-    public static boolean equals(Object a, Object b) {
-        return (a == b) || (a != null && a.equals(b));
+import java.io.IOException;
+
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+
+public class Util {
+    private static final String TAG = "Util";
+
+    /**
+     * TODO: This method may have a better place to be.
+     *
+     * @param client Working okHttp client to run some GET requests
+     */
+    public static String getActiveServerUrl(OkHttpClient client) {
+        for (String currentUrl : Config.BASE_URL_SET) {
+            Log.d(TAG, "provideRetrofitInstance: " + currentUrl);
+
+            Request request = new Request.Builder()
+                    .url(currentUrl)
+                    .build();
+
+            try {
+                Response response = client.newCall(request).execute();
+                if (response.code() == 200) {
+                    return currentUrl;
+                }
+            } catch (IOException e) {
+                Log.d(TAG, "getActiveServerUrl: failed to access " + currentUrl, e);
+            }
+
+        }
+
+        Log.w(TAG, "getActiveServerUrl: Failed to find a working server URL!");
+        return Config.BASE_URL_SET[0];
     }
 }

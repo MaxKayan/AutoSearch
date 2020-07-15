@@ -7,11 +7,14 @@ import net.inqer.autosearch.data.model.User;
 import net.inqer.autosearch.util.Config;
 
 import io.reactivex.Flowable;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
+import retrofit2.http.Url;
 
 public interface AuthApi {
 
@@ -19,11 +22,14 @@ public interface AuthApi {
     @POST("auth/obtain_key/")
     Flowable<User> login(@Body LoginCredentials credentials);
 
-    @Headers(Config.NO_AUTHENTICATION_COOKIE+": guest")
+    @Headers(Config.NO_AUTHENTICATION_COOKIE + ": guest")
     @POST("register/")
     Flowable<User> register(@Body RegisterCredentials credentials);
 
-    @Headers(Config.NO_AUTHENTICATION_COOKIE+": guest")
+    @Headers(Config.NO_AUTHENTICATION_COOKIE + ": guest")
     @GET("auth/checkme/")
     Flowable<User> checkAuthentication(@Header("Authorization") String authToken);
+
+    @GET
+    Call<ResponseBody> checkHost(@Url String absoluteUrl);
 }
