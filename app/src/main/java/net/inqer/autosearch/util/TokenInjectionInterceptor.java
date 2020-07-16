@@ -17,14 +17,14 @@ import okhttp3.Response;
 public class TokenInjectionInterceptor implements Interceptor {
     private static final String TAG = "TokenInjectionIntercept";
 
-    private String sessionToken;
+    private String sessionToken = "";
 
     @Inject
     TokenInjectionInterceptor() {
     }
 
     public void setSessionToken(String sessionToken) {
-        Log.d(TAG, "setSessionToken: setting - "+sessionToken);
+        Log.d(TAG, "setSessionToken: setting - " + sessionToken);
         this.sessionToken = sessionToken;
     }
 
@@ -35,13 +35,13 @@ public class TokenInjectionInterceptor implements Interceptor {
 
         Request.Builder requestBuilder = request.newBuilder();
 
-        if (request.header(Config.NO_AUTHENTICATION_COOKIE)==null) {
+        if (request.header(Config.NO_AUTHENTICATION_COOKIE) == null) {
             Log.d(TAG, "intercept: getting token...");
             // get token
             if (sessionToken == null) {
                 throw new RuntimeException("Session token should be defined for auth APIs");
             } else {
-                requestBuilder.addHeader("Authorization", "Token "+sessionToken);
+                requestBuilder.addHeader("Authorization", "Token " + sessionToken);
             }
         }
 

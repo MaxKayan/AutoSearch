@@ -3,6 +3,7 @@ package net.inqer.autosearch.util;
 import android.util.Log;
 
 import java.io.IOException;
+import java.util.concurrent.CountDownLatch;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -19,10 +20,13 @@ public class Util {
     public static String getActiveServerUrl(OkHttpClient client) {
         for (String currentUrl : Config.BASE_URL_SET) {
             Log.d(TAG, "provideRetrofitInstance: " + currentUrl);
+            Log.d(TAG, "getActiveServerUrl: String format test: " + String.format(Config.BASE_URL_FORMAT, currentUrl));
 
             Request request = new Request.Builder()
                     .url(currentUrl)
                     .build();
+
+            CountDownLatch countDownLatch = new CountDownLatch(1);
 
             try {
                 Response response = client.newCall(request).execute();
