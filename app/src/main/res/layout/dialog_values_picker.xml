@@ -94,8 +94,6 @@
             android:id="@+id/dialog_val_accept"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Применить"
-            android:textSize="18sp"
             android:textAllCaps="true"
             android:layout_alignParentRight="true"
             android:layout_marginHorizontal="@dimen/dialog_horizontal_padding"/>

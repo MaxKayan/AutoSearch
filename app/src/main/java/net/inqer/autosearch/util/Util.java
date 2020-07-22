@@ -2,9 +2,13 @@ package net.inqer.autosearch.util;
 
 import android.util.Log;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
 
+import okhttp3.Call;
+import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -12,12 +16,19 @@ import okhttp3.Response;
 public class Util {
     private static final String TAG = "Util";
 
+    private static String apiUrl;
+
+    public static String getApiUrl() {
+        return apiUrl;
+    }
+
     /**
      * TODO: This method may have a better place to be.
      *
      * @param client Working okHttp client to run some GET requests
      */
     public static String getActiveServerUrl(OkHttpClient client) {
+        CountDownLatch countDownLatch = new CountDownLatch(Config.BASE_URL_SET.length);
         for (String currentUrl : Config.BASE_URL_SET) {
             Log.d(TAG, "provideRetrofitInstance: " + currentUrl);
             Log.d(TAG, "getActiveServerUrl: String format test: " + String.format(Config.BASE_URL_FORMAT, currentUrl));
@@ -26,20 +37,32 @@ public class Util {
                     .url(currentUrl)
                     .build();
 
-            CountDownLatch countDownLatch = new CountDownLatch(1);
-
-            try {
-                Response response = client.newCall(request).execute();
-                if (response.code() == 200) {
-                    return currentUrl;
+            client.newCall(request).enqueue(new Callback() {
+                @Override
+                public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                    Log.e(TAG, "onFailure: Failed to connect: " + e.getMessage());
+                    countDownLatch.countDown();
                 }
-            } catch (IOException e) {
-                Log.d(TAG, "getActiveServerUrl: failed to access " + currentUrl, e);
-            }
 
+                @Override
+                public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                    apiUrl = currentUrl;
+                    countDownLatch.countDown();
+                }
+            });
         }
 
-        Log.w(TAG, "getActiveServerUrl: Failed to find a working server URL!");
-        return Config.BASE_URL_SET[0];
+        try {
+            countDownLatch.await();
+        } catch (InterruptedException e) {
+            Log.e(TAG, "getActiveServerUrl: Interrupted: " + e.getMessage());
+        }
+
+        if (apiUrl == null) {
+            Log.w(TAG, "getActiveServerUrl: Failed to find a working server URL!");
+            return Config.BASE_URL_SET[0];
+        }
+
+        return apiUrl;
     }
 }
