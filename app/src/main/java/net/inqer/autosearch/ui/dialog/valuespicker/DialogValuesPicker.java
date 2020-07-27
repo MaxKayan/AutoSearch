@@ -1,9 +1,6 @@
 package net.inqer.autosearch.ui.dialog.valuespicker;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,21 +9,8 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.LinearLayoutManager;
 
-import net.inqer.autosearch.data.model.ListItem;
-import net.inqer.autosearch.databinding.DialogListSearchBinding;
 import net.inqer.autosearch.databinding.DialogValuesPickerBinding;
-import net.inqer.autosearch.ui.dialog.listsearch.DialogListSearchViewModel;
-import net.inqer.autosearch.ui.dialog.listsearch.DialogListSearchViewModelFactory;
-import net.inqer.autosearch.ui.dialog.listsearch.adapter.AutoCompleteListItemAdapter;
-import net.inqer.autosearch.ui.dialog.listsearch.adapter.DialogListAdapter;
-
-import java.util.List;
-
-import io.reactivex.Flowable;
-import io.reactivex.disposables.CompositeDisposable;
 
 public class DialogValuesPicker extends DialogFragment {
     public static final String TAG = "DialogValuesPicker";
@@ -34,6 +18,8 @@ public class DialogValuesPicker extends DialogFragment {
     private static final String TITLE = "dialog_header";
     private static final String HINT = "dialog_values_hint";
     private static final String CODE = "dialog_values_request_code";
+    private static final String MIN = "dialog_values_min";
+    private static final String MAX = "dialog_values_max";
     public static final String RESULT = "dialog_values_result";
 
     private String requestKey;
@@ -42,9 +28,14 @@ public class DialogValuesPicker extends DialogFragment {
 
     private DialogValuesPickerBinding binding;
 
-    public static DialogValuesPicker newInstance(String requestCode, String title, String hint) {
+    public static DialogValuesPicker newInstance(String requestCode, int min, int max, String title, String hint) {
         DialogValuesPicker instance = new DialogValuesPicker();
         Bundle args = new Bundle();
+        args.putString(TITLE, title);
+        args.putString(HINT, hint);
+        args.putInt(MIN, min);
+        args.putInt(MAX, max);
+        args.putString(CODE, requestCode);
         instance.setArguments(args);
 
         return instance;
@@ -72,6 +63,10 @@ public class DialogValuesPicker extends DialogFragment {
             requestKey = bundle.getString(CODE);
             title = bundle.getString(TITLE);
             hint = bundle.getString(HINT);
+            binding.dialogValL.setMinValue(bundle.getInt(MIN));
+            binding.dialogValR.setMinValue(bundle.getInt(MIN));
+            binding.dialogValL.setMinValue(bundle.getInt(MAX));
+            binding.dialogValR.setMinValue(bundle.getInt(MAX));
         } else {
             Log.w(TAG, "unpackBundleArgs: args bundle is null!");
         }
@@ -79,7 +74,13 @@ public class DialogValuesPicker extends DialogFragment {
 
 
     private void setupView() {
+        if (title != null && !title.isEmpty()) binding.dialogValHeader.setText(title);
+        if (hint != null && !hint.isEmpty()) binding.dialogValLHelpText.setHint(hint);
 
+        binding.dialogValAccept.setOnClickListener(v -> {
+            Log.d(TAG, "setupView: " + binding.dialogValL.getValue());
+            Log.d(TAG, "setupView: " + binding.dialogValR.getValue());
+        });
     }
 
     @Override

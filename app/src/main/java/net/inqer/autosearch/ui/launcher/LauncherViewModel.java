@@ -1,7 +1,6 @@
 package net.inqer.autosearch.ui.launcher;
 
 import android.app.Application;
-import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.LiveDataReactiveStreams;
@@ -46,10 +45,10 @@ public class LauncherViewModel extends ViewModel {
         // TODO: Rework this block, seems to be more complex than needed
         sessionManager.authenticateWithCredentials(LiveDataReactiveStreams.fromPublisher(
                 authApi.checkAuthentication("Token " + token)
-                        .onErrorReturn(throwable -> {
-                            Log.w(TAG, "checkAuthenticationByToken: Error", throwable);
-                            return new User(throwable.getMessage());
-                        })
+//                        .onErrorReturn(throwable -> {
+//                            Log.w(TAG, "checkAuthenticationByToken: Error", throwable);
+//                            return new User(throwable.getMessage());
+//                        })
                         .map((Function<User, AuthResource<User>>) loggedInUser -> {
                             if (loggedInUser.getErrorCase() != null) {
                                 return AuthResource.error(loggedInUser.getErrorCase(), null);

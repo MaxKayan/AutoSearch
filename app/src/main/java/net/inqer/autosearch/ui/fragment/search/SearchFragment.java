@@ -1,7 +1,6 @@
 package net.inqer.autosearch.ui.fragment.search;
 
 import android.annotation.SuppressLint;
-import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -202,7 +201,7 @@ public class SearchFragment extends DaggerFragment {
         FragmentManager manager = getParentFragmentManager();
         manager.executePendingTransactions();
 
-        DialogValuesPicker dialog = DialogValuesPicker.newInstance(requestCode, title, hint);
+        DialogValuesPicker dialog = DialogValuesPicker.newInstance(requestCode, 0, 100000, title, hint);
         dialog.show(manager, DialogValuesPicker.TAG);
     }
 
