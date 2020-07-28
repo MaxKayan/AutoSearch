@@ -3,7 +3,6 @@ package net.inqer.autosearch.ui.launcher;
 import android.app.Application;
 
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.LiveDataReactiveStreams;
 import androidx.lifecycle.ViewModel;
 
 import net.inqer.autosearch.R;
@@ -14,9 +13,6 @@ import net.inqer.autosearch.data.source.local.AuthParametersProvider;
 import net.inqer.autosearch.util.TokenInjectionInterceptor;
 
 import javax.inject.Inject;
-
-import io.reactivex.functions.Function;
-import io.reactivex.schedulers.Schedulers;
 
 public class LauncherViewModel extends ViewModel {
     private static final String TAG = "LauncherViewModel";
@@ -43,20 +39,22 @@ public class LauncherViewModel extends ViewModel {
 
     void checkAuthenticationByToken(final String token) {
         // TODO: Rework this block, seems to be more complex than needed
-        sessionManager.authenticateWithCredentials(LiveDataReactiveStreams.fromPublisher(
-                authApi.checkAuthentication("Token " + token)
+//        sessionManager.authenticateWithCredentials(LiveDataReactiveStreams.fromPublisher(
+//                authApi.checkAuthentication("Token " + token)
 //                        .onErrorReturn(throwable -> {
 //                            Log.w(TAG, "checkAuthenticationByToken: Error", throwable);
 //                            return new User(throwable.getMessage());
 //                        })
-                        .map((Function<User, AuthResource<User>>) loggedInUser -> {
-                            if (loggedInUser.getErrorCase() != null) {
-                                return AuthResource.error(loggedInUser.getErrorCase(), null);
-                            } else return AuthResource.authenticated(loggedInUser);
-                        })
-                        .subscribeOn(Schedulers.io())
-                )
-        );
+//                        .map((Function<User, AuthResource<User>>) loggedInUser -> {
+//                            if (loggedInUser.getErrorCase() != null) {
+//                                return AuthResource.error(loggedInUser.getErrorCase(), null);
+//                            } else return AuthResource.authenticated(loggedInUser);
+//                        })
+//                        .subscribeOn(Schedulers.io())
+//                )
+//        );
+        sessionManager.authenticateWithToken(token, authApi)
+                .subscribe();
     }
 
     String getToken() {

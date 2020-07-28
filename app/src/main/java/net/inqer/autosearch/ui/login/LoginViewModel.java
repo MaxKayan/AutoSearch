@@ -1,26 +1,20 @@
 package net.inqer.autosearch.ui.login;
 
+import android.annotation.SuppressLint;
 import android.util.Log;
 import android.util.Patterns;
 
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.LiveDataReactiveStreams;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.jakewharton.retrofit2.adapter.rxjava2.HttpException;
-
 import net.inqer.autosearch.R;
 import net.inqer.autosearch.SessionManager;
-import net.inqer.autosearch.data.model.LoginCredentials;
 import net.inqer.autosearch.data.model.User;
 import net.inqer.autosearch.data.source.api.AuthApi;
 import net.inqer.autosearch.ui.launcher.AuthResource;
 
 import javax.inject.Inject;
-
-import io.reactivex.functions.Function;
-import io.reactivex.schedulers.Schedulers;
 
 public class LoginViewModel extends ViewModel {
     private static final String TAG = "LoginViewModel";
@@ -47,48 +41,55 @@ public class LoginViewModel extends ViewModel {
         return loginResult;
     }
 
+    @SuppressLint("CheckResult")
     void authenticate(final String email, final String password) {
-        sessionManager.authenticateWithCredentials(queryUser(email, password));
+//        sessionManager.authenticateWithToken(queryUser(email, password));
+        sessionManager.authenticateWithCredentials(authApi, email, password)
+                .subscribe(user -> {
+                    Log.d(TAG, "authenticate: " + user.toString());
+                }, throwable -> {
+
+                });
     }
 
-    private LiveData<AuthResource<User>> queryUser(String email, String password) {
-        return LiveDataReactiveStreams.fromPublisher(
-                authApi.login(new LoginCredentials(email, password))
+//    private LiveData<AuthResource<User>> queryUser(String email, String password) {
+//        return LiveDataReactiveStreams.fromPublisher(
+//                authApi.login(new LoginCredentials(email, password))
+//
+//                        // Handle Error
+//                        .onErrorReturn(throwable -> {
+//                            Log.w(TAG, "authenticateWithCredentials: onError: ", throwable);
+//                            String errorMessage = throwable.getMessage();
+//
+//                            if (throwable instanceof HttpException) {
+//                                HttpException httpException = ((HttpException) throwable);
+//                                Log.d(TAG, "authenticateWithCredentials: HTTP code: " + httpException.code());
+//                                switch (httpException.code()) {
+//                                    case 400: {
+//                                        errorMessage = "Wrong email or password. Please try again.";
+//                                        break;
+//                                    }
+//                                    case 500: {
+//                                        errorMessage = "Internal server error. Please try again.";
+//                                        break;
+//                                    }
+//                                }
+//                            }
+//                            return new User(errorMessage);
+//                        })
+//
+//                        // Return user with error if there is one
+//                        .map((Function<User, AuthResource<User>>) loggedInUser -> {
+//                            if (loggedInUser.getErrorCase() != null) {
+//                                return AuthResource.error(loggedInUser.getErrorCase(), null);
+//                            }
+//                            return AuthResource.authenticated(loggedInUser);
+//                        })
+//                        .subscribeOn(Schedulers.io())
+//        );
+//    }
 
-                        // Handle Error
-                        .onErrorReturn(throwable -> {
-                            Log.w(TAG, "authenticateWithCredentials: onError: ", throwable);
-                            String errorMessage = throwable.getMessage();
-
-                            if (throwable instanceof HttpException) {
-                                HttpException httpException = ((HttpException) throwable);
-                                Log.d(TAG, "authenticateWithCredentials: HTTP code: " + httpException.code());
-                                switch (httpException.code()) {
-                                    case 400: {
-                                        errorMessage = "Wrong email or password. Please try again.";
-                                        break;
-                                    }
-                                    case 500: {
-                                        errorMessage = "Internal server error. Please try again.";
-                                        break;
-                                    }
-                                }
-                            }
-                            return new User(errorMessage);
-                        })
-
-                        // Return user with error if there is one
-                        .map((Function<User, AuthResource<User>>) loggedInUser -> {
-                            if (loggedInUser.getErrorCase() != null) {
-                                return AuthResource.error(loggedInUser.getErrorCase(), null);
-                            }
-                            return AuthResource.authenticated(loggedInUser);
-                        })
-                        .subscribeOn(Schedulers.io())
-        );
-    }
-
-    LiveData<AuthResource<User>> observerAuthState() {
+    LiveData<AuthResource<User>> observeAuthState() {
         return sessionManager.getAuthUser();
     }
 

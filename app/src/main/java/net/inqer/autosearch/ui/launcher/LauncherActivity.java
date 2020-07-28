@@ -34,7 +34,7 @@ public class LauncherActivity extends BaseActivity {
         if (token != null) {
             Log.d(TAG, "onCreate: Token is not empty, checking access...");
 
-            viewModel.checkAuthenticationByToken(token);
+            viewModel.checkAuthenticationByToken(token);  // "NOT AUTHENTICATED" is handled on Base Activity
 
         } else {
             Log.w(TAG, "onCreate: Token is empty, creating Login Activity. -- ");

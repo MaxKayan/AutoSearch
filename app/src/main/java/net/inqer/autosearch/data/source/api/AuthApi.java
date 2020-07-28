@@ -6,7 +6,7 @@ import net.inqer.autosearch.data.model.RegisterCredentials;
 import net.inqer.autosearch.data.model.User;
 import net.inqer.autosearch.util.Config;
 
-import io.reactivex.Flowable;
+import io.reactivex.Single;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -18,17 +18,17 @@ import retrofit2.http.Url;
 
 public interface AuthApi {
 
-    @Headers(Config.NO_AUTHENTICATION_COOKIE+": guest")
+    @Headers(Config.NO_AUTHENTICATION_COOKIE + ": guest")
     @POST("auth/obtain_key/")
-    Flowable<User> login(@Body LoginCredentials credentials);
+    Single<User> login(@Body LoginCredentials credentials);
 
     @Headers(Config.NO_AUTHENTICATION_COOKIE + ": guest")
     @POST("register/")
-    Flowable<User> register(@Body RegisterCredentials credentials);
+    Single<User> register(@Body RegisterCredentials credentials);
 
     @Headers(Config.NO_AUTHENTICATION_COOKIE + ": guest")
     @GET("auth/checkme/")
-    Flowable<User> checkAuthentication(@Header("Authorization") String authToken);
+    Single<User> checkAuthentication(@Header("Authorization") String authToken);
 
     @GET
     Call<ResponseBody> checkHost(@Url String absoluteUrl);

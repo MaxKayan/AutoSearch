@@ -87,7 +87,7 @@ public class LoginActivity extends DaggerAppCompatActivity {
 
     private void subscribeObservers() {
 
-        loginViewModel.observerAuthState().observe(this, authResource -> {
+        loginViewModel.observeAuthState().observe(this, authResource -> {
             if (authResource != null) {
                 switch (authResource.status) {
                     case LOADING: {
@@ -96,7 +96,7 @@ public class LoginActivity extends DaggerAppCompatActivity {
                     }
                     case AUTHENTICATED: {
                         showProgressBar(false);
-                        Log.d(TAG, "subscribeObservers: LOGIN SUCCESS: "+authResource.data.getEmail());
+                        Log.d(TAG, "subscribeObservers: LOGIN SUCCESS: " + authResource.data.getEmail());
                         updateUiWithUser(new LoggedInUserView(authResource.data.getUsername(), authResource.data.getToken()));
                         break;
                     }
