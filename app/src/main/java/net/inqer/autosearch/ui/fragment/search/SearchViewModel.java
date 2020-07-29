@@ -68,19 +68,6 @@ public class SearchViewModel extends ViewModel {
         return optionsRepository.observeModelsByMark(carMark);
     }
 
-//    public void setRegion(String rSlug) {
-//        Disposable d = locationsRepository.getRegionById(rSlug)
-//                .subscribe(region -> {
-//                    EditableFilter filter = currentEditableFilter.getValue();
-//                    if (filter != null && region != null) {
-//                        filter.setRegion(region);
-//                        currentEditableFilter.postValue(filter);
-//                    } else Log.d(TAG, "setRegion: editable filter should never be null");
-//                }, throwable -> {
-//                    Log.e(TAG, "setRegion: Error: ", throwable);
-//                });
-//    }
-
     /**
      * Submit new filter to backend via POST request.
      */
@@ -88,12 +75,12 @@ public class SearchViewModel extends ViewModel {
         EditableFilter filter = currentEditableFilter.getValue();
         if (filter != null) {
             Disposable d = api.createFilter(filter)
-            .subscribeOn(Schedulers.io())
-            .subscribe(() -> {
-                Log.d(TAG, "submitFilter: completed");
-            }, throwable -> {
-                Log.e(TAG, "submitFilter: ", throwable);
-            });
+                    .subscribeOn(Schedulers.io())
+                    .subscribe(() -> {
+                        Log.d(TAG, "submitFilter: completed");
+                    }, throwable -> {
+                        Log.e(TAG, "submitFilter: ", throwable);
+                    });
         }
     }
 
@@ -125,6 +112,15 @@ public class SearchViewModel extends ViewModel {
         EditableFilter filter = currentEditableFilter.getValue();
         if (instance != null && filter != null) {
             filter.setCarModel(instance);
+            currentEditableFilter.setValue(filter);
+        } else Log.e(TAG, "setModel: null data");
+    }
+
+    public void setPrice(int from, int to) {
+        EditableFilter filter = currentEditableFilter.getValue();
+        if (filter != null) {
+            filter.setPriceMinimum(from);
+            filter.setPriceMaximum(to);
             currentEditableFilter.setValue(filter);
         } else Log.e(TAG, "setModel: null data");
     }

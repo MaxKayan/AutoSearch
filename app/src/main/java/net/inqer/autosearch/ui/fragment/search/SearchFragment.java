@@ -175,17 +175,26 @@ public class SearchFragment extends DaggerFragment {
 
     private void setupResultListeners() {
         FragmentManager manager = getParentFragmentManager();
+        String listKey = DialogListSearch.RESULT;
+        String valKey = DialogListSearch.RESULT;
+
         manager.setFragmentResultListener(REGION, this, (requestKey, result) -> {
-            viewModel.setRegion(result.getParcelable(DialogListSearch.RESULT));
+            viewModel.setRegion(result.getParcelable(listKey));
         });
         manager.setFragmentResultListener(CITY, this, (requestKey, result) -> {
-            viewModel.setCity(result.getParcelable(DialogListSearch.RESULT));
+            viewModel.setCity(result.getParcelable(listKey));
         });
         manager.setFragmentResultListener(MARK, this, (requestKey, result) -> {
-            viewModel.setMark(result.getParcelable(DialogListSearch.RESULT));
+            viewModel.setMark(result.getParcelable(listKey));
         });
         manager.setFragmentResultListener(MODEL, this, (requestKey, result) -> {
-            viewModel.setModel(result.getParcelable(DialogListSearch.RESULT));
+            viewModel.setModel(result.getParcelable(listKey));
+        });
+        manager.setFragmentResultListener(PRICE, this, (requestKey, result) -> {
+            int[] values = result.getIntArray(valKey);
+            if (values != null) {
+                viewModel.setPrice(values[0], values[1]);
+            }
         });
     }
 

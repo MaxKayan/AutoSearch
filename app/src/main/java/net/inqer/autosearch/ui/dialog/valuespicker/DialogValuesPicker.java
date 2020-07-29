@@ -15,8 +15,6 @@ import net.inqer.autosearch.databinding.DialogValuesPickerBinding;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 public class DialogValuesPicker extends DialogFragment {
     public static final String RESULT = "dialog_values_result";
@@ -28,6 +26,13 @@ public class DialogValuesPicker extends DialogFragment {
     private static final String CODE = "dialog_values_request_code";
     private static final String MIN = "dialog_values_min";
     private static final String MAX = "dialog_values_max";
+    private String requestKey;
+    private String title;
+    private String hint;
+    private DialogValuesPickerBinding binding;
+
+    public DialogValuesPicker() {
+    }
 
     public static DialogValuesPicker newInstance(String requestCode, int min, int max, int step, String title, String hint) {
         DialogValuesPicker instance = new DialogValuesPicker();
@@ -42,12 +47,6 @@ public class DialogValuesPicker extends DialogFragment {
 
         return instance;
     }
-
-    private String requestKey;
-    private String title;
-    private String hint;
-
-    private DialogValuesPickerBinding binding;
 
     //    @SuppressWarnings("unchecked")
     @Override
@@ -67,15 +66,6 @@ public class DialogValuesPicker extends DialogFragment {
         return binding.getRoot();
     }
 
-    /**
-     * @param lVal Value from the left picker ("From")
-     * @param rVal Value from the right picker ("To")
-     */
-    private void compareValues(int lVal, int rVal) {
-        if (lVal > rVal) {
-            binding.dialogValR.setValue(lVal);
-        }
-    }
 
     private void setupView(Bundle bundle) {
         if (title != null && !title.isEmpty()) binding.dialogValHeader.setText(title);
@@ -88,36 +78,21 @@ public class DialogValuesPicker extends DialogFragment {
             throw new AssertionError("MIN should always be less than MAX");
         }
 
-//        NumberPicker.Formatter formatter = new NumberPicker.Formatter() {
-//            @Override
-//            public String format(int value) {
-//                return String.valueOf(value * step);
-//            }
-//        };
-//        binding.dialogValL.setFormatter(formatter);
-//        binding.dialogValR.setFormatter(formatter);
 
-        List<Integer> range = IntStream.rangeClosed(min, max).boxed().collect(Collectors.toList());
-
-//        String[] stepValues = new String[max - min + 1];
         List<String> stepValues = new ArrayList<>();
         for (int i = min; i <= max; i++) {
             String number = Integer.toString(i * step);
             stepValues.add(number);
-//            stepValues[i] = number;
         }
 
 
         Log.d(TAG, "setupView: stepValues: " + stepValues.toString());
-//        Log.d(TAG, "setupView: range: " + range.toString());
 
         binding.dialogValL.setDisplayedValues(stepValues.toArray(new String[0]));
         binding.dialogValR.setDisplayedValues(stepValues.toArray(new String[0]));
 
         binding.dialogValAccept.setOnClickListener(v -> {
-            Log.d(TAG, "setupView: " + binding.dialogValL.getValue() * step);
-            Log.d(TAG, "setupView: " + binding.dialogValR.getValue() * step);
-//            Log.d(TAG, "setupView: stepValues: "+stepValues.length);
+            finishWithResult(binding.dialogValL.getValue(), binding.dialogValR.getValue());
         });
 
         binding.dialogValL.setMinValue(min);
@@ -152,33 +127,26 @@ public class DialogValuesPicker extends DialogFragment {
             }
         });
 
-//        binding.dialogValCancel.setOnClickListener(v -> dismiss());
     }
-
-
-    public static enum TYPE {}
-
 
     @Override
     public void onPause() {
         super.onPause();
     }
 
-
     @Override
     public void onDetach() {
         super.onDetach();
-//        disposableBag.clear();
+    }
+
+    private void finishWithResult(int from, int to) {
+        Bundle bundle = new Bundle();
+        bundle.putIntArray(RESULT, new int[]{from, to});
+        getParentFragmentManager().setFragmentResult(requestKey, bundle);
+        this.dismiss();
     }
 
 
-    private void finishWithResult(Float result) {
-        if (result != null) {
-            Bundle bundle = new Bundle();
-//            bundle.putParcelable(RESULT, result);
-            getParentFragmentManager().setFragmentResult(requestKey, bundle);
-            this.dismiss();
-        }
-    }
+    public enum TYPE {NORMAL, CURRENCY, SINGLE}
 
 }
