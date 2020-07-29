@@ -25,8 +25,6 @@ public class LoginViewModel extends ViewModel {
     private MutableLiveData<LoginFormState> loginFormState = new MutableLiveData<>();
     private MutableLiveData<LoginResult> loginResult = new MutableLiveData<>();
 
-//    private MediatorLiveData<AuthResource<LoggedInUser>> authUser = new MediatorLiveData<>();
-
     @Inject
     LoginViewModel(AuthApi api, SessionManager sessionManager) {
         this.authApi = api;
@@ -52,79 +50,9 @@ public class LoginViewModel extends ViewModel {
                 });
     }
 
-//    private LiveData<AuthResource<User>> queryUser(String email, String password) {
-//        return LiveDataReactiveStreams.fromPublisher(
-//                authApi.login(new LoginCredentials(email, password))
-//
-//                        // Handle Error
-//                        .onErrorReturn(throwable -> {
-//                            Log.w(TAG, "authenticateWithCredentials: onError: ", throwable);
-//                            String errorMessage = throwable.getMessage();
-//
-//                            if (throwable instanceof HttpException) {
-//                                HttpException httpException = ((HttpException) throwable);
-//                                Log.d(TAG, "authenticateWithCredentials: HTTP code: " + httpException.code());
-//                                switch (httpException.code()) {
-//                                    case 400: {
-//                                        errorMessage = "Wrong email or password. Please try again.";
-//                                        break;
-//                                    }
-//                                    case 500: {
-//                                        errorMessage = "Internal server error. Please try again.";
-//                                        break;
-//                                    }
-//                                }
-//                            }
-//                            return new User(errorMessage);
-//                        })
-//
-//                        // Return user with error if there is one
-//                        .map((Function<User, AuthResource<User>>) loggedInUser -> {
-//                            if (loggedInUser.getErrorCase() != null) {
-//                                return AuthResource.error(loggedInUser.getErrorCase(), null);
-//                            }
-//                            return AuthResource.authenticated(loggedInUser);
-//                        })
-//                        .subscribeOn(Schedulers.io())
-//        );
-//    }
-
     LiveData<AuthResource<User>> observeAuthState() {
         return sessionManager.getAuthUser();
     }
-
-//    public void login(final String email, final String password) {
-//        authApi.login(new LoginCredentials(email, password))
-//                .toObservable()
-//                .singleElement()
-//                .subscribeOn(Schedulers.io())
-//                .subscribe(new MaybeObserver<LoggedInUser>() {
-//                    @Override
-//                    public void onSubscribe(Disposable d) {
-//
-//                    }
-//
-//                    @Override
-//                    public void onSuccess(LoggedInUser loggedInUser) {
-//                        loginResult.postValue(new LoginResult(new LoggedInUserView(loggedInUser.getUsername(), loggedInUser.getToken())));
-//                    }
-//
-//                    @Override
-//                    public void onError(Throwable e) {
-//                        loginResult.postValue(new LoginResult(R.string.login_failed, e.getMessage()));
-//
-//                        if (e instanceof HttpException) {
-//                            Log.w(TAG, "onError: " + ((HttpException) e).code());
-//                            ;
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void onComplete() {
-//
-//                    }
-//                });
-//    }
 
     void loginDataChanged(String username, String password) {
         if (!isUserNameValid(username)) {

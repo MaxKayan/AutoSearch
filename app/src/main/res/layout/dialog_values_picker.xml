@@ -5,15 +5,30 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/dialog_val_header"
+    <RelativeLayout
         android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimaryLight">
+
+        <TextView
+            android:id="@+id/dialog_val_header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/dialog_horizontal_padding"
+            android:layout_marginVertical="@dimen/dialog_horizontal_padding"
+            android:text="Выберите значение"
+            android:textColor="@color/background"
+            android:textSize="18sp" />
+
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/dialog_val_hint"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/dialog_horizontal_padding"
         android:layout_marginVertical="@dimen/dialog_horizontal_padding"
-        android:text="Выберите значение"
-        android:textColor="#000"
-        android:textSize="18sp" />
+        android:text="Укажите значение" />
 
     <!--    <RelativeLayout-->
     <!--        android:layout_width="match_parent"-->
@@ -44,7 +59,7 @@
             android:id="@+id/dialog_val_l_help_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="С"
+            android:text="От"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintLeft_toLeftOf="@id/dialog_val_l"
             app:layout_constraintRight_toRightOf="@id/dialog_val_l" />
@@ -65,6 +80,16 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toBottomOf="@id/dialog_val_l_help_text" />
 
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_baseline_arrow_right_alt_24"
+            android:tint="@color/colorPrimary"
+            app:layout_constraintBottom_toBottomOf="@+id/dialog_val_r"
+            app:layout_constraintEnd_toStartOf="@+id/dialog_val_r"
+            app:layout_constraintStart_toEndOf="@+id/dialog_val_l"
+            app:layout_constraintTop_toTopOf="@+id/dialog_val_r" />
+
         <NumberPicker
             android:id="@+id/dialog_val_r"
             android:layout_width="wrap_content"
@@ -79,24 +104,25 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <Button
-            android:id="@+id/dialog_val_cancel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Отмена"
-            android:textSize="18sp"
-            android:textAllCaps="true"
-            android:layout_alignParentLeft="true"
-            android:layout_marginHorizontal="@dimen/dialog_horizontal_padding"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
+        <!--        <Button-->
+        <!--            android:id="@+id/dialog_val_cancel"-->
+        <!--            android:layout_width="wrap_content"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:text="Отмена"-->
+        <!--            android:textSize="18sp"-->
+        <!--            android:textAllCaps="true"-->
+        <!--            android:layout_alignParentLeft="true"-->
+        <!--            android:layout_marginHorizontal="@dimen/dialog_horizontal_padding"-->
+        <!--            style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>-->
 
         <Button
             android:id="@+id/dialog_val_accept"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAllCaps="true"
-            android:layout_alignParentRight="true"
-            android:layout_marginHorizontal="@dimen/dialog_horizontal_padding"/>
+            android:layout_centerInParent="true"
+            android:text="Применить"
+            android:layout_marginHorizontal="@dimen/dialog_horizontal_padding" />
 
     </RelativeLayout>
 

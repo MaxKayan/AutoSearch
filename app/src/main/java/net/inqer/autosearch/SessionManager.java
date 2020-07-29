@@ -49,12 +49,12 @@ public class SessionManager {
     @SuppressLint("CheckResult")
     public Single<User> authenticateWithToken(final String token, AuthApi api) {
         return api.checkAuthentication("Token " + token)
-                .doOnError(throwable -> {
-                    if (throwable.getMessage() != null) {
-                        Log.w(TAG, "authenticateWithToken: " + throwable.getMessage() + throwable.getClass(), throwable);
-                        cachedUser.postValue(AuthResource.error(throwable.getMessage(), null));
-                    }
-                })
+//                .doOnError(throwable -> {
+//                    if (throwable instanceof HttpException) {
+//                        Log.w(TAG, "authenticateWithToken: " + throwable.getMessage() + throwable.getClass(), throwable);
+//                        cachedUser.postValue(AuthResource.error(throwable.getMessage(), null));
+//                    }
+//                })
                 .doOnSuccess(user -> {
                     cachedUser.postValue(AuthResource.authenticated(user));
                 })
@@ -83,7 +83,7 @@ public class SessionManager {
 
     public void logOut() {
         Log.d(TAG, "logOut: logging out...");
-        cachedUser.setValue(AuthResource.logout());
+        cachedUser.postValue(AuthResource.logout());
     }
 
     public LiveData<AuthResource<User>> getAuthUser() {

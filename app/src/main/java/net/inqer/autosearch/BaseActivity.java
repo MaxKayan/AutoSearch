@@ -31,6 +31,7 @@ public abstract class BaseActivity extends DaggerAppCompatActivity {
     private void subscribeDefaultObservers() {
         sessionManager.getAuthUser().observe(this, authResource -> {
             if (authResource != null) {
+                Log.d(TAG, "subscribeDefaultObservers: new value: " + authResource.status);
                 switch (authResource.status) {
                     case NOT_AUTHENTICATED: {
                         navLoginScreen();

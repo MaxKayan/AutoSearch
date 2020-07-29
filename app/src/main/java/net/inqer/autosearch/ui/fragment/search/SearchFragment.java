@@ -41,6 +41,8 @@ public class SearchFragment extends DaggerFragment {
     private final String MARK = "list_search_mark";
     private final String MODEL = "list_search_model";
     private final String PRICE = "values_picker_price";
+    private final String YEAR = "values_picker_year";
+    private final String RADIUS = "values_picker_radius";
 
     @Inject
     ViewModelProviderFactory providerFactory;
@@ -135,10 +137,12 @@ public class SearchFragment extends DaggerFragment {
         });
 
         binding.fEditPrice.setOnClickListener(v -> {
-            showValuesPickerDialog(PRICE, "Цена", "Выберите интервал стоимости (р.)");
+            showValuesPickerDialog(PRICE, "Цена", "Выберите интервал стоимости (р.)",
+                    0, 1000000, 1000);
         });
         binding.fEditYear.setOnClickListener(v -> {
-
+            showValuesPickerDialog(YEAR, "Год выпуска", "Выберите год выпуска ТС",
+                    1980, 2020, 1);
         });
         binding.fEditTransmission.setOnClickListener(v -> {
 
@@ -153,7 +157,8 @@ public class SearchFragment extends DaggerFragment {
 
         });
         binding.fEditRadius.setOnClickListener(v -> {
-
+            showValuesPickerDialog(RADIUS, "Радиус поиска", "Укажите радиус поиска (км)",
+                    0, 1000, 10);
         });
 
         binding.fEditSearchButton.setOnClickListener(v -> {
@@ -197,11 +202,11 @@ public class SearchFragment extends DaggerFragment {
         dialog.show(manager, DialogListSearch.TAG);
     }
 
-    private void showValuesPickerDialog(String requestCode, String title, String hint) {
+    private void showValuesPickerDialog(String requestCode, String title, String hint, int min, int max, int step) {
         FragmentManager manager = getParentFragmentManager();
         manager.executePendingTransactions();
 
-        DialogValuesPicker dialog = DialogValuesPicker.newInstance(requestCode, 0, 100000, title, hint);
+        DialogValuesPicker dialog = DialogValuesPicker.newInstance(requestCode, min, max, step, title, hint);
         dialog.show(manager, DialogValuesPicker.TAG);
     }
 

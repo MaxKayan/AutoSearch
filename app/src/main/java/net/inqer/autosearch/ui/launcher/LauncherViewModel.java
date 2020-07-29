@@ -1,9 +1,12 @@
 package net.inqer.autosearch.ui.launcher;
 
+import android.annotation.SuppressLint;
 import android.app.Application;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
+
+import com.jakewharton.retrofit2.adapter.rxjava2.HttpException;
 
 import net.inqer.autosearch.R;
 import net.inqer.autosearch.SessionManager;
@@ -37,6 +40,7 @@ public class LauncherViewModel extends ViewModel {
         this.interceptor = interceptor;
     }
 
+    @SuppressLint("CheckResult")
     void checkAuthenticationByToken(final String token) {
         // TODO: Rework this block, seems to be more complex than needed
 //        sessionManager.authenticateWithCredentials(LiveDataReactiveStreams.fromPublisher(
@@ -54,7 +58,17 @@ public class LauncherViewModel extends ViewModel {
 //                )
 //        );
         sessionManager.authenticateWithToken(token, authApi)
-                .subscribe();
+                .subscribe((user, throwable) -> {
+                    if (throwable instanceof HttpException) {
+                        HttpException httpException = (HttpException) throwable;
+                        switch (httpException.code()) {
+                            case 403:
+                            case 401:
+                                sessionManager.logOut();
+                                break;
+                        }
+                    }
+                });
     }
 
     String getToken() {
