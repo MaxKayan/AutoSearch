@@ -17,7 +17,7 @@
             android:layout_marginHorizontal="@dimen/dialog_horizontal_padding"
             android:layout_marginVertical="@dimen/dialog_horizontal_padding"
             android:text="Выберите значение"
-            android:textColor="@color/background"
+            android:textColor="@android:color/white"
             android:textSize="18sp" />
 
     </RelativeLayout>

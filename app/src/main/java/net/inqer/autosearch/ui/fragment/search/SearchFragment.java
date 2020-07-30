@@ -26,6 +26,7 @@ import net.inqer.autosearch.ui.dialog.listsearch.DialogListSearch;
 import net.inqer.autosearch.ui.dialog.valuespicker.DialogValuesPicker;
 import net.inqer.autosearch.util.ViewModelProviderFactory;
 
+import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -176,7 +177,7 @@ public class SearchFragment extends DaggerFragment {
     private void setupResultListeners() {
         FragmentManager manager = getParentFragmentManager();
         String listKey = DialogListSearch.RESULT;
-        String valKey = DialogListSearch.RESULT;
+        String valKey = DialogValuesPicker.RESULT;
 
         manager.setFragmentResultListener(REGION, this, (requestKey, result) -> {
             viewModel.setRegion(result.getParcelable(listKey));
@@ -192,6 +193,7 @@ public class SearchFragment extends DaggerFragment {
         });
         manager.setFragmentResultListener(PRICE, this, (requestKey, result) -> {
             int[] values = result.getIntArray(valKey);
+            Log.d(TAG, "setupResultListeners: PRICE: " + Arrays.toString(values) + " key: " + valKey);
             if (values != null) {
                 viewModel.setPrice(values[0], values[1]);
             }

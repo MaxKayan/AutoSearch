@@ -24,6 +24,8 @@ public class DialogValuesPicker extends DialogFragment {
     private static final String TITLE = "dialog_header";
     private static final String HINT = "dialog_values_hint";
     private static final String CODE = "dialog_values_request_code";
+    private static final String FROM = "dialog_values_from";
+    private static final String TO = "dialog_values_to";
     private static final String MIN = "dialog_values_min";
     private static final String MAX = "dialog_values_max";
     private String requestKey;
@@ -34,7 +36,7 @@ public class DialogValuesPicker extends DialogFragment {
     public DialogValuesPicker() {
     }
 
-    public static DialogValuesPicker newInstance(String requestCode, int min, int max, int step, String title, String hint) {
+    public static DialogValuesPicker newInstance(String requestCode, int from, int to, int min, int max, int step, String title, String hint) {
         DialogValuesPicker instance = new DialogValuesPicker();
         Bundle args = new Bundle();
         args.putString(TITLE, title);
@@ -92,7 +94,8 @@ public class DialogValuesPicker extends DialogFragment {
         binding.dialogValR.setDisplayedValues(stepValues.toArray(new String[0]));
 
         binding.dialogValAccept.setOnClickListener(v -> {
-            finishWithResult(binding.dialogValL.getValue(), binding.dialogValR.getValue());
+            Log.d(TAG, "setupView: dialogValAccept: " + binding.dialogValL.getValue() + " " + binding.dialogValR.getValue());
+            finishWithResult(binding.dialogValL.getValue() * step, binding.dialogValR.getValue() * step);
         });
 
         binding.dialogValL.setMinValue(min);
@@ -114,8 +117,8 @@ public class DialogValuesPicker extends DialogFragment {
 
     private void setupListeners() {
         binding.dialogValL.setOnValueChangedListener((picker, oldVal, newVal) -> {
-            Log.d(TAG, "setupListeners: OnValueChangedListener: " +
-                    " " + oldVal + " " + newVal);
+//            Log.d(TAG, "setupListeners: OnValueChangedListener: " +
+//                    " " + oldVal + " " + newVal);
 
             if (newVal > binding.dialogValR.getValue()) {
                 binding.dialogValR.setValue(newVal);
@@ -143,6 +146,7 @@ public class DialogValuesPicker extends DialogFragment {
         Bundle bundle = new Bundle();
         bundle.putIntArray(RESULT, new int[]{from, to});
         getParentFragmentManager().setFragmentResult(requestKey, bundle);
+        Log.d(TAG, "finishWithResult: " + bundle.toString());
         this.dismiss();
     }
 
