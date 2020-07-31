@@ -213,11 +213,11 @@ public class SearchFragment extends DaggerFragment {
         dialog.show(manager, DialogListSearch.TAG);
     }
 
-    private void showValuesPickerDialog(String requestCode, String title, String hint, int min, int max, int step) {
+    private void showValuesPickerDialog(String requestCode, String title, String hint, int from, int to, int min, int max, int step) {
         FragmentManager manager = getParentFragmentManager();
         manager.executePendingTransactions();
 
-        DialogValuesPicker dialog = DialogValuesPicker.newInstance(requestCode, min, max, step, title, hint);
+        DialogValuesPicker dialog = DialogValuesPicker.newInstance(requestCode, from, to, min, max, step, title, hint);
         dialog.show(manager, DialogValuesPicker.TAG);
     }
 

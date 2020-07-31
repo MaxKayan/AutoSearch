@@ -41,6 +41,8 @@ public class DialogValuesPicker extends DialogFragment {
         Bundle args = new Bundle();
         args.putString(TITLE, title);
         args.putString(HINT, hint);
+        args.putInt(FROM, from);
+        args.putInt(TO, to);
         args.putInt(MIN, min);
         args.putInt(MAX, max);
         args.putInt(STEP, step);
@@ -72,6 +74,9 @@ public class DialogValuesPicker extends DialogFragment {
     private void setupView(Bundle bundle) {
         if (title != null && !title.isEmpty()) binding.dialogValHeader.setText(title);
         if (hint != null && !hint.isEmpty()) binding.dialogValHint.setText(hint);
+
+        binding.dialogValL.setValue(bundle.getInt(FROM));
+        binding.dialogValR.setValue(bundle.getInt(TO));
 
         int step = bundle.getInt(STEP);
         int min = bundle.getInt(MIN);
