@@ -29,13 +29,27 @@ public class DialogValuesPicker extends DialogFragment {
     private static final String MIN = "dialog_values_min";
     private static final String MAX = "dialog_values_max";
     private String requestKey;
-    private String title;
-    private String hint;
-    private DialogValuesPickerBinding binding;
+    private String title;   // Dialog header to be displayed TODO: Can these be local variables?
+    private String hint;    // Description string to be displayed
+    private int from;       // Current "left" value
+    private int to;         // Current "right" value
+    private int step;       // Value step, doesn't change through the instance life.
+    private DialogValuesPickerBinding binding;  // View binding
 
     public DialogValuesPicker() {
     }
 
+    /**
+     * @param requestCode Dialog request code to be used upon saving fragment's result
+     * @param from        Initial "from" value at the first picker
+     * @param to          Initial "to" value at the second picker
+     * @param min         Minimal acceptable value for both pickers
+     * @param max         Maximum acceptable value for both pickers
+     * @param step        Step of the values for both pickers
+     * @param title       Title at the header of the dialog
+     * @param hint        Description under the header (title)
+     * @return Valid dialog instance with specified arguments put as Bundle
+     */
     public static DialogValuesPicker newInstance(String requestCode, int from, int to, int min, int max, int step, String title, String hint) {
         DialogValuesPicker instance = new DialogValuesPicker();
         Bundle args = new Bundle();
@@ -52,7 +66,13 @@ public class DialogValuesPicker extends DialogFragment {
         return instance;
     }
 
-    //    @SuppressWarnings("unchecked")
+
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        binding = DialogValuesPickerBinding.inflate(inflater, container, false);
+        return binding.getRoot();
+    }
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -61,30 +81,48 @@ public class DialogValuesPicker extends DialogFragment {
         unpackBundleArgs(args);
         setupView(args);
         setupListeners();
+
+        binding.dialogValL.setValue(from);
+        binding.dialogValR.setValue(to);
     }
 
 
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        binding = DialogValuesPickerBinding.inflate(inflater, container, false);
-        return binding.getRoot();
+    /**
+     * Gets needed arguments from the bundle and writes them to class private fields.
+     *
+     * @param bundle Arguments passed upon fragment's creation.
+     */
+    private void unpackBundleArgs(@Nullable Bundle bundle) {
+        if (bundle != null) {
+            requestKey = bundle.getString(CODE);
+            title = bundle.getString(TITLE);
+            hint = bundle.getString(HINT);
+            step = bundle.getInt(STEP);  // Must be > 0
+            from = bundle.getInt(FROM) / step;
+            to = bundle.getInt(TO) / step;
+        } else {
+            Log.w(TAG, "unpackBundleArgs: args bundle is null!");
+        }
     }
 
 
+    /**
+     * Applies data to the view both from the saved instance's bundle and class private fields.
+     *
+     * @param bundle Arguments passed upon fragment's creation.
+     */
     private void setupView(Bundle bundle) {
         if (title != null && !title.isEmpty()) binding.dialogValHeader.setText(title);
         if (hint != null && !hint.isEmpty()) binding.dialogValHint.setText(hint);
 
-        binding.dialogValL.setValue(bundle.getInt(FROM));
-        binding.dialogValR.setValue(bundle.getInt(TO));
+        binding.dialogValL.setValue(from);
+        binding.dialogValR.setValue(to);
 
-        int step = bundle.getInt(STEP);
         int min = bundle.getInt(MIN);
         int max = bundle.getInt(MAX) / step;
         if (BuildConfig.DEBUG && min >= max) {
             throw new AssertionError("MIN should always be less than MAX");
         }
-
 
         List<String> stepValues = new ArrayList<>();
         for (int i = min; i <= max; i++) {
@@ -92,17 +130,14 @@ public class DialogValuesPicker extends DialogFragment {
             stepValues.add(number);
         }
 
-
-        Log.d(TAG, "setupView: stepValues: " + stepValues.toString());
-
         binding.dialogValL.setDisplayedValues(stepValues.toArray(new String[0]));
         binding.dialogValR.setDisplayedValues(stepValues.toArray(new String[0]));
 
         binding.dialogValAccept.setOnClickListener(v -> {
-            Log.d(TAG, "setupView: dialogValAccept: " + binding.dialogValL.getValue() + " " + binding.dialogValR.getValue());
             finishWithResult(binding.dialogValL.getValue() * step, binding.dialogValR.getValue() * step);
         });
 
+        // Set min and max acceptable values for both pickers
         binding.dialogValL.setMinValue(min);
         binding.dialogValR.setMinValue(min);
         binding.dialogValL.setMaxValue(max);
@@ -110,48 +145,47 @@ public class DialogValuesPicker extends DialogFragment {
     }
 
 
-    private void unpackBundleArgs(@Nullable Bundle bundle) {
-        if (bundle != null) {
-            requestKey = bundle.getString(CODE);
-            title = bundle.getString(TITLE);
-            hint = bundle.getString(HINT);
-        } else {
-            Log.w(TAG, "unpackBundleArgs: args bundle is null!");
-        }
-    }
-
     private void setupListeners() {
         binding.dialogValL.setOnValueChangedListener((picker, oldVal, newVal) -> {
-//            Log.d(TAG, "setupListeners: OnValueChangedListener: " +
-//                    " " + oldVal + " " + newVal);
-
             if (newVal > binding.dialogValR.getValue()) {
                 binding.dialogValR.setValue(newVal);
+                to = newVal;
             }
+            from = newVal;
         });
+
         binding.dialogValR.setOnValueChangedListener((picker, oldVal, newVal) -> {
             if (newVal < binding.dialogValL.getValue()) {
                 binding.dialogValL.setValue(newVal);
+                from = newVal;
             }
+            to = newVal;
         });
+    }
 
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        outState.putInt(FROM, from);
+        outState.putInt(TO, to);
+        super.onSaveInstanceState(outState);
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            from = savedInstanceState.getInt(FROM);
+            to = savedInstanceState.getInt(TO);
+            binding.dialogValL.setValue(from);
+            binding.dialogValR.setValue(to);
+        }
+        super.onViewStateRestored(savedInstanceState);
     }
 
     private void finishWithResult(int from, int to) {
         Bundle bundle = new Bundle();
         bundle.putIntArray(RESULT, new int[]{from, to});
         getParentFragmentManager().setFragmentResult(requestKey, bundle);
-        Log.d(TAG, "finishWithResult: " + bundle.toString());
         this.dismiss();
     }
 

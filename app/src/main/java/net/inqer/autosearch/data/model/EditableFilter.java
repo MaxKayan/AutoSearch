@@ -143,7 +143,7 @@ public class EditableFilter {
     }
 
     @Nullable
-    public Integer getPriceMinimum() {
+    public Integer getPriceMin() {
         return priceMinimum;
     }
 
@@ -152,7 +152,7 @@ public class EditableFilter {
     }
 
     @Nullable
-    public Integer getPriceMaximum() {
+    public Integer getPriceMax() {
         return priceMaximum;
     }
 

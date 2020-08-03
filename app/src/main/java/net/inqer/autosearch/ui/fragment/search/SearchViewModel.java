@@ -124,4 +124,13 @@ public class SearchViewModel extends ViewModel {
             currentEditableFilter.setValue(filter);
         } else Log.e(TAG, "setModel: null data");
     }
+
+    public void setYear(int from, int to) {
+        EditableFilter filter = currentEditableFilter.getValue();
+        if (filter != null) {
+            filter.setManufactureYearMin(from);
+            filter.setManufactureYearMax(to);
+            currentEditableFilter.setValue(filter);
+        } else Log.e(TAG, "setModel: null data");
+    }
 }
