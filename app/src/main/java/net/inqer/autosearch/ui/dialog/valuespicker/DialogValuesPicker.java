@@ -13,13 +13,15 @@ import androidx.fragment.app.DialogFragment;
 import net.inqer.autosearch.BuildConfig;
 import net.inqer.autosearch.databinding.DialogValuesPickerBinding;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 public class DialogValuesPicker extends DialogFragment {
     public static final String RESULT = "dialog_values_result";
-
+    // Bundle codes
     public static final String TAG = "DialogValuesPicker";
+    private static final String TYPE = "dialog_values_type";
     private static final String STEP = "dialog_values_step";
     private static final String TITLE = "dialog_header";
     private static final String HINT = "dialog_values_hint";
@@ -28,11 +30,14 @@ public class DialogValuesPicker extends DialogFragment {
     private static final String TO = "dialog_values_to";
     private static final String MIN = "dialog_values_min";
     private static final String MAX = "dialog_values_max";
+    private PickerType type;
     private String requestKey;
     private String title;   // Dialog header to be displayed TODO: Can these be local variables?
     private String hint;    // Description string to be displayed
     private int from;       // Current "left" value
     private int to;         // Current "right" value
+    private int min;         // Minimum acceptable value for both pickers
+    private int max;         // Maximum acceptable value for both pickers
     private int step;       // Value step, doesn't change through the instance life.
     private DialogValuesPickerBinding binding;  // View binding
 
@@ -50,9 +55,12 @@ public class DialogValuesPicker extends DialogFragment {
      * @param hint        Description under the header (title)
      * @return Valid dialog instance with specified arguments put as Bundle
      */
-    public static DialogValuesPicker newInstance(String requestCode, int from, int to, int min, int max, int step, String title, String hint) {
+    public static DialogValuesPicker newInstance(String requestCode,
+                                                 PickerType type,
+                                                 int from, int to, int min, int max, int step, String title, String hint) {
         DialogValuesPicker instance = new DialogValuesPicker();
         Bundle args = new Bundle();
+        args.putSerializable(TYPE, type);
         args.putString(TITLE, title);
         args.putString(HINT, hint);
         args.putInt(FROM, from);
@@ -65,7 +73,6 @@ public class DialogValuesPicker extends DialogFragment {
 
         return instance;
     }
-
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -86,7 +93,6 @@ public class DialogValuesPicker extends DialogFragment {
         binding.dialogValR.setValue(to);
     }
 
-
     /**
      * Gets needed arguments from the bundle and writes them to class private fields.
      *
@@ -100,11 +106,46 @@ public class DialogValuesPicker extends DialogFragment {
             step = bundle.getInt(STEP);  // Must be > 0
             from = bundle.getInt(FROM) / step;
             to = bundle.getInt(TO) / step;
+            min = bundle.getInt(MIN);
+            max = bundle.getInt(MAX) / step;
         } else {
             Log.w(TAG, "unpackBundleArgs: args bundle is null!");
         }
     }
 
+    /**
+     * Get values for both number pickers in case of using integers
+     *
+     * @return Array of strings that represent available values
+     */
+    private String[] getDisplayValues(int min, int max, int step) {
+        List<String> values = new ArrayList<>();
+        NumberFormat formatter = NumberFormat.getIntegerInstance();
+        values.add("Все");
+        for (int i = min == 0 ? min + 1 : min; i <= max; i++) {
+//            String number = Integer.toString(i * step);
+            String number = formatter.format(i * step);
+            values.add(number);
+        }
+
+        return values.toArray(new String[0]);
+    }
+
+    /**
+     * Get values for both number pickers in case of using float
+     *
+     * @return Array of strings that represent available values
+     */
+    private String[] getDisplayValues(float min, float max, float step) {
+        List<String> values = new ArrayList<>();
+        values.add("Все");
+        for (float i = min == 0 ? min + 1 : min; i <= max; i++) {
+            String number = Float.toString(i * step);
+            values.add(number);
+        }
+
+        return values.toArray(new String[0]);
+    }
 
     /**
      * Applies data to the view both from the saved instance's bundle and class private fields.
@@ -118,20 +159,13 @@ public class DialogValuesPicker extends DialogFragment {
         binding.dialogValL.setValue(from);
         binding.dialogValR.setValue(to);
 
-        int min = bundle.getInt(MIN);
-        int max = bundle.getInt(MAX) / step;
         if (BuildConfig.DEBUG && min >= max) {
             throw new AssertionError("MIN should always be less than MAX");
         }
 
-        List<String> stepValues = new ArrayList<>();
-        for (int i = min; i <= max; i++) {
-            String number = Integer.toString(i * step);
-            stepValues.add(number);
-        }
-
-        binding.dialogValL.setDisplayedValues(stepValues.toArray(new String[0]));
-        binding.dialogValR.setDisplayedValues(stepValues.toArray(new String[0]));
+        String[] displayValues = getDisplayValues(min, max, step);
+        binding.dialogValL.setDisplayedValues(displayValues);
+        binding.dialogValR.setDisplayedValues(displayValues);
 
         binding.dialogValAccept.setOnClickListener(v -> {
             finishWithResult(binding.dialogValL.getValue() * step, binding.dialogValR.getValue() * step);
@@ -144,10 +178,13 @@ public class DialogValuesPicker extends DialogFragment {
         binding.dialogValR.setMaxValue(max);
     }
 
-
+    /**
+     * Set view action listeners.
+     */
     private void setupListeners() {
         binding.dialogValL.setOnValueChangedListener((picker, oldVal, newVal) -> {
-            if (newVal > binding.dialogValR.getValue()) {
+            int rightValue = binding.dialogValR.getValue();
+            if (newVal > rightValue && newVal != 0 && rightValue != 0) {
                 binding.dialogValR.setValue(newVal);
                 to = newVal;
             }
@@ -155,7 +192,8 @@ public class DialogValuesPicker extends DialogFragment {
         });
 
         binding.dialogValR.setOnValueChangedListener((picker, oldVal, newVal) -> {
-            if (newVal < binding.dialogValL.getValue()) {
+            int leftValue = binding.dialogValL.getValue();
+            if (newVal < leftValue && newVal != 0 && leftValue != 0) {
                 binding.dialogValL.setValue(newVal);
                 from = newVal;
             }
@@ -163,7 +201,9 @@ public class DialogValuesPicker extends DialogFragment {
         });
     }
 
-
+    /**
+     * @param outState Bundle to be saved. Will be restored later.
+     */
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         outState.putInt(FROM, from);
@@ -171,6 +211,9 @@ public class DialogValuesPicker extends DialogFragment {
         super.onSaveInstanceState(outState);
     }
 
+    /**
+     * @param savedInstanceState Bundle with saved arguments
+     */
     @Override
     public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
         if (savedInstanceState != null) {
@@ -182,6 +225,12 @@ public class DialogValuesPicker extends DialogFragment {
         super.onViewStateRestored(savedInstanceState);
     }
 
+    /**
+     * Packs 2 final values into bundle as an integer array of length 2. Sets
+     *
+     * @param from Final "from" value from the left picker
+     * @param to   Final "to" value from the right picker
+     */
     private void finishWithResult(int from, int to) {
         Bundle bundle = new Bundle();
         bundle.putIntArray(RESULT, new int[]{from, to});
@@ -190,6 +239,10 @@ public class DialogValuesPicker extends DialogFragment {
     }
 
 
-    public enum TYPE {NORMAL, CURRENCY, SINGLE}
+    public enum PickerType {
+        NORMAL,  // Plain integer values
+        CURRENCY, // Integer values formatted as currency
+        SINGLE
+    }
 
 }

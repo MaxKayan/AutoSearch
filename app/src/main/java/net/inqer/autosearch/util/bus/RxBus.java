@@ -21,7 +21,7 @@ public class RxBus {
     }
 
     // Listen should return an Observable and not the publisher
-    // Using ofType we filter only events that match that class type
+    // Using ofType we filter only events that match that class PickerType
     public <T> Observable<T> listen(Class<T> eventType) {
         return publisher.ofType(eventType);
     }
