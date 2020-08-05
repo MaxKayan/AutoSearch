@@ -13,8 +13,10 @@ import androidx.fragment.app.DialogFragment;
 import net.inqer.autosearch.BuildConfig;
 import net.inqer.autosearch.databinding.DialogValuesPickerBinding;
 
+import java.security.InvalidParameterException;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class DialogValuesPicker extends DialogFragment {
@@ -30,7 +32,9 @@ public class DialogValuesPicker extends DialogFragment {
     private static final String TO = "dialog_values_to";
     private static final String MIN = "dialog_values_min";
     private static final String MAX = "dialog_values_max";
+    private static final String VALUES = "dialog_values_array";
     private PickerType type;
+    private String[] displayedValues;
     private String requestKey;
     private String title;   // Dialog header to be displayed TODO: Can these be local variables?
     private String hint;    // Description string to be displayed
@@ -55,24 +59,43 @@ public class DialogValuesPicker extends DialogFragment {
      * @param hint        Description under the header (title)
      * @return Valid dialog instance with specified arguments put as Bundle
      */
-    public static DialogValuesPicker newInstance(String requestCode,
-                                                 PickerType type,
+    public static DialogValuesPicker getInstance(String requestCode,
+//                                                 PickerType type,
                                                  int from, int to, int min, int max, int step, String title, String hint) {
         DialogValuesPicker instance = new DialogValuesPicker();
-        Bundle args = new Bundle();
-        args.putSerializable(TYPE, type);
-        args.putString(TITLE, title);
-        args.putString(HINT, hint);
+        Bundle args = getBaseBundle(title, hint, requestCode);
+
+        args.putSerializable(TYPE, PickerType.NORMAL);
+        args.putInt(STEP, step);
         args.putInt(FROM, from);
         args.putInt(TO, to);
         args.putInt(MIN, min);
         args.putInt(MAX, max);
-        args.putInt(STEP, step);
-        args.putString(CODE, requestCode);
+
         instance.setArguments(args);
 
         return instance;
     }
+
+    public static DialogValuesPicker getInstance(String requestCode, String[] values,
+                                                 String from, String to, String title, String hint) {
+        DialogValuesPicker instance = new DialogValuesPicker();
+        Bundle args = getBaseBundle(title, hint, requestCode);
+
+        args.putSerializable(TYPE, PickerType.ENGINE);
+        args.putStringArray(VALUES, values);
+        instance.setArguments(args);
+        return instance;
+    }
+
+    private static Bundle getBaseBundle(String title, String hint, String code) {
+        Bundle args = new Bundle();
+        args.putString(TITLE, title);
+        args.putString(HINT, hint);
+        args.putString(CODE, code);
+        return args;
+    }
+
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -100,18 +123,40 @@ public class DialogValuesPicker extends DialogFragment {
      */
     private void unpackBundleArgs(@Nullable Bundle bundle) {
         if (bundle != null) {
+            // Get type from bundle, check if it's null.
+            type = (PickerType) bundle.getSerializable(TYPE);
+            if (type == null)
+                throw new InvalidParameterException("Picker type should be specified");
+
+            // Common arguments for all types
             requestKey = bundle.getString(CODE);
             title = bundle.getString(TITLE);
             hint = bundle.getString(HINT);
-            step = bundle.getInt(STEP);  // Must be > 0
-            from = bundle.getInt(FROM) / step;
-            to = bundle.getInt(TO) / step;
-            min = bundle.getInt(MIN);
-            max = bundle.getInt(MAX) / step;
+
+            // Specific arguments depending on current type
+            switch (type) {
+                case NORMAL:
+                    step = bundle.getInt(STEP);  // Must be > 0
+                    from = bundle.getInt(FROM) / step;
+                    to = bundle.getInt(TO) / step;
+                    min = bundle.getInt(MIN);
+                    max = bundle.getInt(MAX) / step;
+
+                    if (BuildConfig.DEBUG && min >= max) {
+                        throw new AssertionError("MIN should always be less than MAX");
+                    }
+                    break;
+                case ENGINE:
+                    displayedValues = bundle.getStringArray(VALUES);
+                    Log.d(TAG, "unpackBundleArgs: values: " + Arrays.toString(displayedValues));
+                    break;
+            }
+
         } else {
             Log.w(TAG, "unpackBundleArgs: args bundle is null!");
         }
     }
+
 
     /**
      * Get values for both number pickers in case of using integers
@@ -131,21 +176,6 @@ public class DialogValuesPicker extends DialogFragment {
         return values.toArray(new String[0]);
     }
 
-    /**
-     * Get values for both number pickers in case of using float
-     *
-     * @return Array of strings that represent available values
-     */
-    private String[] getDisplayValues(float min, float max, float step) {
-        List<String> values = new ArrayList<>();
-        values.add("Все");
-        for (float i = min == 0 ? min + 1 : min; i <= max; i++) {
-            String number = Float.toString(i * step);
-            values.add(number);
-        }
-
-        return values.toArray(new String[0]);
-    }
 
     /**
      * Applies data to the view both from the saved instance's bundle and class private fields.
@@ -156,26 +186,37 @@ public class DialogValuesPicker extends DialogFragment {
         if (title != null && !title.isEmpty()) binding.dialogValHeader.setText(title);
         if (hint != null && !hint.isEmpty()) binding.dialogValHint.setText(hint);
 
-        binding.dialogValL.setValue(from);
-        binding.dialogValR.setValue(to);
+        switch (type) {
+            case NORMAL:
+                displayedValues = getDisplayValues(min, max, step);
 
-        if (BuildConfig.DEBUG && min >= max) {
-            throw new AssertionError("MIN should always be less than MAX");
+                // Set min and max acceptable values for both pickers
+                binding.dialogValL.setMinValue(min);
+                binding.dialogValR.setMinValue(min);
+                binding.dialogValL.setMaxValue(max);
+                binding.dialogValR.setMaxValue(max);
+                break;
+            case ENGINE:
+                binding.dialogValL.setMinValue(0);
+                binding.dialogValR.setMinValue(0);
+                binding.dialogValL.setMaxValue(displayedValues.length - 1);
+                binding.dialogValR.setMaxValue(displayedValues.length - 1);
+                break;
         }
 
-        String[] displayValues = getDisplayValues(min, max, step);
-        binding.dialogValL.setDisplayedValues(displayValues);
-        binding.dialogValR.setDisplayedValues(displayValues);
+//        binding.dialogValL.setValue(from);
+//        binding.dialogValR.setValue(to);
+
+        binding.dialogValL.setDisplayedValues(displayedValues);
+        binding.dialogValR.setDisplayedValues(displayedValues);
 
         binding.dialogValAccept.setOnClickListener(v -> {
-            finishWithResult(binding.dialogValL.getValue() * step, binding.dialogValR.getValue() * step);
+//            finishWithResult(binding.dialogValL.getValue() * step, binding.dialogValR.getValue() * step);
+            String lVal = displayedValues[binding.dialogValL.getValue()];
+            String rVal = displayedValues[binding.dialogValR.getValue()];
+            Log.d(TAG, "setupView: click: " + lVal + " : " + rVal);
         });
 
-        // Set min and max acceptable values for both pickers
-        binding.dialogValL.setMinValue(min);
-        binding.dialogValR.setMinValue(min);
-        binding.dialogValL.setMaxValue(max);
-        binding.dialogValR.setMaxValue(max);
     }
 
     /**
@@ -201,29 +242,29 @@ public class DialogValuesPicker extends DialogFragment {
         });
     }
 
-    /**
-     * @param outState Bundle to be saved. Will be restored later.
-     */
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        outState.putInt(FROM, from);
-        outState.putInt(TO, to);
-        super.onSaveInstanceState(outState);
-    }
-
-    /**
-     * @param savedInstanceState Bundle with saved arguments
-     */
-    @Override
-    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
-        if (savedInstanceState != null) {
-            from = savedInstanceState.getInt(FROM);
-            to = savedInstanceState.getInt(TO);
-            binding.dialogValL.setValue(from);
-            binding.dialogValR.setValue(to);
-        }
-        super.onViewStateRestored(savedInstanceState);
-    }
+//    /**
+//     * @param outState Bundle to be saved. Will be restored later.
+//     */
+//    @Override
+//    public void onSaveInstanceState(@NonNull Bundle outState) {
+//        outState.putInt(FROM, from);
+//        outState.putInt(TO, to);
+//        super.onSaveInstanceState(outState);
+//    }
+//
+//    /**
+//     * @param savedInstanceState Bundle with saved arguments
+//     */
+//    @Override
+//    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+//        if (savedInstanceState != null) {
+//            from = savedInstanceState.getInt(FROM);
+//            to = savedInstanceState.getInt(TO);
+//            binding.dialogValL.setValue(from);
+//            binding.dialogValR.setValue(to);
+//        }
+//        super.onViewStateRestored(savedInstanceState);
+//    }
 
     /**
      * Packs 2 final values into bundle as an integer array of length 2. Sets
@@ -242,6 +283,7 @@ public class DialogValuesPicker extends DialogFragment {
     public enum PickerType {
         NORMAL,  // Plain integer values
         CURRENCY, // Integer values formatted as currency
+        ENGINE,
         SINGLE
     }
 

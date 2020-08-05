@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -33,6 +34,8 @@ import javax.inject.Inject;
 import dagger.android.support.DaggerFragment;
 import io.reactivex.Flowable;
 
+import static net.inqer.autosearch.util.Util.DISPLACEMENTS;
+
 public class SearchFragment extends DaggerFragment {
     private static final String TAG = "SearchFragment";
     // Dialog fragment id
@@ -42,6 +45,7 @@ public class SearchFragment extends DaggerFragment {
     private final String MODEL = "list_search_model";
     private final String PRICE = "values_picker_price";
     private final String YEAR = "values_picker_year";
+    private final String DISPLACEMENT = "values_picker_displacement";
     private final String RADIUS = "values_picker_radius";
 
     @Inject
@@ -159,7 +163,7 @@ public class SearchFragment extends DaggerFragment {
 
         });
         binding.fEditDisplacement.setOnClickListener(v -> {
-
+            showValuesPickerDialog(DISPLACEMENT, "Объём двигателя", "Укажите объём двигателя (л)", DISPLACEMENTS);
         });
         binding.fEditRadius.setOnClickListener(v -> {
             EditableFilter currentFilter = getCurrentFilter();
@@ -214,27 +218,34 @@ public class SearchFragment extends DaggerFragment {
 
 
     private <T extends ListItem> void showListSearchDialog(String requestCode, String title, String hint, Flowable<List<T>> dataSource) {
-        FragmentManager manager = getParentFragmentManager();
-        manager.executePendingTransactions();
-        if (manager.findFragmentByTag(DialogListSearch.TAG) != null) {
-            Log.w(TAG, "setupClickListeners: fragment " + DialogListSearch.TAG + " already exists");
-            return;
-        }
-
         DialogListSearch<T> dialog = DialogListSearch.newInstance(requestCode, title, hint, dataSource);
-        dialog.show(manager, DialogListSearch.TAG);
+        showDialog(dialog, DialogListSearch.TAG);
     }
 
     private void showValuesPickerDialog(String requestCode, String title, String hint,
                                         Integer rawFrom, Integer rawTo, int min, int max, int step) {
-        FragmentManager manager = getParentFragmentManager();
-        manager.executePendingTransactions();
-
         int from = rawFrom != null ? rawFrom : 0;
         int to = rawTo != null ? rawTo : 0;
 
-        DialogValuesPicker dialog = DialogValuesPicker.newInstance(requestCode, from, to, min, max, step, title, hint);
-        dialog.show(manager, DialogValuesPicker.TAG);
+        DialogValuesPicker dialog = DialogValuesPicker.getInstance(requestCode, from, to, min, max, step, title, hint);
+        showDialog(dialog, DialogValuesPicker.TAG);
+    }
+
+    private void showValuesPickerDialog(String requestCode, String title, String hint, String[] values) {
+        DialogValuesPicker dialog = DialogValuesPicker.getInstance(requestCode, values, "", "", title, hint);
+        showDialog(dialog, DialogValuesPicker.TAG);
+    }
+
+    private void showDialog(DialogFragment dialog, String tag) {
+        FragmentManager manager = getParentFragmentManager();
+        manager.executePendingTransactions();
+
+        if (manager.findFragmentByTag(tag) != null) {
+            Log.w(TAG, "showDialog: dialog " + tag + " already exists!");
+            return;
+        }
+
+        dialog.show(manager, tag);
     }
 
 
