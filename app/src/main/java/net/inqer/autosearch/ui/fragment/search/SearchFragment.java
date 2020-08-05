@@ -142,15 +142,21 @@ public class SearchFragment extends DaggerFragment {
         binding.fEditPrice.setOnClickListener(v -> {
             EditableFilter currentFilter = getCurrentFilter();
             if (currentFilter != null) {
-                showValuesPickerDialog(PRICE, "Цена", "Выберите интервал стоимости (р.)",
-                        currentFilter.getPriceMin(), currentFilter.getPriceMax(), 0, 1000000, 1000);
+                showDialog(
+                        DialogValuesPicker.getCurrencyInstance(PRICE, "Цена", "Выберите интервал стоимости (р.)",
+                                currentFilter.getPriceMin(), currentFilter.getPriceMax(), 0, 1000000, 1000),
+                        PRICE
+                );
             }
         });
         binding.fEditYear.setOnClickListener(v -> {
             EditableFilter currentFilter = getCurrentFilter();
             if (currentFilter != null) {
-                showValuesPickerDialog(YEAR, "Год выпуска", "Выберите год выпуска ТС",
-                        currentFilter.getManufactureYearMin(), currentFilter.getManufactureYearMax(), 1980, 2020, 1);
+                showDialog(
+                        DialogValuesPicker.getNumberInstance(YEAR, "Год выпуска", "Выберите год выпуска ТС",
+                                currentFilter.getManufactureYearMin(), currentFilter.getManufactureYearMax(), 1980, 2020, 1),
+                        YEAR
+                );
             }
         });
         binding.fEditTransmission.setOnClickListener(v -> {
@@ -163,14 +169,21 @@ public class SearchFragment extends DaggerFragment {
 
         });
         binding.fEditDisplacement.setOnClickListener(v -> {
-            showValuesPickerDialog(DISPLACEMENT, "Объём двигателя", "Укажите объём двигателя (л)", DISPLACEMENTS);
+            showDialog(
+                    DialogValuesPicker.getValuesInstance(DISPLACEMENT, "Объём двигателя",
+                            "Укажите объём двигателя (л)", DISPLACEMENTS, "", ""),
+                    DISPLACEMENT
+            );
         });
         binding.fEditRadius.setOnClickListener(v -> {
             EditableFilter currentFilter = getCurrentFilter();
             if (currentFilter == null) return;
 
-            showValuesPickerDialog(RADIUS, "Радиус поиска", "Укажите радиус поиска (км)",
-                    0, currentFilter.getRadius(), 0, 1000, 10);
+            showDialog(
+                    DialogValuesPicker.getNumberInstance(RADIUS, "Радиус поиска", "Укажите радиус поиска (км)",
+                            0, currentFilter.getRadius(), 0, 1000, 10),
+                    RADIUS
+            );
         });
 
         binding.fEditSearchButton.setOnClickListener(v -> {
@@ -222,19 +235,17 @@ public class SearchFragment extends DaggerFragment {
         showDialog(dialog, DialogListSearch.TAG);
     }
 
-    private void showValuesPickerDialog(String requestCode, String title, String hint,
-                                        Integer rawFrom, Integer rawTo, int min, int max, int step) {
-        int from = rawFrom != null ? rawFrom : 0;
-        int to = rawTo != null ? rawTo : 0;
+//    private void showValuesPickerDialog(String requestCode, String title, String hint, DialogValuesPicker.PickerType type,
+//                                        Integer rawFrom, Integer rawTo, int min, int max, int step) {
+//
+//        DialogValuesPicker dialog = DialogValuesPicker.getInstance(requestCode, type, from, to, min, max, step, title, hint);
+//        showDialog(dialog, DialogValuesPicker.TAG);
+//    }
 
-        DialogValuesPicker dialog = DialogValuesPicker.getInstance(requestCode, from, to, min, max, step, title, hint);
-        showDialog(dialog, DialogValuesPicker.TAG);
-    }
-
-    private void showValuesPickerDialog(String requestCode, String title, String hint, String[] values) {
-        DialogValuesPicker dialog = DialogValuesPicker.getInstance(requestCode, values, "", "", title, hint);
-        showDialog(dialog, DialogValuesPicker.TAG);
-    }
+//    private void showValuesPickerDialog(String requestCode, String title, String hint, String[] values) {
+//        DialogValuesPicker dialog = DialogValuesPicker.getInstance(requestCode, values, "", "", title, hint);
+//        showDialog(dialog, DialogValuesPicker.TAG);
+//    }
 
     private void showDialog(DialogFragment dialog, String tag) {
         FragmentManager manager = getParentFragmentManager();

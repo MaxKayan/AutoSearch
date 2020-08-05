@@ -15,6 +15,7 @@ import net.inqer.autosearch.databinding.DialogValuesPickerBinding;
 
 import java.security.InvalidParameterException;
 import java.text.NumberFormat;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -34,6 +35,7 @@ public class DialogValuesPicker extends DialogFragment {
     private static final String MAX = "dialog_values_max";
     private static final String VALUES = "dialog_values_array";
     private PickerType type;
+    private NumberFormat formatter;
     private String[] displayedValues;
     private String requestKey;
     private String title;   // Dialog header to be displayed TODO: Can these be local variables?
@@ -60,12 +62,23 @@ public class DialogValuesPicker extends DialogFragment {
      * @return Valid dialog instance with specified arguments put as Bundle
      */
     public static DialogValuesPicker getInstance(String requestCode,
-//                                                 PickerType type,
-                                                 int from, int to, int min, int max, int step, String title, String hint) {
+                                                 String title, String hint,
+                                                 PickerType type,
+                                                 Integer from, Integer to, int min, int max, int step) {
         DialogValuesPicker instance = new DialogValuesPicker();
         Bundle args = getBaseBundle(title, hint, requestCode);
 
-        args.putSerializable(TYPE, PickerType.NORMAL);
+        from = from != null ? from : 0;
+        to = to != null ? to : 0;
+
+        if (BuildConfig.DEBUG && step <= 0) {
+            throw new AssertionError("Step must be greater than 0. Got: " + step);
+        }
+        if (BuildConfig.DEBUG && min >= max) {
+            throw new AssertionError("Min argument should be less than max. Got: " + min + " -> " + max);
+        }
+
+        args.putSerializable(TYPE, type);
         args.putInt(STEP, step);
         args.putInt(FROM, from);
         args.putInt(TO, to);
@@ -77,8 +90,21 @@ public class DialogValuesPicker extends DialogFragment {
         return instance;
     }
 
-    public static DialogValuesPicker getInstance(String requestCode, String[] values,
-                                                 String from, String to, String title, String hint) {
+
+    public static DialogValuesPicker getCurrencyInstance(String requestCode, String title, String hint,
+                                                         Integer from, Integer to, int min, int max, int step) {
+        return getInstance(requestCode, title, hint, PickerType.CURRENCY, from, to, min, max, step);
+    }
+
+
+    public static DialogValuesPicker getNumberInstance(String requestCode, String title, String hint,
+                                                       Integer from, Integer to, int min, int max, int step) {
+        return getInstance(requestCode, title, hint, PickerType.NORMAL, from, to, min, max, step);
+    }
+
+
+    public static DialogValuesPicker getValuesInstance(String requestCode, String title, String hint,
+                                                       String[] values, String from, String to) {
         DialogValuesPicker instance = new DialogValuesPicker();
         Bundle args = getBaseBundle(title, hint, requestCode);
 
@@ -87,6 +113,7 @@ public class DialogValuesPicker extends DialogFragment {
         instance.setArguments(args);
         return instance;
     }
+
 
     private static Bundle getBaseBundle(String title, String hint, String code) {
         Bundle args = new Bundle();
@@ -135,16 +162,13 @@ public class DialogValuesPicker extends DialogFragment {
 
             // Specific arguments depending on current type
             switch (type) {
+                case CURRENCY:
                 case NORMAL:
-                    step = bundle.getInt(STEP);  // Must be > 0
-                    from = bundle.getInt(FROM) / step;
-                    to = bundle.getInt(TO) / step;
+                    step = bundle.getInt(STEP);  // Must be >= 1
+                    from = bundle.getInt(FROM);
+                    to = bundle.getInt(TO);
                     min = bundle.getInt(MIN);
-                    max = bundle.getInt(MAX) / step;
-
-                    if (BuildConfig.DEBUG && min >= max) {
-                        throw new AssertionError("MIN should always be less than MAX");
-                    }
+                    max = bundle.getInt(MAX);
                     break;
                 case ENGINE:
                     displayedValues = bundle.getStringArray(VALUES);
@@ -163,16 +187,28 @@ public class DialogValuesPicker extends DialogFragment {
      *
      * @return Array of strings that represent available values
      */
-    private String[] getDisplayValues(int min, int max, int step) {
+    private String[] getDisplayedValues(NumberFormat formatter, int min, int max, int step) {
         List<String> values = new ArrayList<>();
-        NumberFormat formatter = NumberFormat.getIntegerInstance();
         values.add("Все");
-        for (int i = min == 0 ? min + 1 : min; i <= max; i++) {
-//            String number = Integer.toString(i * step);
-            String number = formatter.format(i * step);
-            values.add(number);
+
+        if (formatter != null) {
+            for (int i = min; i <= max; i += step) {
+                String value = formatter.format(i);
+                values.add(value);
+            }
+        } else {
+            for (int i = min; i <= max; i += step) {
+                values.add(Integer.toString(i));
+            }
         }
 
+
+        // Check if first actual value is 0, remove it if true.
+        if (values.get(1).equals("0")) {
+            values.remove(1);
+        }
+
+        Log.d(TAG, "getDisplayValues: " + values.toString());
         return values.toArray(new String[0]);
     }
 
@@ -188,21 +224,24 @@ public class DialogValuesPicker extends DialogFragment {
 
         switch (type) {
             case NORMAL:
-                displayedValues = getDisplayValues(min, max, step);
-
-                // Set min and max acceptable values for both pickers
-                binding.dialogValL.setMinValue(min);
-                binding.dialogValR.setMinValue(min);
-                binding.dialogValL.setMaxValue(max);
-                binding.dialogValR.setMaxValue(max);
+                formatter = NumberFormat.getNumberInstance();
+                displayedValues = this.getDisplayedValues(null, min, max, step);
+                break;
+            case CURRENCY:
+                formatter = NumberFormat.getIntegerInstance();
+                displayedValues = this.getDisplayedValues(formatter, min, max, step);
                 break;
             case ENGINE:
-                binding.dialogValL.setMinValue(0);
-                binding.dialogValR.setMinValue(0);
-                binding.dialogValL.setMaxValue(displayedValues.length - 1);
-                binding.dialogValR.setMaxValue(displayedValues.length - 1);
                 break;
+            default:
+                throw new InvalidParameterException("Unexpected picker type - " + type);
         }
+
+        // Set min and max acceptable values for both pickers
+        binding.dialogValL.setMinValue(0);
+        binding.dialogValR.setMinValue(0);
+        binding.dialogValL.setMaxValue(displayedValues.length - 1);
+        binding.dialogValR.setMaxValue(displayedValues.length - 1);
 
 //        binding.dialogValL.setValue(from);
 //        binding.dialogValR.setValue(to);
@@ -211,16 +250,24 @@ public class DialogValuesPicker extends DialogFragment {
         binding.dialogValR.setDisplayedValues(displayedValues);
 
         binding.dialogValAccept.setOnClickListener(v -> {
-//            finishWithResult(binding.dialogValL.getValue() * step, binding.dialogValR.getValue() * step);
             String lVal = displayedValues[binding.dialogValL.getValue()];
             String rVal = displayedValues[binding.dialogValR.getValue()];
-            Log.d(TAG, "setupView: click: " + lVal + " : " + rVal);
+
+            if (formatter != null) {
+                try {
+                    Log.d(TAG, "dialogValAccept: " + formatter.parse(lVal) + " : " + formatter.parse(rVal));
+                } catch (ParseException e) {
+                    Log.e(TAG, "dialogValAccept: failed to parse", e);
+                }
+            } else {
+                Log.d(TAG, "dialogValAccept: " + lVal + " : " + rVal);
+            }
         });
 
     }
 
     /**
-     * Set view action listeners.
+     * Set picker action listeners.
      */
     private void setupListeners() {
         binding.dialogValL.setOnValueChangedListener((picker, oldVal, newVal) -> {
