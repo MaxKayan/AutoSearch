@@ -227,6 +227,12 @@ public class SearchFragment extends DaggerFragment {
                 viewModel.setYear(values[0], values[1]);
             }
         });
+        manager.setFragmentResultListener(DISPLACEMENT, this, (requestKey, result) -> {
+            String[] values = result.getStringArray(valKey);
+            if (values != null) {
+                viewModel.setDisplacement(values[0], values[1]);
+            }
+        });
     }
 
 

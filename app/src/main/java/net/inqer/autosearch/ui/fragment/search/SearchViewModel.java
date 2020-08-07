@@ -133,4 +133,13 @@ public class SearchViewModel extends ViewModel {
             currentEditableFilter.setValue(filter);
         } else Log.e(TAG, "setModel: null data");
     }
+
+    public void setDisplacement(String from, String to) {
+        EditableFilter filter = currentEditableFilter.getValue();
+        if (filter != null) {
+            filter.setEngineDisplacementMin(from);
+            filter.setEngineDisplacementMax(to);
+            currentEditableFilter.setValue(filter);
+        } else Log.e(TAG, "setModel: null data");
+    }
 }

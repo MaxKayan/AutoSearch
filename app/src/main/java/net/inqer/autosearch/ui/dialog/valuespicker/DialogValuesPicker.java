@@ -19,6 +19,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 public class DialogValuesPicker extends DialogFragment {
     public static final String RESULT = "dialog_values_result";
@@ -115,6 +116,11 @@ public class DialogValuesPicker extends DialogFragment {
     }
 
 
+    /**
+     * Create basic bundle with arguments that are present on any dialog type.
+     *
+     * @return Base Bundle instance with common arguments
+     */
     private static Bundle getBaseBundle(String title, String hint, String code) {
         Bundle args = new Bundle();
         args.putString(TITLE, title);
@@ -130,55 +136,88 @@ public class DialogValuesPicker extends DialogFragment {
         return binding.getRoot();
     }
 
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         Bundle args = getArguments();
-        unpackBundleArgs(args);
-        setupView(args);
-        setupListeners();
+        // We can't do anything if arguments are null
+        if (args == null) {
+            Log.e(TAG, "onViewCreated: Null arguments, closing dialog.");
+            this.dismiss();
+            return;
+        }
 
-        binding.dialogValL.setValue(from);
-        binding.dialogValR.setValue(to);
+        unpackBundleArgs(args); // Extract bundle arguments and write them to class private fields
+        setupView();            // Apply data to dialog's UI
+        setupListeners();       // Setup UI click/action listeners
     }
+
 
     /**
      * Gets needed arguments from the bundle and writes them to class private fields.
      *
      * @param bundle Arguments passed upon fragment's creation.
      */
-    private void unpackBundleArgs(@Nullable Bundle bundle) {
-        if (bundle != null) {
-            // Get type from bundle, check if it's null.
-            type = (PickerType) bundle.getSerializable(TYPE);
-            if (type == null)
-                throw new InvalidParameterException("Picker type should be specified");
+    private void unpackBundleArgs(@NonNull Bundle bundle) {
+        Objects.requireNonNull(bundle);
 
-            // Common arguments for all types
-            requestKey = bundle.getString(CODE);
-            title = bundle.getString(TITLE);
-            hint = bundle.getString(HINT);
+        // Get type from bundle, check if it's null.
+        type = (PickerType) bundle.getSerializable(TYPE);
 
-            // Specific arguments depending on current type
-            switch (type) {
-                case CURRENCY:
-                case NORMAL:
-                    step = bundle.getInt(STEP);  // Must be >= 1
-                    from = bundle.getInt(FROM);
-                    to = bundle.getInt(TO);
-                    min = bundle.getInt(MIN);
-                    max = bundle.getInt(MAX);
-                    break;
-                case ENGINE:
-                    displayedValues = bundle.getStringArray(VALUES);
-                    Log.d(TAG, "unpackBundleArgs: values: " + Arrays.toString(displayedValues));
-                    break;
-            }
+        // Common arguments for all types
+        requestKey = bundle.getString(CODE);
+        title = bundle.getString(TITLE);
+        hint = bundle.getString(HINT);
 
-        } else {
-            Log.w(TAG, "unpackBundleArgs: args bundle is null!");
+        // Specific arguments depending on current type
+        switch (type) {
+            case CURRENCY:
+            case NORMAL:
+                step = bundle.getInt(STEP);  // Must be >= 1
+                from = bundle.getInt(FROM);
+                to = bundle.getInt(TO);
+                min = bundle.getInt(MIN);
+                max = bundle.getInt(MAX);
+                break;
+            case ENGINE:
+                displayedValues = bundle.getStringArray(VALUES);
+                Log.d(TAG, "unpackBundleArgs: values: " + Arrays.toString(displayedValues));
+                break;
         }
+    }
+
+
+    /**
+     * Applies data to the view both from the saved instance's bundle and class private fields.
+     */
+    private void setupView() {
+        if (title != null && !title.isEmpty()) binding.dialogValHeader.setText(title);
+        if (hint != null && !hint.isEmpty()) binding.dialogValHint.setText(hint);
+
+        switch (type) {
+            case NORMAL:
+                displayedValues = this.getDisplayedValues(null, min, max, step);
+                break;
+            case CURRENCY:
+                formatter = NumberFormat.getIntegerInstance();
+                displayedValues = this.getDisplayedValues(formatter, min, max, step);
+                break;
+            case ENGINE:
+                break;
+            default:
+                throw new InvalidParameterException("Unexpected picker type - " + type);
+        }
+
+        // Set min and max acceptable values for both pickers
+        binding.dialogValL.setMinValue(0);
+        binding.dialogValR.setMinValue(0);
+        binding.dialogValL.setMaxValue(displayedValues.length - 1);
+        binding.dialogValR.setMaxValue(displayedValues.length - 1);
+
+        binding.dialogValL.setDisplayedValues(displayedValues);
+        binding.dialogValR.setDisplayedValues(displayedValues);
     }
 
 
@@ -202,69 +241,14 @@ public class DialogValuesPicker extends DialogFragment {
             }
         }
 
-
         // Check if first actual value is 0, remove it if true.
         if (values.get(1).equals("0")) {
             values.remove(1);
         }
 
-        Log.d(TAG, "getDisplayValues: " + values.toString());
         return values.toArray(new String[0]);
     }
 
-
-    /**
-     * Applies data to the view both from the saved instance's bundle and class private fields.
-     *
-     * @param bundle Arguments passed upon fragment's creation.
-     */
-    private void setupView(Bundle bundle) {
-        if (title != null && !title.isEmpty()) binding.dialogValHeader.setText(title);
-        if (hint != null && !hint.isEmpty()) binding.dialogValHint.setText(hint);
-
-        switch (type) {
-            case NORMAL:
-                formatter = NumberFormat.getNumberInstance();
-                displayedValues = this.getDisplayedValues(null, min, max, step);
-                break;
-            case CURRENCY:
-                formatter = NumberFormat.getIntegerInstance();
-                displayedValues = this.getDisplayedValues(formatter, min, max, step);
-                break;
-            case ENGINE:
-                break;
-            default:
-                throw new InvalidParameterException("Unexpected picker type - " + type);
-        }
-
-        // Set min and max acceptable values for both pickers
-        binding.dialogValL.setMinValue(0);
-        binding.dialogValR.setMinValue(0);
-        binding.dialogValL.setMaxValue(displayedValues.length - 1);
-        binding.dialogValR.setMaxValue(displayedValues.length - 1);
-
-//        binding.dialogValL.setValue(from);
-//        binding.dialogValR.setValue(to);
-
-        binding.dialogValL.setDisplayedValues(displayedValues);
-        binding.dialogValR.setDisplayedValues(displayedValues);
-
-        binding.dialogValAccept.setOnClickListener(v -> {
-            String lVal = displayedValues[binding.dialogValL.getValue()];
-            String rVal = displayedValues[binding.dialogValR.getValue()];
-
-            if (formatter != null) {
-                try {
-                    Log.d(TAG, "dialogValAccept: " + formatter.parse(lVal) + " : " + formatter.parse(rVal));
-                } catch (ParseException e) {
-                    Log.e(TAG, "dialogValAccept: failed to parse", e);
-                }
-            } else {
-                Log.d(TAG, "dialogValAccept: " + lVal + " : " + rVal);
-            }
-        });
-
-    }
 
     /**
      * Set picker action listeners.
@@ -287,31 +271,35 @@ public class DialogValuesPicker extends DialogFragment {
             }
             to = newVal;
         });
+
+        binding.dialogValAccept.setOnClickListener(v -> {
+            String lVal = displayedValues[binding.dialogValL.getValue()];
+            String rVal = displayedValues[binding.dialogValR.getValue()];
+
+            switch (type) {
+                case CURRENCY:
+                    try {
+                        Number lResult = formatter.parse(lVal);
+                        Number rResult = formatter.parse(rVal);
+                        if (lResult != null && rResult != null) {
+                            finishWithResult(lResult.intValue(), rResult.intValue());
+                        }
+                    } catch (ParseException e) {
+                        Log.e(TAG, "dialogValAccept: failed to parse", e);
+                    }
+                    break;
+
+                case NORMAL:
+                    finishWithResult(Integer.parseInt(lVal), Integer.parseInt(rVal));
+                    break;
+
+                case ENGINE:
+                    finishWithResult(lVal, rVal);
+                    break;
+            }
+        });
     }
 
-//    /**
-//     * @param outState Bundle to be saved. Will be restored later.
-//     */
-//    @Override
-//    public void onSaveInstanceState(@NonNull Bundle outState) {
-//        outState.putInt(FROM, from);
-//        outState.putInt(TO, to);
-//        super.onSaveInstanceState(outState);
-//    }
-//
-//    /**
-//     * @param savedInstanceState Bundle with saved arguments
-//     */
-//    @Override
-//    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
-//        if (savedInstanceState != null) {
-//            from = savedInstanceState.getInt(FROM);
-//            to = savedInstanceState.getInt(TO);
-//            binding.dialogValL.setValue(from);
-//            binding.dialogValR.setValue(to);
-//        }
-//        super.onViewStateRestored(savedInstanceState);
-//    }
 
     /**
      * Packs 2 final values into bundle as an integer array of length 2. Sets
@@ -324,6 +312,40 @@ public class DialogValuesPicker extends DialogFragment {
         bundle.putIntArray(RESULT, new int[]{from, to});
         getParentFragmentManager().setFragmentResult(requestKey, bundle);
         this.dismiss();
+    }
+
+    // TODO: Check if there's a way to not duplicate method for different types
+    private void finishWithResult(String from, String to) {
+        Bundle bundle = new Bundle();
+        bundle.putStringArray(RESULT, new String[]{from, to});
+        getParentFragmentManager().setFragmentResult(requestKey, bundle);
+        this.dismiss();
+    }
+
+
+    /**
+     * @param outState Bundle to be saved. Will be restored later.
+     */
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        outState.putInt(FROM, from);
+        outState.putInt(TO, to);
+        super.onSaveInstanceState(outState);
+    }
+
+
+    /**
+     * @param savedInstanceState Bundle with saved arguments
+     */
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            from = savedInstanceState.getInt(FROM);
+            to = savedInstanceState.getInt(TO);
+            binding.dialogValL.setValue(from);
+            binding.dialogValR.setValue(to);
+        }
+        super.onViewStateRestored(savedInstanceState);
     }
 
 
