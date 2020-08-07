@@ -340,12 +340,45 @@ public class DialogValuesPicker extends DialogFragment {
     @Override
     public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
         if (savedInstanceState != null) {
-            from = savedInstanceState.getInt(FROM);
-            to = savedInstanceState.getInt(TO);
-            binding.dialogValL.setValue(from);
-            binding.dialogValR.setValue(to);
+            restorePickerPosValues(savedInstanceState.getInt(FROM), savedInstanceState.getInt(TO));
+        } else if (getArguments() != null) {
+            Bundle args = getArguments();
+            String fromValue = null;
+            String toValue = null;
+
+            switch (type) {
+                case CURRENCY:
+                case NORMAL:
+                    fromValue = formatter.format(args.getInt(FROM));
+                    toValue = formatter.format(args.getInt(TO));
+                    break;
+
+                case ENGINE:
+                    fromValue = args.getString(FROM);
+                    toValue = args.getString(TO);
+                    break;
+            }
+            List<String> values = Arrays.asList(displayedValues);
+            restorePickerPosValues(values.indexOf(fromValue), values.indexOf(toValue));
         }
+
         super.onViewStateRestored(savedInstanceState);
+    }
+
+
+    /**
+     * Apply specified index (pos) values for both pickers.
+     *
+     * @param fromPos Index in displayedValues for left (from) picker.
+     * @param toPos   Index in displayedValues for right (to) picker.
+     */
+    private void restorePickerPosValues(int fromPos, int toPos) {
+        if (fromPos < 0 || toPos < 0) return;
+
+        from = fromPos;
+        to = toPos;
+        binding.dialogValL.setValue(from);
+        binding.dialogValR.setValue(to);
     }
 
 
