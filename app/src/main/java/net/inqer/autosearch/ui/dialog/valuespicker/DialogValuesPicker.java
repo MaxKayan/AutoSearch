@@ -109,7 +109,9 @@ public class DialogValuesPicker extends DialogFragment {
         DialogValuesPicker instance = new DialogValuesPicker();
         Bundle args = getBaseBundle(title, hint, requestCode);
 
-        args.putSerializable(TYPE, PickerType.ENGINE);
+        args.putString(FROM, from);
+        args.putString(TO, to);
+        args.putSerializable(TYPE, PickerType.CUSTOM);
         args.putStringArray(VALUES, values);
         instance.setArguments(args);
         return instance;
@@ -181,7 +183,7 @@ public class DialogValuesPicker extends DialogFragment {
                 min = bundle.getInt(MIN);
                 max = bundle.getInt(MAX);
                 break;
-            case ENGINE:
+            case CUSTOM:
                 displayedValues = bundle.getStringArray(VALUES);
                 Log.d(TAG, "unpackBundleArgs: values: " + Arrays.toString(displayedValues));
                 break;
@@ -204,7 +206,7 @@ public class DialogValuesPicker extends DialogFragment {
                 formatter = NumberFormat.getIntegerInstance();
                 displayedValues = this.getDisplayedValues(formatter, min, max, step);
                 break;
-            case ENGINE:
+            case CUSTOM:
                 break;
             default:
                 throw new InvalidParameterException("Unexpected picker type - " + type);
@@ -279,8 +281,8 @@ public class DialogValuesPicker extends DialogFragment {
             switch (type) {
                 case CURRENCY:
                     try {
-                        Number lResult = formatter.parse(lVal);
-                        Number rResult = formatter.parse(rVal);
+                        Number lResult = binding.dialogValL.getValue() > 0 ? formatter.parse(lVal) : 0;
+                        Number rResult = binding.dialogValR.getValue() > 0 ? formatter.parse(rVal) : 0;
                         if (lResult != null && rResult != null) {
                             finishWithResult(lResult.intValue(), rResult.intValue());
                         }
@@ -290,10 +292,12 @@ public class DialogValuesPicker extends DialogFragment {
                     break;
 
                 case NORMAL:
-                    finishWithResult(Integer.parseInt(lVal), Integer.parseInt(rVal));
+                    int lResult = binding.dialogValL.getValue() > 0 ? Integer.parseInt(lVal) : 0;
+                    int rResult = binding.dialogValR.getValue() > 0 ? Integer.parseInt(rVal) : 0;
+                    finishWithResult(lResult, rResult);
                     break;
 
-                case ENGINE:
+                case CUSTOM:
                     finishWithResult(lVal, rVal);
                     break;
             }
@@ -307,9 +311,9 @@ public class DialogValuesPicker extends DialogFragment {
      * @param from Final "from" value from the left picker
      * @param to   Final "to" value from the right picker
      */
-    private void finishWithResult(int from, int to) {
+    private void finishWithResult(Integer from, Integer to) {
         Bundle bundle = new Bundle();
-        bundle.putIntArray(RESULT, new int[]{from, to});
+        bundle.putIntegerArrayList(RESULT, new ArrayList<>(Arrays.asList(from, to)));
         getParentFragmentManager().setFragmentResult(requestKey, bundle);
         this.dismiss();
     }
@@ -345,20 +349,29 @@ public class DialogValuesPicker extends DialogFragment {
             Bundle args = getArguments();
             String fromValue = null;
             String toValue = null;
+            formatter = NumberFormat.getIntegerInstance();
 
             switch (type) {
                 case CURRENCY:
-                case NORMAL:
+                    Log.d(TAG, "onViewStateRestored: currency");
                     fromValue = formatter.format(args.getInt(FROM));
                     toValue = formatter.format(args.getInt(TO));
                     break;
 
-                case ENGINE:
+                case NORMAL:
+                    Log.d(TAG, "onViewStateRestored: numeric");
+                    fromValue = Integer.toString(args.getInt(FROM));
+                    toValue = Integer.toString(args.getInt(TO));
+                    break;
+
+                case CUSTOM:
+                    Log.d(TAG, "onViewStateRestored: string");
                     fromValue = args.getString(FROM);
                     toValue = args.getString(TO);
                     break;
             }
             List<String> values = Arrays.asList(displayedValues);
+            Log.d(TAG, "onViewStateRestored: searching for - " + fromValue + " : " + toValue);
             restorePickerPosValues(values.indexOf(fromValue), values.indexOf(toValue));
         }
 
@@ -373,19 +386,21 @@ public class DialogValuesPicker extends DialogFragment {
      * @param toPos   Index in displayedValues for right (to) picker.
      */
     private void restorePickerPosValues(int fromPos, int toPos) {
-        if (fromPos < 0 || toPos < 0) return;
-
-        from = fromPos;
-        to = toPos;
-        binding.dialogValL.setValue(from);
-        binding.dialogValR.setValue(to);
+        if (fromPos > 0) {
+            from = fromPos;
+            binding.dialogValL.setValue(from);
+        }
+        if (toPos > 0) {
+            to = toPos;
+            binding.dialogValR.setValue(to);
+        }
     }
 
 
     public enum PickerType {
         NORMAL,  // Plain integer values
         CURRENCY, // Integer values formatted as currency
-        ENGINE,
+        CUSTOM,
         SINGLE
     }
 

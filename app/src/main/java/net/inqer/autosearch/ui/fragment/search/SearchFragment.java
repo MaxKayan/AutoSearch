@@ -27,6 +27,7 @@ import net.inqer.autosearch.ui.dialog.listsearch.DialogListSearch;
 import net.inqer.autosearch.ui.dialog.valuespicker.DialogValuesPicker;
 import net.inqer.autosearch.util.ViewModelProviderFactory;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -169,11 +170,17 @@ public class SearchFragment extends DaggerFragment {
 
         });
         binding.fEditDisplacement.setOnClickListener(v -> {
-            showDialog(
-                    DialogValuesPicker.getValuesInstance(DISPLACEMENT, "Объём двигателя",
-                            "Укажите объём двигателя (л)", DISPLACEMENTS, "", ""),
-                    DISPLACEMENT
-            );
+            EditableFilter currentFilter = getCurrentFilter();
+            if (currentFilter != null) {
+                showDialog(
+                        DialogValuesPicker.getValuesInstance(DISPLACEMENT, "Объём двигателя",
+                                "Укажите объём двигателя (л)", DISPLACEMENTS,
+                                currentFilter.getEngineDisplacementMin(),
+                                currentFilter.getEngineDisplacementMax()
+                        ),
+                        DISPLACEMENT
+                );
+            }
         });
         binding.fEditRadius.setOnClickListener(v -> {
             EditableFilter currentFilter = getCurrentFilter();
@@ -222,9 +229,9 @@ public class SearchFragment extends DaggerFragment {
             }
         });
         manager.setFragmentResultListener(YEAR, this, (requestKey, result) -> {
-            int[] values = result.getIntArray(valKey);
+            ArrayList<Integer> values = result.getIntegerArrayList(YEAR);
             if (values != null) {
-                viewModel.setYear(values[0], values[1]);
+                viewModel.setYear(values.get(0), values.get(1));
             }
         });
         manager.setFragmentResultListener(DISPLACEMENT, this, (requestKey, result) -> {
