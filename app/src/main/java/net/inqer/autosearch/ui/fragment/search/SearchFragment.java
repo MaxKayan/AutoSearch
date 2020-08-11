@@ -27,6 +27,7 @@ import net.inqer.autosearch.ui.dialog.listsearch.DialogListSearch;
 import net.inqer.autosearch.ui.dialog.valuespicker.DialogValuesPicker;
 import net.inqer.autosearch.util.ViewModelProviderFactory;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -78,9 +79,7 @@ public class SearchFragment extends DaggerFragment {
      * Current filter - instance of editable filter that is currently being viewed/edited
      */
     private void subscribeObservers() {
-        viewModel.getCurrentFilter().observe(getViewLifecycleOwner(), queryFilter -> {
-            setupViewByFilter(queryFilter);
-        });
+        viewModel.getCurrentFilter().observe(getViewLifecycleOwner(), this::setupViewByFilter);
     }
 
     /**
@@ -94,17 +93,24 @@ public class SearchFragment extends DaggerFragment {
         binding.fEditModelValue.setText(filter.getCarModel() == null ? "" : filter.getCarModel().getName());
         binding.fEditRegionValue.setText(filter.getRegion() == null ? "" : filter.getRegion().getName());
         binding.fEditCityValue.setText(filter.getCity() == null ? "" : filter.getCity().getName());
-        binding.fEditPriceValue.setText(filter.getPriceMin() +
-                " до: " + filter.getPriceMax());
-        binding.fEditYearValue.setText(filter.getManufactureYearMin() + " до: " + filter.getManufactureYearMax());
+        binding.fEditPriceValue.setText(getRangeString(filter.getPriceMin(), filter.getPriceMax(), true));
+        binding.fEditYearValue.setText(getRangeString(filter.getManufactureYearMin(), filter.getManufactureYearMax(), false));
         binding.fEditTransmissionValue.setText(filter.getTransmission());
         binding.fEditHullValue.setText(filter.getHull());
         binding.fEditFuelValue.setText(filter.getFuel());
-        binding.fEditDisplacementValue.setText(filter.getEngineDisplacementMin() + " до: " + filter.getEngineDisplacementMax());
+        binding.fEditDisplacementValue.setText(getRangeString(filter.getEngineDisplacementMin(), filter.getEngineDisplacementMax(), false));
         binding.fEditRadiusValue.setText(String.valueOf(filter.getRadius()));
 
         if (filter.getRegion() == null) binding.fEditCityLabel.setEnabled(false);
         else binding.fEditCityLabel.setEnabled(true);
+    }
+
+
+    private String getRangeString(Object from, Object to, boolean isCurrency) {
+        NumberFormat formatter = NumberFormat.getIntegerInstance();
+        String lVal = from == null ? "Все" : isCurrency ? formatter.format(from) : from.toString();
+        String rVal = to == null ? "Все" : isCurrency ? formatter.format(to) : to.toString();
+        return lVal + " до: " + rVal;
     }
 
 
@@ -223,13 +229,14 @@ public class SearchFragment extends DaggerFragment {
             viewModel.setModel(result.getParcelable(listKey));
         });
         manager.setFragmentResultListener(PRICE, this, (requestKey, result) -> {
-            int[] values = result.getIntArray(valKey);
+            ArrayList<Integer> values = result.getIntegerArrayList(valKey);
             if (values != null) {
-                viewModel.setPrice(values[0], values[1]);
+                Log.d(TAG, "setupResultListeners: values: " + values);
+                viewModel.setPrice(values.get(0), values.get(1));
             }
         });
         manager.setFragmentResultListener(YEAR, this, (requestKey, result) -> {
-            ArrayList<Integer> values = result.getIntegerArrayList(YEAR);
+            ArrayList<Integer> values = result.getIntegerArrayList(valKey);
             if (values != null) {
                 viewModel.setYear(values.get(0), values.get(1));
             }
@@ -248,17 +255,6 @@ public class SearchFragment extends DaggerFragment {
         showDialog(dialog, DialogListSearch.TAG);
     }
 
-//    private void showValuesPickerDialog(String requestCode, String title, String hint, DialogValuesPicker.PickerType type,
-//                                        Integer rawFrom, Integer rawTo, int min, int max, int step) {
-//
-//        DialogValuesPicker dialog = DialogValuesPicker.getInstance(requestCode, type, from, to, min, max, step, title, hint);
-//        showDialog(dialog, DialogValuesPicker.TAG);
-//    }
-
-//    private void showValuesPickerDialog(String requestCode, String title, String hint, String[] values) {
-//        DialogValuesPicker dialog = DialogValuesPicker.getInstance(requestCode, values, "", "", title, hint);
-//        showDialog(dialog, DialogValuesPicker.TAG);
-//    }
 
     private void showDialog(DialogFragment dialog, String tag) {
         FragmentManager manager = getParentFragmentManager();
@@ -278,6 +274,7 @@ public class SearchFragment extends DaggerFragment {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.action_bar_menu, menu);
     }
+
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {

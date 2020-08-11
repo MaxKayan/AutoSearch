@@ -87,6 +87,9 @@ public class SearchViewModel extends ViewModel {
     public void setRegion(Region instance) {
         EditableFilter filter = currentEditableFilter.getValue();
         if (instance != null && filter != null) {
+            if (filter.getRegion() != null && !filter.getRegion().isSameModelAs(instance)) {
+                filter.setCity(null);
+            }
             filter.setRegion(instance);
             currentEditableFilter.setValue(filter);
         } else Log.e(TAG, "setMark: null data");
@@ -103,6 +106,9 @@ public class SearchViewModel extends ViewModel {
     void setMark(CarMark instance) {
         EditableFilter filter = currentEditableFilter.getValue();
         if (instance != null && filter != null) {
+            if (filter.getCarMark() != null && !filter.getCarMark().isSameModelAs(instance)) {
+                filter.setCarModel(null);
+            }
             filter.setCarMark(instance);
             currentEditableFilter.setValue(filter);
         } else Log.e(TAG, "setRegion: null data");
@@ -116,7 +122,7 @@ public class SearchViewModel extends ViewModel {
         } else Log.e(TAG, "setModel: null data");
     }
 
-    public void setPrice(int from, int to) {
+    public void setPrice(Integer from, Integer to) {
         EditableFilter filter = currentEditableFilter.getValue();
         if (filter != null) {
             filter.setPriceMinimum(from);
@@ -125,7 +131,7 @@ public class SearchViewModel extends ViewModel {
         } else Log.e(TAG, "setModel: null data");
     }
 
-    public void setYear(int from, int to) {
+    public void setYear(Integer from, Integer to) {
         EditableFilter filter = currentEditableFilter.getValue();
         if (filter != null) {
             filter.setManufactureYearMin(from);

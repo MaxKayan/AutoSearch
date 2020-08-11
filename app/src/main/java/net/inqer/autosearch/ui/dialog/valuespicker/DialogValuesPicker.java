@@ -311,9 +311,12 @@ public class DialogValuesPicker extends DialogFragment {
      * @param from Final "from" value from the left picker
      * @param to   Final "to" value from the right picker
      */
-    private void finishWithResult(Integer from, Integer to) {
+    private void finishWithResult(int from, int to) {
         Bundle bundle = new Bundle();
-        bundle.putIntegerArrayList(RESULT, new ArrayList<>(Arrays.asList(from, to)));
+        bundle.putIntegerArrayList(RESULT, new ArrayList<>(Arrays.asList(
+                from > 0 ? from : null,
+                to > 0 ? to : null
+        )));
         getParentFragmentManager().setFragmentResult(requestKey, bundle);
         this.dismiss();
     }
