@@ -100,7 +100,8 @@ public class SearchFragment extends DaggerFragment {
         binding.fEditHullValue.setText(filter.getHull());
         binding.fEditFuelValue.setText(filter.getFuel());
         binding.fEditDisplacementValue.setText(getRangeString(filter.getEngineDisplacementMin(), filter.getEngineDisplacementMax(), false));
-        binding.fEditRadiusValue.setText(String.valueOf(filter.getRadius()));
+        Integer radius = filter.getRadius();
+        binding.fEditRadiusValue.setText(radius != null ? radius.toString() : "Любой");
 
         if (filter.getRegion() == null) binding.fEditCityLabel.setEnabled(false);
         else binding.fEditCityLabel.setEnabled(true);
@@ -186,7 +187,7 @@ public class SearchFragment extends DaggerFragment {
             EditableFilter currentFilter = getCurrentFilter();
             if (currentFilter == null) return;
             showDialog(
-                    DialogSinglePicker.getInstance(RADIUS, "Радиус поиска", "Укажите радиус поиска (км)", 0, 0, 300, 15)
+                    DialogSinglePicker.getInstance(RADIUS, "Радиус поиска", "Укажите радиус поиска (км)", currentFilter.getRadius(), 0, 300, 10)
             );
         });
 
@@ -239,7 +240,8 @@ public class SearchFragment extends DaggerFragment {
             }
         });
         manager.setFragmentResultListener(RADIUS, this, (requestKey, result) -> {
-            viewModel.setRadius(result.getInt(RADIUS));
+            Integer value = (Integer) result.getSerializable(DialogSinglePicker.RESULT);
+            viewModel.setRadius(value);
         });
     }
 

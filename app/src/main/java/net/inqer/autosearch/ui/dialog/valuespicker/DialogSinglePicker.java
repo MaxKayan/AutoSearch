@@ -17,8 +17,8 @@ import java.util.Arrays;
 import java.util.List;
 
 public class DialogSinglePicker extends DialogFragment {
+    public static final String RESULT = "DialogSinglePicker_result";
     private static final String TAG = "DialogSinglePicker";
-    private static final String RESULT = "DialogSinglePicker_result";
     private static final String STEP = "dialog_values_step";
     private static final String TITLE = "dialog_header";
     private static final String HINT = "dialog_values_hint";
@@ -29,7 +29,7 @@ public class DialogSinglePicker extends DialogFragment {
     DialogSinglePickerBinding binding;
 
     private String requestKey;
-    private int value;
+    private Integer value;
     private int min;
     private int max;
     private int step;
@@ -45,8 +45,7 @@ public class DialogSinglePicker extends DialogFragment {
         args.putString(TITLE, title);
         args.putString(HINT, hint);
 
-        initialVal = initialVal != null ? initialVal : 0;
-        args.putInt(VALUE, initialVal);
+        args.putSerializable(VALUE, initialVal);
 
         args.putInt(MIN, min);
         args.putInt(MAX, max);
@@ -56,7 +55,6 @@ public class DialogSinglePicker extends DialogFragment {
         return instance;
     }
 
-    ;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -86,7 +84,7 @@ public class DialogSinglePicker extends DialogFragment {
         requestKey = args.getString(CODE);
         binding.textHeader.setText(args.getString(TITLE));
         binding.textHint.setText(args.getString(HINT));
-        value = args.getInt(VALUE);
+        value = (Integer) args.getSerializable(VALUE);
         min = args.getInt(MIN);
         max = args.getInt(MAX);
         step = args.getInt(STEP);
@@ -100,7 +98,7 @@ public class DialogSinglePicker extends DialogFragment {
         binding.numberPicker.setMaxValue(displayedValues.length - 1);
 
         binding.numberPicker.setValue(
-                Arrays.binarySearch(displayedValues, Integer.toString(value))
+                value != null ? Arrays.binarySearch(displayedValues, Integer.toString(value)) : 0
         );
 
         binding.buttonAccept.setOnClickListener(v -> {
@@ -123,7 +121,7 @@ public class DialogSinglePicker extends DialogFragment {
 
     private void finishWithResult(Integer value) {
         Bundle bundle = new Bundle();
-        bundle.putInt(RESULT, value);
+        bundle.putSerializable(RESULT, value);
         getParentFragmentManager().setFragmentResult(requestKey, bundle);
         this.dismiss();
     }
