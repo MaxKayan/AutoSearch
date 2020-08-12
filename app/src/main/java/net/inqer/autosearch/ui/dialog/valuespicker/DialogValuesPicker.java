@@ -185,7 +185,6 @@ public class DialogValuesPicker extends DialogFragment {
                 break;
             case CUSTOM:
                 displayedValues = bundle.getStringArray(VALUES);
-                Log.d(TAG, "unpackBundleArgs: values: " + Arrays.toString(displayedValues));
                 break;
         }
     }
@@ -356,25 +355,21 @@ public class DialogValuesPicker extends DialogFragment {
 
             switch (type) {
                 case CURRENCY:
-                    Log.d(TAG, "onViewStateRestored: currency");
                     fromValue = formatter.format(args.getInt(FROM));
                     toValue = formatter.format(args.getInt(TO));
                     break;
 
                 case NORMAL:
-                    Log.d(TAG, "onViewStateRestored: numeric");
                     fromValue = Integer.toString(args.getInt(FROM));
                     toValue = Integer.toString(args.getInt(TO));
                     break;
 
                 case CUSTOM:
-                    Log.d(TAG, "onViewStateRestored: string");
                     fromValue = args.getString(FROM);
                     toValue = args.getString(TO);
                     break;
             }
             List<String> values = Arrays.asList(displayedValues);
-            Log.d(TAG, "onViewStateRestored: searching for - " + fromValue + " : " + toValue);
             restorePickerPosValues(values.indexOf(fromValue), values.indexOf(toValue));
         }
 

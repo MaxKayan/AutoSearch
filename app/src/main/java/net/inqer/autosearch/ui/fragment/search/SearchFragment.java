@@ -24,6 +24,7 @@ import net.inqer.autosearch.data.model.ListItem;
 import net.inqer.autosearch.databinding.FragmentSearchBinding;
 import net.inqer.autosearch.ui.dev.DevActivity;
 import net.inqer.autosearch.ui.dialog.listsearch.DialogListSearch;
+import net.inqer.autosearch.ui.dialog.valuespicker.DialogSinglePicker;
 import net.inqer.autosearch.ui.dialog.valuespicker.DialogValuesPicker;
 import net.inqer.autosearch.util.ViewModelProviderFactory;
 
@@ -151,9 +152,7 @@ public class SearchFragment extends DaggerFragment {
             if (currentFilter != null) {
                 showDialog(
                         DialogValuesPicker.getCurrencyInstance(PRICE, "Цена", "Выберите интервал стоимости (р.)",
-                                currentFilter.getPriceMin(), currentFilter.getPriceMax(), 0, 1000000, 1000),
-                        PRICE
-                );
+                                currentFilter.getPriceMin(), currentFilter.getPriceMax(), 0, 1000000, 1000));
             }
         });
         binding.fEditYear.setOnClickListener(v -> {
@@ -161,9 +160,7 @@ public class SearchFragment extends DaggerFragment {
             if (currentFilter != null) {
                 showDialog(
                         DialogValuesPicker.getNumberInstance(YEAR, "Год выпуска", "Выберите год выпуска ТС",
-                                currentFilter.getManufactureYearMin(), currentFilter.getManufactureYearMax(), 1980, 2020, 1),
-                        YEAR
-                );
+                                currentFilter.getManufactureYearMin(), currentFilter.getManufactureYearMax(), 1980, 2020, 1));
             }
         });
         binding.fEditTransmission.setOnClickListener(v -> {
@@ -182,20 +179,14 @@ public class SearchFragment extends DaggerFragment {
                         DialogValuesPicker.getValuesInstance(DISPLACEMENT, "Объём двигателя",
                                 "Укажите объём двигателя (л)", DISPLACEMENTS,
                                 currentFilter.getEngineDisplacementMin(),
-                                currentFilter.getEngineDisplacementMax()
-                        ),
-                        DISPLACEMENT
-                );
+                                currentFilter.getEngineDisplacementMax()));
             }
         });
         binding.fEditRadius.setOnClickListener(v -> {
             EditableFilter currentFilter = getCurrentFilter();
             if (currentFilter == null) return;
-
             showDialog(
-                    DialogValuesPicker.getNumberInstance(RADIUS, "Радиус поиска", "Укажите радиус поиска (км)",
-                            0, currentFilter.getRadius(), 0, 1000, 10),
-                    RADIUS
+                    DialogSinglePicker.getInstance(RADIUS, "Радиус поиска", "Укажите радиус поиска (км)", 0, 0, 300, 15)
             );
         });
 
@@ -247,16 +238,20 @@ public class SearchFragment extends DaggerFragment {
                 viewModel.setDisplacement(values[0], values[1]);
             }
         });
+        manager.setFragmentResultListener(RADIUS, this, (requestKey, result) -> {
+            viewModel.setRadius(result.getInt(RADIUS));
+        });
     }
 
 
     private <T extends ListItem> void showListSearchDialog(String requestCode, String title, String hint, Flowable<List<T>> dataSource) {
         DialogListSearch<T> dialog = DialogListSearch.newInstance(requestCode, title, hint, dataSource);
-        showDialog(dialog, DialogListSearch.TAG);
+        showDialog(dialog);
     }
 
 
-    private void showDialog(DialogFragment dialog, String tag) {
+    private void showDialog(DialogFragment dialog) {
+        String tag = TAG;
         FragmentManager manager = getParentFragmentManager();
         manager.executePendingTransactions();
 

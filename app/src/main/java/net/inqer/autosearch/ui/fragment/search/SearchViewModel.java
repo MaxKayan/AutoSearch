@@ -148,4 +148,12 @@ public class SearchViewModel extends ViewModel {
             currentEditableFilter.setValue(filter);
         } else Log.e(TAG, "setModel: null data");
     }
+
+    public void setRadius(Integer radius) {
+        EditableFilter filter = currentEditableFilter.getValue();
+        if (filter != null) {
+            filter.setRadius(radius);
+            currentEditableFilter.setValue(filter);
+        } else Log.e(TAG, "setModel: null data");
+    }
 }
