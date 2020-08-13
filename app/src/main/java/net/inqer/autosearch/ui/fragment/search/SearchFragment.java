@@ -24,6 +24,7 @@ import net.inqer.autosearch.data.model.ListItem;
 import net.inqer.autosearch.databinding.FragmentSearchBinding;
 import net.inqer.autosearch.ui.dev.DevActivity;
 import net.inqer.autosearch.ui.dialog.listsearch.DialogListSearch;
+import net.inqer.autosearch.ui.dialog.radiopicker.DialogRadioPicker;
 import net.inqer.autosearch.ui.dialog.valuespicker.DialogSinglePicker;
 import net.inqer.autosearch.ui.dialog.valuespicker.DialogValuesPicker;
 import net.inqer.autosearch.util.ViewModelProviderFactory;
@@ -49,6 +50,7 @@ public class SearchFragment extends DaggerFragment {
     private final String PRICE = "values_picker_price";
     private final String YEAR = "values_picker_year";
     private final String DISPLACEMENT = "values_picker_displacement";
+    private final String TRANSMISSION = "values_picker_transmission";
     private final String RADIUS = "values_picker_radius";
 
     @Inject
@@ -109,6 +111,8 @@ public class SearchFragment extends DaggerFragment {
 
 
     private String getRangeString(Object from, Object to, boolean isCurrency) {
+        if (from == null && to == null) return "";
+
         NumberFormat formatter = NumberFormat.getIntegerInstance();
         String lVal = from == null ? "Все" : isCurrency ? formatter.format(from) : from.toString();
         String rVal = to == null ? "Все" : isCurrency ? formatter.format(to) : to.toString();
@@ -165,7 +169,9 @@ public class SearchFragment extends DaggerFragment {
             }
         });
         binding.fEditTransmission.setOnClickListener(v -> {
-
+            showDialog(
+                    DialogRadioPicker.getInstance(TRANSMISSION, "Коробка передач", "Укажите тип", getResources().getStringArray(R.array.transmission))
+            );
         });
         binding.fEditHull.setOnClickListener(v -> {
 
@@ -232,6 +238,10 @@ public class SearchFragment extends DaggerFragment {
             if (values != null) {
                 viewModel.setYear(values.get(0), values.get(1));
             }
+        });
+        manager.setFragmentResultListener(TRANSMISSION, this, (requestKey, result) -> {
+            String value = result.getString(DialogRadioPicker.RESULT);
+            viewModel.setTransmission(value);
         });
         manager.setFragmentResultListener(DISPLACEMENT, this, (requestKey, result) -> {
             String[] values = result.getStringArray(valKey);

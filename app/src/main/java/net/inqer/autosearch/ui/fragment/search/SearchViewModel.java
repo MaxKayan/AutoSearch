@@ -92,7 +92,7 @@ public class SearchViewModel extends ViewModel {
             }
             filter.setRegion(instance);
             currentEditableFilter.setValue(filter);
-        } else Log.e(TAG, "setMark: null data");
+        } else handleError();
     }
 
     void setCity(City instance) {
@@ -100,7 +100,7 @@ public class SearchViewModel extends ViewModel {
         if (instance != null && filter != null) {
             filter.setCity(instance);
             currentEditableFilter.setValue(filter);
-        } else Log.e(TAG, "setModel: null data");
+        } else handleError();
     }
 
     void setMark(CarMark instance) {
@@ -111,7 +111,7 @@ public class SearchViewModel extends ViewModel {
             }
             filter.setCarMark(instance);
             currentEditableFilter.setValue(filter);
-        } else Log.e(TAG, "setRegion: null data");
+        } else handleError();
     }
 
     public void setModel(CarModel instance) {
@@ -119,7 +119,7 @@ public class SearchViewModel extends ViewModel {
         if (instance != null && filter != null) {
             filter.setCarModel(instance);
             currentEditableFilter.setValue(filter);
-        } else Log.e(TAG, "setModel: null data");
+        } else handleError();
     }
 
     public void setPrice(Integer from, Integer to) {
@@ -128,7 +128,7 @@ public class SearchViewModel extends ViewModel {
             filter.setPriceMinimum(from);
             filter.setPriceMaximum(to);
             currentEditableFilter.setValue(filter);
-        } else Log.e(TAG, "setModel: null data");
+        } else handleError();
     }
 
     public void setYear(Integer from, Integer to) {
@@ -137,7 +137,7 @@ public class SearchViewModel extends ViewModel {
             filter.setManufactureYearMin(from);
             filter.setManufactureYearMax(to);
             currentEditableFilter.setValue(filter);
-        } else Log.e(TAG, "setModel: null data");
+        } else handleError();
     }
 
     public void setDisplacement(String from, String to) {
@@ -146,7 +146,7 @@ public class SearchViewModel extends ViewModel {
             filter.setEngineDisplacementMin(from);
             filter.setEngineDisplacementMax(to);
             currentEditableFilter.setValue(filter);
-        } else Log.e(TAG, "setModel: null data");
+        } else handleError();
     }
 
     public void setRadius(Integer radius) {
@@ -154,6 +154,18 @@ public class SearchViewModel extends ViewModel {
         if (filter != null) {
             filter.setRadius(radius);
             currentEditableFilter.setValue(filter);
-        } else Log.e(TAG, "setModel: null data");
+        } else handleError();
+    }
+
+    public void setTransmission(String value) {
+        EditableFilter filter = currentEditableFilter.getValue();
+        if (filter != null) {
+            filter.setTransmission(value);
+            currentEditableFilter.setValue(filter);
+        } else handleError();
+    }
+
+    private void handleError() {
+        Log.e(TAG, "handleError: Current filter value in live data is null!");
     }
 }

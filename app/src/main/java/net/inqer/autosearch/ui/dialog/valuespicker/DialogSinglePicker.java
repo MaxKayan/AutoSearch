@@ -13,27 +13,27 @@ import androidx.fragment.app.DialogFragment;
 import net.inqer.autosearch.databinding.DialogSinglePickerBinding;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class DialogSinglePicker extends DialogFragment {
     public static final String RESULT = "DialogSinglePicker_result";
     private static final String TAG = "DialogSinglePicker";
-    private static final String STEP = "dialog_values_step";
-    private static final String TITLE = "dialog_header";
-    private static final String HINT = "dialog_values_hint";
-    private static final String CODE = "dialog_values_request_code";
-    private static final String VALUE = "dialog_values_value";
-    private static final String MIN = "dialog_values_min";
-    private static final String MAX = "dialog_values_max";
+    private static final String STEP = "dialog_single_step";
+    private static final String TITLE = "dialog_single_header";
+    private static final String HINT = "dialog_single_hint";
+    private static final String CODE = "dialog_single_request_code";
+    private static final String INIT_VAL = "dialog_single_initial_value";
+    private static final String POS = "dialog_single_picker_position";
+    private static final String MIN = "dialog_single_min";
+    private static final String MAX = "dialog_single_max";
     DialogSinglePickerBinding binding;
 
     private String requestKey;
-    private Integer value;
+    private int pos;
     private int min;
     private int max;
     private int step;
-    private String[] displayedValues;
+    private List<String> displayedValues;
 
     public DialogSinglePicker() {
     }
@@ -45,7 +45,7 @@ public class DialogSinglePicker extends DialogFragment {
         args.putString(TITLE, title);
         args.putString(HINT, hint);
 
-        args.putSerializable(VALUE, initialVal);
+        args.putSerializable(INIT_VAL, initialVal);
 
         args.putInt(MIN, min);
         args.putInt(MAX, max);
@@ -76,7 +76,7 @@ public class DialogSinglePicker extends DialogFragment {
         }
 
         unpackArguments(args);
-        setupView();
+        setupView(args);
     }
 
 
@@ -84,38 +84,41 @@ public class DialogSinglePicker extends DialogFragment {
         requestKey = args.getString(CODE);
         binding.textHeader.setText(args.getString(TITLE));
         binding.textHint.setText(args.getString(HINT));
-        value = (Integer) args.getSerializable(VALUE);
         min = args.getInt(MIN);
         max = args.getInt(MAX);
         step = args.getInt(STEP);
     }
 
 
-    private void setupView() {
+    private void setupView(Bundle args) {
         displayedValues = getDisplayedValues();
-        binding.numberPicker.setDisplayedValues(displayedValues);
+        binding.numberPicker.setDisplayedValues(displayedValues.toArray(new String[0]));
         binding.numberPicker.setMinValue(0);
-        binding.numberPicker.setMaxValue(displayedValues.length - 1);
+        binding.numberPicker.setMaxValue(displayedValues.size() - 1);
 
-        binding.numberPicker.setValue(
-                value != null ? Arrays.binarySearch(displayedValues, Integer.toString(value)) : 0
-        );
+        Integer initValue = (Integer) args.getSerializable(INIT_VAL);
+        pos = initValue != null ? displayedValues.indexOf(initValue.toString()) : 0;
+        binding.numberPicker.setValue(pos);
+
+        binding.numberPicker.setOnValueChangedListener((picker, oldVal, newVal) -> {
+            pos = newVal;
+        });
 
         binding.buttonAccept.setOnClickListener(v -> {
             int pos = binding.numberPicker.getValue();
-            Integer value = pos > 0 ? Integer.valueOf(displayedValues[binding.numberPicker.getValue()]) : null;
+            Integer value = pos > 0 ? Integer.valueOf(displayedValues.get(binding.numberPicker.getValue())) : null;
             finishWithResult(value);
         });
     }
 
 
-    private String[] getDisplayedValues() {
+    private List<String> getDisplayedValues() {
         List<String> values = new ArrayList<>();
         values.add("Любой");
         for (int i = min; i <= max; i += step) {
             values.add(Integer.toString(i));
         }
-        return values.toArray(new String[0]);
+        return values;
     }
 
 
@@ -124,5 +127,20 @@ public class DialogSinglePicker extends DialogFragment {
         bundle.putSerializable(RESULT, value);
         getParentFragmentManager().setFragmentResult(requestKey, bundle);
         this.dismiss();
+    }
+
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        outState.putInt(POS, binding.numberPicker.getValue());
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+        if (savedInstanceState != null) {
+            binding.numberPicker.setValue(savedInstanceState.getInt(POS));
+        }
     }
 }
