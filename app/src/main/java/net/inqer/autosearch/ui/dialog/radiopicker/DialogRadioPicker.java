@@ -20,6 +20,7 @@ public class DialogRadioPicker extends DialogFragment {
     private static final String TAG = "DialogRadioPicker";
     private static final String TITLE = "DialogRadioPicker_title";
     private static final String HINT = "DialogRadioPicker_hint";
+    private static final String VALUE = "DialogRadioPicker_value";
     private static final String CODE = "DialogRadioPicker_requestCode";
     private static final String VALUES = "DialogRadioPicker_valuesArray";
 
@@ -29,13 +30,14 @@ public class DialogRadioPicker extends DialogFragment {
     public DialogRadioPicker() {
     }
 
-    public static DialogRadioPicker getInstance(String requestCode, String title, String hint, String[] stringArray) {
+    public static DialogRadioPicker getInstance(String requestCode, String title, String hint, String initValue, String[] stringArray) {
         DialogRadioPicker instance = new DialogRadioPicker();
         Bundle args = new Bundle();
 
         args.putString(CODE, requestCode);
         args.putString(TITLE, title);
         args.putString(HINT, hint);
+        args.putString(VALUE, initValue);
         args.putStringArray(VALUES, stringArray);
 
         instance.setArguments(args);
@@ -63,6 +65,8 @@ public class DialogRadioPicker extends DialogFragment {
 
         requestKey = args.getString(CODE);
         setupView(view, args);
+        restoreSelected(args.getString(VALUE));
+        setupListeners();
     }
 
 
@@ -78,20 +82,19 @@ public class DialogRadioPicker extends DialogFragment {
 
         addNewButton(view, "Любая", true);
 
-        for (String text : values) {
-            addNewButton(view, text, false);
+        for (String value : values) {
+            addNewButton(view, value, false);
         }
-
-        binding.radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
-            RadioButton button = group.findViewById(checkedId);
-            finishWithResult(button.getText().toString());
-        });
     }
 
 
     private void addNewButton(View view, String text, boolean checked) {
+        addNewButton(view, text, checked, View.generateViewId());
+    }
+
+    private void addNewButton(View view, String text, boolean checked, int id) {
         RadioButton button = new RadioButton(view.getContext());
-        button.setId(View.generateViewId());
+        button.setId(id);
 
         RadioGroup.LayoutParams params = new RadioGroup.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
         params.setMargins(0, 0, 0, 20);
@@ -109,9 +112,42 @@ public class DialogRadioPicker extends DialogFragment {
 
 
     private void finishWithResult(String text) {
+        Log.d(TAG, "finishWithResult: " + text);
         Bundle bundle = new Bundle();
         bundle.putString(RESULT, text);
         getParentFragmentManager().setFragmentResult(requestKey, bundle);
         this.dismiss();
+    }
+
+
+    private void restoreSelected(@Nullable String value) {
+        if (value == null) return;
+
+        for (int i = 0; i < binding.radioGroup.getChildCount(); i++) {
+            View view = binding.radioGroup.getChildAt(i);
+            if (view instanceof RadioButton) {
+                RadioButton button = (RadioButton) view;
+                if (button.getText().equals(value)) {
+                    binding.radioGroup.clearCheck();
+                    button.setChecked(true);
+                }
+            }
+        }
+    }
+
+
+    private void setupListeners() {
+        binding.radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
+            Log.d(TAG, "setupListeners: called: " + checkedId);
+            if (checkedId <= 0) {
+                return;
+            }
+
+            RadioButton button = group.findViewById(checkedId);
+            if (button != null) {
+
+                finishWithResult(group.indexOfChild(button) == 0 ? null : button.getText().toString());
+            }
+        });
     }
 }

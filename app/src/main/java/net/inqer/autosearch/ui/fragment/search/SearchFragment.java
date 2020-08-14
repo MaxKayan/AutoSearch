@@ -169,9 +169,13 @@ public class SearchFragment extends DaggerFragment {
             }
         });
         binding.fEditTransmission.setOnClickListener(v -> {
-            showDialog(
-                    DialogRadioPicker.getInstance(TRANSMISSION, "Коробка передач", "Укажите тип", getResources().getStringArray(R.array.transmission))
-            );
+            EditableFilter currentFilter = getCurrentFilter();
+            if (currentFilter != null) {
+                showDialog(
+                        DialogRadioPicker.getInstance(TRANSMISSION, "Коробка передач", "Укажите тип",
+                                currentFilter.getTransmission(), getResources().getStringArray(R.array.transmission))
+                );
+            }
         });
         binding.fEditHull.setOnClickListener(v -> {
 
