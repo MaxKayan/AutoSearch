@@ -105,13 +105,21 @@ public class SearchFragment extends DaggerFragment {
         binding.fEditHullValue.setText(filter.getHull());
         binding.fEditFuelValue.setText(filter.getFuel());
         binding.fEditDisplacementValue.setText(getRangeString(filter.getEngineDisplacementMin(), filter.getEngineDisplacementMax(), false));
-        Integer radius = filter.getRadius();
-        binding.fEditRadiusValue.setText(radius != null ? radius.toString() : "Любой");
+        binding.fEditRadiusValue.setText(filter.getRadius() != null ? filter.getRadius().toString() : "");
 
         binding.fEditCity.setEnabled(filter.getRegion() != null);
         binding.fEditModel.setEnabled(filter.getCarMark() != null);
     }
 
+    /**
+     * Produces a "from X to Y" string display value for a range of plain {@link Integer} {@link String} etc. values
+     * or currency values.
+     *
+     * @param from       Value that represents the start of the range.
+     * @param to         Value that represents the end of the range.
+     * @param isCurrency Format the resulting values as currency?
+     * @return "From X to Y" string value to be displayed for user.
+     */
     private String getRangeString(Object from, Object to, boolean isCurrency) {
         if (from == null && to == null) return "";
 
@@ -121,6 +129,13 @@ public class SearchFragment extends DaggerFragment {
         return lVal + " до: " + rVal;
     }
 
+    /**
+     * Set fragment's parameter state (enabled/disabled & current value) based on passed parameters.
+     *
+     * @param view    Parameter layout who's 1-st child is title, 2-nd child is value. Both should be {@link TextView}.
+     * @param enabled Should this parameter layout be clickable?
+     * @param item    Value instance that implements a {@link ListItem#getName()} method.
+     */
     private void setParamState(RelativeLayout view, boolean enabled, ListItem item) {
         view.setEnabled(enabled);
         View title = view.getChildAt(0);

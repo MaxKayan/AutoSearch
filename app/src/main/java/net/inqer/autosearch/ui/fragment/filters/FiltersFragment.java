@@ -60,7 +60,6 @@ public class FiltersFragment extends DaggerFragment {
         super.onViewCreated(view, savedInstanceState);
         viewModel = new ViewModelProvider(this, providerFactory).get(FiltersViewModel.class);
 
-//        showProgressBar(true);
         setupRecyclerView(view);
         subscribeObservers();
         setupFab(view);
