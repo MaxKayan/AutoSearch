@@ -33,7 +33,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="@dimen/editor_text_horizontal_margin"
                         android:layout_marginVertical="4dp"
-                        android:text="Марка и модель" />
+                        android:text="@string/car_mark_model" />
 
                     <include layout="@layout/hr" />
 
@@ -49,16 +49,14 @@
                             style="@style/EditorLabel"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Марка" />
+                            android:text="@string/car_mark" />
 
                         <TextView
                             android:id="@+id/f_edit_mark_value"
                             style="@style/EditorValue"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_alignParentEnd="true"
-                            android:layout_alignParentRight="true"
-                            android:text="Honda" />
+                            android:layout_alignParentEnd="true" />
                     </RelativeLayout>
 
 
@@ -77,16 +75,14 @@
                             style="@style/EditorLabel"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Модель" />
+                            android:text="@string/car_model" />
 
                         <TextView
                             android:id="@+id/f_edit_model_value"
                             style="@style/EditorValue"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_alignParentEnd="true"
-                            android:layout_alignParentRight="true"
-                            android:text="Accord" />
+                            android:layout_alignParentEnd="true" />
                     </RelativeLayout>
 
 
@@ -128,16 +124,14 @@
                             style="@style/EditorLabel"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Регион" />
+                            android:text="@string/region" />
 
                         <TextView
                             android:id="@+id/f_edit_region_value"
                             style="@style/EditorValue"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_alignParentEnd="true"
-                            android:layout_alignParentRight="true"
-                            android:text="Московская область" />
+                            android:layout_alignParentEnd="true"/>
                     </RelativeLayout>
 
                     <include layout="@layout/hr" />
@@ -154,16 +148,14 @@
                             style="@style/EditorLabel"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Город" />
+                            android:text="@string/city" />
 
                         <TextView
                             android:id="@+id/f_edit_city_value"
                             style="@style/EditorValue"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_alignParentEnd="true"
-                            android:layout_alignParentRight="true"
-                            android:text="Подольск" />
+                            android:layout_alignParentEnd="true" />
                     </RelativeLayout>
 
                 </LinearLayout>

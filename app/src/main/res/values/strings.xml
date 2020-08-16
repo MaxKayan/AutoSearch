@@ -28,6 +28,11 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="car_mark">Марка</string>
+    <string name="car_mark_model">Марка и модель</string>
+    <string name="car_model">Модель</string>
+    <string name="region">Регион</string>
+    <string name="city">Город</string>
 
     <string-array name="transmission">
         <item>Автомат</item>

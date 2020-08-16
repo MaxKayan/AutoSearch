@@ -43,14 +43,6 @@ public class SearchViewModel extends ViewModel {
         return currentEditableFilter;
     }
 
-    public void reNew(EditableFilter instance) {
-        currentEditableFilter.setValue(instance);
-    }
-
-    public Single<Region> getRegionById(long id) {
-        return locationsRepository.getRegionById(id);
-    }
-
     Single<List<City>> getCitiesByRegion(Region region) {
         return locationsRepository.getCitiesPageByRegion(region)
                 .map(PageResponse::getResults);
@@ -68,6 +60,7 @@ public class SearchViewModel extends ViewModel {
         return optionsRepository.observeModelsByMark(carMark);
     }
 
+
     /**
      * Submit new filter to backend via POST request.
      */
@@ -84,88 +77,87 @@ public class SearchViewModel extends ViewModel {
         }
     }
 
+
     public void setRegion(Region instance) {
-        EditableFilter filter = currentEditableFilter.getValue();
-        if (instance != null && filter != null) {
+        editFilter(filter -> {
             if (filter.getRegion() != null && !filter.getRegion().isSameModelAs(instance)) {
                 filter.setCity(null);
             }
             filter.setRegion(instance);
-            currentEditableFilter.setValue(filter);
-        } else handleError();
+        });
     }
 
     void setCity(City instance) {
-        EditableFilter filter = currentEditableFilter.getValue();
-        if (instance != null && filter != null) {
-            filter.setCity(instance);
-            currentEditableFilter.setValue(filter);
-        } else handleError();
+        editFilter(filter -> filter.setCity(instance));
     }
 
     void setMark(CarMark instance) {
-        EditableFilter filter = currentEditableFilter.getValue();
-        if (instance != null && filter != null) {
+        editFilter(filter -> {
             if (filter.getCarMark() != null && !filter.getCarMark().isSameModelAs(instance)) {
                 filter.setCarModel(null);
             }
             filter.setCarMark(instance);
-            currentEditableFilter.setValue(filter);
-        } else handleError();
+        });
     }
 
     public void setModel(CarModel instance) {
-        EditableFilter filter = currentEditableFilter.getValue();
-        if (instance != null && filter != null) {
-            filter.setCarModel(instance);
-            currentEditableFilter.setValue(filter);
-        } else handleError();
+        editFilter(filter -> filter.setCarModel(instance));
     }
 
     public void setPrice(Integer from, Integer to) {
-        EditableFilter filter = currentEditableFilter.getValue();
-        if (filter != null) {
+        editFilter(filter -> {
             filter.setPriceMinimum(from);
             filter.setPriceMaximum(to);
-            currentEditableFilter.setValue(filter);
-        } else handleError();
+        });
     }
 
     public void setYear(Integer from, Integer to) {
-        EditableFilter filter = currentEditableFilter.getValue();
-        if (filter != null) {
+        editFilter(filter -> {
             filter.setManufactureYearMin(from);
             filter.setManufactureYearMax(to);
-            currentEditableFilter.setValue(filter);
-        } else handleError();
+        });
     }
 
     public void setDisplacement(String from, String to) {
-        EditableFilter filter = currentEditableFilter.getValue();
-        if (filter != null) {
+        editFilter(filter -> {
             filter.setEngineDisplacementMin(from);
             filter.setEngineDisplacementMax(to);
-            currentEditableFilter.setValue(filter);
-        } else handleError();
+        });
     }
 
     public void setRadius(Integer radius) {
-        EditableFilter filter = currentEditableFilter.getValue();
-        if (filter != null) {
-            filter.setRadius(radius);
-            currentEditableFilter.setValue(filter);
-        } else handleError();
+        editFilter(filter -> filter.setRadius(radius));
     }
 
     public void setTransmission(String value) {
-        EditableFilter filter = currentEditableFilter.getValue();
-        if (filter != null) {
-            filter.setTransmission(value);
-            currentEditableFilter.setValue(filter);
-        } else handleError();
+        editFilter(filter -> filter.setTransmission(value));
     }
 
-    private void handleError() {
-        Log.e(TAG, "handleError: Current filter value in live data is null!");
+
+    /**
+     * Performs the obtaining of {@link EditableFilter} instance, runs the <var>operation</var>
+     * callback if <var>filter</var> is not null.
+     * Logs a new error if failed to retrieve the instance.
+     * @param operation Callback that edits current filter instance from {@link #currentEditableFilter}
+     * @see FilterOperation
+     */
+    private void editFilter(FilterOperation operation) {
+        EditableFilter filter = currentEditableFilter.getValue();
+        if (filter != null) {
+            operation.run(filter);
+            currentEditableFilter.setValue(filter);
+        } else {
+            Log.e(TAG, "handleError: Current filter value in live data is null!");
+        }
+    }
+
+
+    /**
+     * Used to wrap various filter manipulations with common operations. <p> I.e.: Get filter from liveData
+     * and check if it's not null, call {@link #run(EditableFilter)} afterwards.
+     * @see #editFilter(FilterOperation)
+     */
+    public interface FilterOperation {
+        void run(EditableFilter filter);
     }
 }

@@ -10,6 +10,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -85,17 +87,18 @@ public class SearchFragment extends DaggerFragment {
         viewModel.getCurrentFilter().observe(getViewLifecycleOwner(), this::setupViewByFilter);
     }
 
+
     /**
-     * Sets all values of an existing EditableFilter instance to the view.
+     * Sets all values of an {@link EditableFilter} instance to the view.
      *
      * @param filter Saved filter that contains some values
      */
     @SuppressLint("SetTextI18n")
     private void setupViewByFilter(EditableFilter filter) {
-        binding.fEditMarkValue.setText(filter.getCarMark() == null ? "" : filter.getCarMark().getName());
-        binding.fEditModelValue.setText(filter.getCarModel() == null ? "" : filter.getCarModel().getName());
-        binding.fEditRegionValue.setText(filter.getRegion() == null ? "" : filter.getRegion().getName());
-        binding.fEditCityValue.setText(filter.getCity() == null ? "" : filter.getCity().getName());
+        setParamState(binding.fEditMark, true, filter.getCarMark());
+        setParamState(binding.fEditModel, filter.getCarMark() != null, filter.getCarModel());
+        setParamState(binding.fEditRegion, true, filter.getRegion());
+        setParamState(binding.fEditCity, filter.getRegion() != null, filter.getCity());
         binding.fEditPriceValue.setText(getRangeString(filter.getPriceMin(), filter.getPriceMax(), true));
         binding.fEditYearValue.setText(getRangeString(filter.getManufactureYearMin(), filter.getManufactureYearMax(), false));
         binding.fEditTransmissionValue.setText(filter.getTransmission());
@@ -105,10 +108,9 @@ public class SearchFragment extends DaggerFragment {
         Integer radius = filter.getRadius();
         binding.fEditRadiusValue.setText(radius != null ? radius.toString() : "Любой");
 
-        if (filter.getRegion() == null) binding.fEditCityLabel.setEnabled(false);
-        else binding.fEditCityLabel.setEnabled(true);
+        binding.fEditCity.setEnabled(filter.getRegion() != null);
+        binding.fEditModel.setEnabled(filter.getCarMark() != null);
     }
-
 
     private String getRangeString(Object from, Object to, boolean isCurrency) {
         if (from == null && to == null) return "";
@@ -119,87 +121,84 @@ public class SearchFragment extends DaggerFragment {
         return lVal + " до: " + rVal;
     }
 
+    private void setParamState(RelativeLayout view, boolean enabled, ListItem item) {
+        view.setEnabled(enabled);
+        View title = view.getChildAt(0);
+        if (title != null) title.setEnabled(enabled);
+
+        View value = view.getChildAt(1);
+        if (enabled && item != null && value instanceof TextView) {
+            ((TextView) value).setText(item.getName());
+        } else if (value instanceof TextView) {
+            ((TextView) value).setText("");
+        }
+    }
+
 
     /**
      * Sets on-click listeners for all parameters of the filter editor.
      */
     private void setupClickListeners() {
-        binding.fEditMark.setOnClickListener(v -> showListSearchDialog(MARK, "Марка Авто", "Наименование марки",
-                viewModel.observeMarks()));
+        if (binding.fEditMark.isEnabled())
+            binding.fEditMark.setOnClickListener(v -> showListSearchDialog(MARK, "Марка Авто", "Наименование марки",
+                    viewModel.observeMarks()));
 
-        binding.fEditModel.setOnClickListener(v -> {
-            EditableFilter currentFilter = getCurrentFilter();
-            if (currentFilter != null && currentFilter.getCarMark() != null) {
+        if (binding.fEditModel.isEnabled())
+            binding.fEditModel.setOnClickListener(v -> withFilter(filter -> {
+                if (filter.getCarMark() == null) {
+                    Toast.makeText(this.getContext(), "Укажите марку", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 showListSearchDialog(MODEL, "Модель Авто", "Наименование модели",
-                        viewModel.observeModelsByMark(currentFilter.getCarMark()));
-            } else {
-                Log.e(TAG, "setupClickListeners: fEditModel: null data");
-            }
-        });
+                        viewModel.observeModelsByMark(filter.getCarMark()));
+            }));
 
-        binding.fEditRegion.setOnClickListener(v -> {
-            showListSearchDialog(REGION, "Регион", "Наименование региона",
-                    viewModel.observeRegions());
-        });
+        if (binding.fEditRegion.isEnabled())
+            binding.fEditRegion.setOnClickListener(v ->
+                    showListSearchDialog(REGION, "Регион", "Наименование региона",
+                            viewModel.observeRegions()));
 
-        binding.fEditCity.setOnClickListener(v -> {
-            EditableFilter currentFilter = getCurrentFilter();
-            if (currentFilter != null && currentFilter.getRegion() != null) {
+        if (binding.fEditCity.isEnabled())
+            binding.fEditCity.setOnClickListener(v -> withFilter(filter -> {
+                if (filter.getRegion() == null) {
+                    Toast.makeText(this.getContext(), "Укажите регион", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 showListSearchDialog(CITY, "Город", "Наименование города",
-                        viewModel.getCitiesByRegion(currentFilter.getRegion()).toFlowable());
-            } else {
-                Log.e(TAG, "setupClickListeners: fEditCity: null data");
-            }
-        });
+                        viewModel.getCitiesByRegion(filter.getRegion()).toFlowable());
+            }));
 
-        binding.fEditPrice.setOnClickListener(v -> {
-            EditableFilter currentFilter = getCurrentFilter();
-            if (currentFilter != null) {
-                showDialog(
-                        DialogValuesPicker.getCurrencyInstance(PRICE, "Цена", "Выберите интервал стоимости (р.)",
-                                currentFilter.getPriceMin(), currentFilter.getPriceMax(), 0, 1000000, 1000));
-            }
-        });
-        binding.fEditYear.setOnClickListener(v -> {
-            EditableFilter currentFilter = getCurrentFilter();
-            if (currentFilter != null) {
-                showDialog(
-                        DialogValuesPicker.getNumberInstance(YEAR, "Год выпуска", "Выберите год выпуска ТС",
-                                currentFilter.getManufactureYearMin(), currentFilter.getManufactureYearMax(), 1980, 2020, 1));
-            }
-        });
-        binding.fEditTransmission.setOnClickListener(v -> {
-            EditableFilter currentFilter = getCurrentFilter();
-            if (currentFilter != null) {
-                showDialog(
-                        DialogRadioPicker.getInstance(TRANSMISSION, "Коробка передач", "Укажите тип",
-                                currentFilter.getTransmission(), getResources().getStringArray(R.array.transmission))
-                );
-            }
-        });
+        binding.fEditPrice.setOnClickListener(v -> withFilter(filter -> showDialog(
+                DialogValuesPicker.getCurrencyInstance(PRICE, "Цена", "Выберите интервал стоимости (р.)",
+                        filter.getPriceMin(), filter.getPriceMax(), 0, 1000000, 1000))));
+
+        binding.fEditYear.setOnClickListener(v -> withFilter(filter -> showDialog(
+                DialogValuesPicker.getNumberInstance(YEAR, "Год выпуска", "Выберите год выпуска ТС",
+                        filter.getManufactureYearMin(), filter.getManufactureYearMax(), 1980, 2020, 1))));
+
+        binding.fEditTransmission.setOnClickListener(v -> withFilter(filter -> showDialog(
+                DialogRadioPicker.getInstance(TRANSMISSION, "Коробка передач", "Укажите тип",
+                        filter.getTransmission(), getResources().getStringArray(R.array.transmission))
+        )));
+
         binding.fEditHull.setOnClickListener(v -> {
 
         });
+
         binding.fEditFuel.setOnClickListener(v -> {
 
         });
-        binding.fEditDisplacement.setOnClickListener(v -> {
-            EditableFilter currentFilter = getCurrentFilter();
-            if (currentFilter != null) {
-                showDialog(
-                        DialogValuesPicker.getValuesInstance(DISPLACEMENT, "Объём двигателя",
-                                "Укажите объём двигателя (л)", DISPLACEMENTS,
-                                currentFilter.getEngineDisplacementMin(),
-                                currentFilter.getEngineDisplacementMax()));
-            }
-        });
-        binding.fEditRadius.setOnClickListener(v -> {
-            EditableFilter currentFilter = getCurrentFilter();
-            if (currentFilter == null) return;
-            showDialog(
-                    DialogSinglePicker.getInstance(RADIUS, "Радиус поиска", "Укажите радиус поиска (км)", currentFilter.getRadius(), 0, 300, 10)
-            );
-        });
+
+        binding.fEditDisplacement.setOnClickListener(v -> withFilter(filter -> showDialog(
+                DialogValuesPicker.getValuesInstance(DISPLACEMENT, "Объём двигателя",
+                        "Укажите объём двигателя (л)", DISPLACEMENTS,
+                        filter.getEngineDisplacementMin(),
+                        filter.getEngineDisplacementMax()))));
+
+        binding.fEditRadius.setOnClickListener(v -> withFilter(filter -> showDialog(
+                DialogSinglePicker.getInstance(RADIUS, "Радиус поиска", "Укажите радиус поиска (км)",
+                        filter.getRadius(), 0, 300, 10)
+        )));
 
         binding.fEditSearchButton.setOnClickListener(v -> {
             viewModel.submitFilter();
@@ -207,12 +206,34 @@ public class SearchFragment extends DaggerFragment {
     }
 
 
+    /**
+     * Run any operations that need a filter instance null-safe. Null-check would be performed
+     * each time and callback ran only if filter was retrieved successfully.
+     *
+     * @param operation Callback that requires an instance of {@link EditableFilter}
+     */
+    private void withFilter(SearchViewModel.FilterOperation operation) {
+        EditableFilter currentFilter = getCurrentFilter();
+        if (currentFilter != null) {
+            operation.run(currentFilter);
+        }
+    }
+
+
+    /**
+     * @return Returns current filter value from viewmodel's live data. Null if there's no filter
+     * was set yet.
+     */
     @Nullable
     private EditableFilter getCurrentFilter() {
         return viewModel.getCurrentFilter().getValue();
     }
 
 
+    /**
+     * Setup result listeners for all dialog fragments that can be opened. I.e.: Save dialog's
+     * returned data to {@link EditableFilter} instance.
+     */
     private void setupResultListeners() {
         FragmentManager manager = getParentFragmentManager();
         String listKey = DialogListSearch.RESULT;
@@ -266,6 +287,12 @@ public class SearchFragment extends DaggerFragment {
     }
 
 
+    /**
+     * Performs a valid dialog opening: waits for manager's pending transactions, checks if there's
+     * already a dialog opened.
+     *
+     * @param dialog Valid dialog instance that is ready to be opened (showed).
+     */
     private void showDialog(DialogFragment dialog) {
         String tag = TAG;
         FragmentManager manager = getParentFragmentManager();
