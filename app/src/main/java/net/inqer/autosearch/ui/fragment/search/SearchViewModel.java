@@ -133,11 +133,19 @@ public class SearchViewModel extends ViewModel {
         editFilter(filter -> filter.setTransmission(value));
     }
 
+    public void setHull(String value) {
+        editFilter(filter -> filter.setHull(value));
+    }
+
+    public void setFuel(String value) {
+        editFilter(filter -> filter.setFuel(value));
+    }
 
     /**
      * Performs the obtaining of {@link EditableFilter} instance, runs the <var>operation</var>
      * callback if <var>filter</var> is not null.
      * Logs a new error if failed to retrieve the instance.
+     *
      * @param operation Callback that edits current filter instance from {@link #currentEditableFilter}
      * @see FilterOperation
      */
@@ -155,6 +163,7 @@ public class SearchViewModel extends ViewModel {
     /**
      * Used to wrap various filter manipulations with common operations. <p> I.e.: Get filter from liveData
      * and check if it's not null, call {@link #run(EditableFilter)} afterwards.
+     *
      * @see #editFilter(FilterOperation)
      */
     public interface FilterOperation {

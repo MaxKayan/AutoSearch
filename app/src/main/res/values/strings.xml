@@ -40,4 +40,25 @@
         <item>Вариатор</item>
         <item>Робот</item>
     </string-array>
+
+    <string-array name="hull">
+        <item>Седан</item>
+        <item>Хетчбэк</item>
+        <item>Универсал</item>
+        <item>Кабриолет</item>
+        <item>Купе</item>
+        <item>Внедорожник</item>
+        <item>Фургон</item>
+        <item>Минивэн</item>
+        <item>Пикап</item>
+        <item>Микроавтобус</item>
+    </string-array>
+
+    <string-array name="fuel">
+        <item>Бензин</item>
+        <item>Дизель</item>
+        <item>Газ</item>
+        <item>Гибрид</item>
+        <item>Электро</item>
+    </string-array>
 </resources>

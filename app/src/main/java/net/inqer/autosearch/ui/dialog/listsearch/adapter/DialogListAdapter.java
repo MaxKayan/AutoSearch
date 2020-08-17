@@ -25,12 +25,10 @@ public class DialogListAdapter<T extends ListItem> extends ListAdapter<T, Search
     private Filter itemFilter = new Filter() {
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
-//            Log.d(TAG, "performFiltering: " + constraint);
             List<T> filteredList = new ArrayList<>();
             FilterResults results = new FilterResults();
 
             if (constraint == null || constraint.length() == 0) {
-//                Log.d(TAG, "performFiltering: adding full: " + fullList.size());
                 filteredList.addAll(fullList);
             } else {
                 String filterPattern = constraint.toString().toLowerCase().trim();
@@ -59,22 +57,18 @@ public class DialogListAdapter<T extends ListItem> extends ListAdapter<T, Search
     }
 
     public void setNewList(List<T> list) {
-//        Log.d(TAG, "setNewList: " + list.size());
         fullList = list;
         submitList(list);
-//        Log.d(TAG, "setNewList: list now: " + getItemCount());
     }
 
     @Override
     public void submitList(@Nullable List<T> list) {
         super.submitList(list);
-//        Log.d(TAG, "submitList: " + (list == null ? "null" : list.size()));
     }
 
     public T getItemAt(int position) {
         Log.d(TAG, "getItemAt: "+position+'\n'
         +"size: "+getItemCount());
-//        return fullList.get(fullList.indexOf(getItem(position)));
         return getItem(position);
     }
 

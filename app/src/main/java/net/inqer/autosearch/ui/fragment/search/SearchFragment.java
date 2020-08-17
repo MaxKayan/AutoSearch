@@ -53,6 +53,8 @@ public class SearchFragment extends DaggerFragment {
     private final String YEAR = "values_picker_year";
     private final String DISPLACEMENT = "values_picker_displacement";
     private final String TRANSMISSION = "values_picker_transmission";
+    private final String HULL = "values_picker_hull";
+    private final String FUEL = "values_picker_fuel";
     private final String RADIUS = "values_picker_radius";
 
     @Inject
@@ -154,34 +156,30 @@ public class SearchFragment extends DaggerFragment {
      * Sets on-click listeners for all parameters of the filter editor.
      */
     private void setupClickListeners() {
-        if (binding.fEditMark.isEnabled())
-            binding.fEditMark.setOnClickListener(v -> showListSearchDialog(MARK, "Марка Авто", "Наименование марки",
-                    viewModel.observeMarks()));
+        binding.fEditMark.setOnClickListener(v -> showListSearchDialog(MARK, "Марка Авто", "Наименование марки",
+                viewModel.observeMarks()));
 
-        if (binding.fEditModel.isEnabled())
-            binding.fEditModel.setOnClickListener(v -> withFilter(filter -> {
-                if (filter.getCarMark() == null) {
-                    Toast.makeText(this.getContext(), "Укажите марку", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                showListSearchDialog(MODEL, "Модель Авто", "Наименование модели",
-                        viewModel.observeModelsByMark(filter.getCarMark()));
-            }));
+        binding.fEditModel.setOnClickListener(v -> withFilter(filter -> {
+            if (filter.getCarMark() == null) {
+                Toast.makeText(this.getContext(), "Укажите марку", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            showListSearchDialog(MODEL, "Модель Авто", "Наименование модели",
+                    viewModel.observeModelsByMark(filter.getCarMark()));
+        }));
 
-        if (binding.fEditRegion.isEnabled())
-            binding.fEditRegion.setOnClickListener(v ->
-                    showListSearchDialog(REGION, "Регион", "Наименование региона",
-                            viewModel.observeRegions()));
+        binding.fEditRegion.setOnClickListener(v ->
+                showListSearchDialog(REGION, "Регион", "Наименование региона",
+                        viewModel.observeRegions()));
 
-        if (binding.fEditCity.isEnabled())
-            binding.fEditCity.setOnClickListener(v -> withFilter(filter -> {
-                if (filter.getRegion() == null) {
-                    Toast.makeText(this.getContext(), "Укажите регион", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                showListSearchDialog(CITY, "Город", "Наименование города",
-                        viewModel.getCitiesByRegion(filter.getRegion()).toFlowable());
-            }));
+        binding.fEditCity.setOnClickListener(v -> withFilter(filter -> {
+            if (filter.getRegion() == null) {
+                Toast.makeText(this.getContext(), "Укажите регион", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            showListSearchDialog(CITY, "Город", "Наименование города",
+                    viewModel.getCitiesByRegion(filter.getRegion()).toFlowable());
+        }));
 
         binding.fEditPrice.setOnClickListener(v -> withFilter(filter -> showDialog(
                 DialogValuesPicker.getCurrencyInstance(PRICE, "Цена", "Выберите интервал стоимости (р.)",
@@ -192,17 +190,19 @@ public class SearchFragment extends DaggerFragment {
                         filter.getManufactureYearMin(), filter.getManufactureYearMax(), 1980, 2020, 1))));
 
         binding.fEditTransmission.setOnClickListener(v -> withFilter(filter -> showDialog(
-                DialogRadioPicker.getInstance(TRANSMISSION, "Коробка передач", "Укажите тип",
+                DialogRadioPicker.getInstance(TRANSMISSION, "Коробка передач", "Укажите тип трансмиссии",
                         filter.getTransmission(), getResources().getStringArray(R.array.transmission))
         )));
 
-        binding.fEditHull.setOnClickListener(v -> {
+        binding.fEditHull.setOnClickListener(v -> withFilter(filter -> showDialog(
+                DialogRadioPicker.getInstance(HULL, "Кузов", "Укажите тип кузова",
+                        filter.getHull(), getResources().getStringArray(R.array.hull))
+        )));
 
-        });
-
-        binding.fEditFuel.setOnClickListener(v -> {
-
-        });
+        binding.fEditFuel.setOnClickListener(v -> withFilter(filter -> showDialog(
+                DialogRadioPicker.getInstance(FUEL, "Двигатель", "Укажите тип двигателя",
+                        filter.getFuel(), getResources().getStringArray(R.array.fuel))
+        )));
 
         binding.fEditDisplacement.setOnClickListener(v -> withFilter(filter -> showDialog(
                 DialogValuesPicker.getValuesInstance(DISPLACEMENT, "Объём двигателя",
@@ -223,7 +223,7 @@ public class SearchFragment extends DaggerFragment {
 
     /**
      * Run any operations that need a filter instance null-safe. Null-check would be performed
-     * each time and callback ran only if filter was retrieved successfully.
+     * each time and callback executed only if filter was retrieved successfully.
      *
      * @param operation Callback that requires an instance of {@link EditableFilter}
      */
@@ -236,7 +236,7 @@ public class SearchFragment extends DaggerFragment {
 
 
     /**
-     * @return Returns current filter value from viewmodel's live data. Null if there's no filter
+     * @return Сurrent filter value from viewmodel's live data. Null if there's no filter.
      * was set yet.
      */
     @Nullable
@@ -282,6 +282,14 @@ public class SearchFragment extends DaggerFragment {
         manager.setFragmentResultListener(TRANSMISSION, this, (requestKey, result) -> {
             String value = result.getString(DialogRadioPicker.RESULT);
             viewModel.setTransmission(value);
+        });
+        manager.setFragmentResultListener(HULL, this, (requestKey, result) -> {
+            String value = result.getString(DialogRadioPicker.RESULT);
+            viewModel.setHull(value);
+        });
+        manager.setFragmentResultListener(FUEL, this, (requestKey, result) -> {
+            String value = result.getString(DialogRadioPicker.RESULT);
+            viewModel.setFuel(value);
         });
         manager.setFragmentResultListener(DISPLACEMENT, this, (requestKey, result) -> {
             String[] values = result.getStringArray(valKey);

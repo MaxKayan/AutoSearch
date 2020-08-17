@@ -29,10 +29,14 @@ public class DialogListSearchViewModel<T extends ListItem> extends ViewModel {
         return instance;
     }
 
-    LiveData<List<T>> observerLiveData() {
+    LiveData<List<T>> observeDataList() {
         return LiveDataReactiveStreams.fromPublisher(dataSource
-        .doOnError(throwable -> {
-            Log.e(TAG, "observerLiveData: Error: "+throwable.getMessage(), throwable);
-        }));
+                .map(tList -> {
+                    tList.add(0, tList.get(0));
+                    return tList;
+                })
+                .doOnError(throwable -> {
+                    Log.e(TAG, "observerLiveData: Error: " + throwable.getMessage(), throwable);
+                }));
     }
 }

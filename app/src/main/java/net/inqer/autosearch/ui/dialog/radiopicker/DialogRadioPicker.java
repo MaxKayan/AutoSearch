@@ -80,7 +80,7 @@ public class DialogRadioPicker extends DialogFragment {
         binding.textHeader.setText(args.getString(TITLE));
         binding.textHint.setText(args.getString(HINT));
 
-        addNewButton(view, "Любая", true);
+        addNewButton(view, "Все", true);
 
         for (String value : values) {
             addNewButton(view, value, false);

@@ -15,7 +15,6 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/dialog_horizontal_padding"
             android:layout_marginVertical="@dimen/dialog_horizontal_padding"
-            android:text="Выберите значение"
             android:textColor="@android:color/white"
             android:textSize="18sp" />
 
@@ -26,16 +25,22 @@
         android:layout_width="250dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/dialog_horizontal_padding"
-        android:layout_marginVertical="@dimen/dialog_horizontal_padding"
-        android:text="Укажите значение" />
+        android:layout_marginVertical="@dimen/dialog_horizontal_padding" />
 
-    <RadioGroup
-        android:id="@+id/radio_group"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/dialog_horizontal_padding"
-        android:paddingHorizontal="@dimen/dialog_horizontal_padding">
+        android:layout_height="wrap_content">
 
-    </RadioGroup>
+        <RadioGroup
+            android:id="@+id/radio_group"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/dialog_horizontal_padding"
+            android:paddingHorizontal="@dimen/dialog_horizontal_padding">
+
+        </RadioGroup>
+
+    </ScrollView>
+
 
 </LinearLayout>

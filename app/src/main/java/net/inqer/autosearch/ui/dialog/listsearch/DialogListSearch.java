@@ -1,6 +1,6 @@
 package net.inqer.autosearch.ui.dialog.listsearch;
 
-import android.content.Intent;
+import android.content.Context;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -43,6 +43,8 @@ public class DialogListSearch<T extends ListItem> extends DialogFragment {
     private String hint;
     private Flowable<List<T>> dataSource;
 
+    private Context context;
+
     public static <T extends ListItem> DialogListSearch<T> newInstance(String requestCode, String title, String hint, Flowable<List<T>> observer) {
         DialogListSearch<T> instance = new DialogListSearch<>();
         instance.dataSource = observer;
@@ -70,11 +72,12 @@ public class DialogListSearch<T extends ListItem> extends DialogFragment {
         DialogListSearchViewModelFactory<T> viewModelFactory = new DialogListSearchViewModelFactory<>(title, dataSource);
         viewModel = new ViewModelProvider(this, viewModelFactory).get(DialogListSearchViewModel.class);
 
+        context = view.getContext();
         unpackBundleArgs(getArguments());
         setupView();
         setupSearchInput();
         setupRecyclerView();
-        getData();
+        setupObservers();
     }
 
 
@@ -83,8 +86,6 @@ public class DialogListSearch<T extends ListItem> extends DialogFragment {
             requestKey = bundle.getString(CODE);
             title = bundle.getString(TITLE);
             hint = bundle.getString(HINT);
-            Log.d(TAG, "unpackBundleArgs: " + title + '\n' +
-                    "data source : " + dataSource + '\n');
         } else {
             Log.w(TAG, "unpackBundleArgs: args bundle is null!");
         }
@@ -95,7 +96,6 @@ public class DialogListSearch<T extends ListItem> extends DialogFragment {
         if (title != null && !title.isEmpty()) binding.dialogLocHeader.setText(title);
         if (hint != null && !hint.isEmpty()) binding.dialogLocInput.setHint(hint);
         binding.dialogLocInput.setOnItemClickListener((parent, view, position, id) -> {
-            Log.d(TAG, "setupView: "+autoCompleteAdapter.getItem(position));
             T item = autoCompleteAdapter.getItem(position);
             if (item != null) {
                 finishWithResult(item);
@@ -124,29 +124,27 @@ public class DialogListSearch<T extends ListItem> extends DialogFragment {
     }
 
 
-    private void getData() {
-        viewModel.observerLiveData().observe(getViewLifecycleOwner(), list -> {
-            Log.d(TAG, "getData: " + list.size());
+    @SuppressWarnings("unchecked")
+    private void setupRecyclerView() {
+        binding.dialogLocRv.setLayoutManager(new LinearLayoutManager(getContext()));
+        adapter = new DialogListAdapter<T>((item, pos) -> {
+            finishWithResult(pos == 0 ? null : (T) item);
+        });
+
+        binding.dialogLocRv.setAdapter(adapter);
+    }
+
+
+    private void setupObservers() {
+        viewModel.observeDataList().observe(getViewLifecycleOwner(), list -> {
             adapter.setNewList(list);
-            autoCompleteAdapter = new AutoCompleteListItemAdapter<>(getContext(), list);
+            autoCompleteAdapter = new AutoCompleteListItemAdapter<>(context, list);
             binding.dialogLocInput.setAdapter(autoCompleteAdapter);
-            Log.d(TAG, binding.dialogLocInput.getAdapter().toString()+"\n"+
-                    binding.dialogLocInput.getAdapter().getCount());
+
             if (adapter.getCurrentList().size() > 0) {
                 binding.dialogLocRv.setHasFixedSize(true);
             }
         });
-    }
-
-
-    @SuppressWarnings("unchecked")
-    private void setupRecyclerView() {
-        binding.dialogLocRv.setLayoutManager(new LinearLayoutManager(getContext()));
-        adapter = new DialogListAdapter<T>(item -> {
-            finishWithResult((T) item);
-        });
-
-        binding.dialogLocRv.setAdapter(adapter);
     }
 
 
@@ -165,12 +163,10 @@ public class DialogListSearch<T extends ListItem> extends DialogFragment {
 
 
     private void finishWithResult(T result) {
-        if (result != null) {
-            Bundle bundle = new Bundle();
-            bundle.putParcelable(RESULT, result);
-            getParentFragmentManager().setFragmentResult(requestKey, bundle);
-            dismiss();
-        }
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(RESULT, result);
+        getParentFragmentManager().setFragmentResult(requestKey, bundle);
+        dismiss();
     }
 
 }
