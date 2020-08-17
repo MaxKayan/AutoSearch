@@ -14,8 +14,7 @@ public class QueryFilter {
     private static final String TAG = "QueryFilter";
 
     @PrimaryKey
-    private Integer id;
-    private String slug;
+    private long id;
     private Integer quantity;
 
     @SerializedName("created_at")
@@ -61,8 +60,7 @@ public class QueryFilter {
     @SerializedName("refresh_count")
     private Integer refreshCount;
 
-    public QueryFilter(Integer id,
-                       String slug,
+    public QueryFilter(long id,
                        Integer quantity,
                        Date created_at,
 //                       List<Region> regions,
@@ -81,7 +79,6 @@ public class QueryFilter {
                        String engineDisplacementMax,
                        Integer refreshCount) {
         this.id = id;
-        this.slug = slug;
         this.quantity = quantity;
         this.created_at = created_at;
 //        this.regions = regions;
@@ -103,12 +100,8 @@ public class QueryFilter {
 
 
     // --- GETTERS ---
-    public Integer getId() {
+    public Long getId() {
         return id;
-    }
-
-    public String getSlug() {
-        return slug;
     }
 
     public Integer getQuantity() {
@@ -190,7 +183,6 @@ public class QueryFilter {
         if (o == null || getClass() != o.getClass()) return false;
         QueryFilter that = (QueryFilter) o;
         return Objects.equals(id, that.id) &&
-                Objects.equals(slug, that.slug) &&
                 Objects.equals(quantity, that.quantity) &&
                 Objects.equals(created_at, that.created_at) &&
 //                Objects.equals(regions, that.regions) &&
@@ -212,44 +204,6 @@ public class QueryFilter {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, slug, quantity, created_at, hull, fuel, transmission, radius, priceMinimum, priceMaximum, manufactureYearMin, manufactureYearMax, engineDisplacementMin, engineDisplacementMax, refreshCount);
+        return Objects.hash(id, quantity, created_at, hull, fuel, transmission, radius, priceMinimum, priceMaximum, manufactureYearMin, manufactureYearMax, engineDisplacementMin, engineDisplacementMax, refreshCount);
     }
-
-    //    @Override
-//    public boolean equals(Object obj) {
-//        if (obj instanceof QueryFilter) {
-//            QueryFilter secFilter = (QueryFilter) obj;
-//
-//            return
-//                    this.id.equals(secFilter.id) &&
-//                            this.slug.equals(secFilter.slug) &&
-//                            this.quantity.equals(secFilter.quantity) &&
-//                            this.created_at.equals(secFilter.created_at) &&
-//                            this.cities.equals(secFilter.cities) &&
-//                            this.carMarks.equals(secFilter.carMarks) &&
-//                            this.carModels.equals(secFilter.carModels) &&
-//                            this.hull.equals(secFilter.hull) &&
-//                            this.fuel.equals(secFilter.fuel) &&
-//                            this.transmission.equals(secFilter.transmission) &&
-//                            this.radius.equals(secFilter.radius) &&
-//                            Util.equals(this.priceMinimum, secFilter.priceMinimum) &&
-//                            Util.equals(this.priceMaximum, secFilter.priceMaximum) &&
-//                            Util.equals(this.manufactureYearMin, secFilter.manufactureYearMin) &&
-//                            Util.equals(this.manufactureYearMax, secFilter.manufactureYearMax) &&
-//                            this.engineDisplacementMin.equals(secFilter.engineDisplacementMin) &&
-//                            this.engineDisplacementMax.equals(secFilter.engineDisplacementMax) &&
-//                            this.refreshCount.equals(secFilter.refreshCount);
-//        }
-//        return false;
-//    }
-//
-//    @Override
-//    public int hashCode() {
-//        return id;
-//    }
-
-    //    @Override
-//    public int hashCode() {
-//        return Objects.hash(id,slug,quantity,created_at,cities,carMark,carModel,hull,fuel,transmission,radius,priceMinimum,priceMaximum);
-//    }
 }

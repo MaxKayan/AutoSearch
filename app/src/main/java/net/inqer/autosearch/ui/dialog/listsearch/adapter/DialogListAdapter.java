@@ -1,6 +1,5 @@
 package net.inqer.autosearch.ui.dialog.listsearch.adapter;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.Filter;
@@ -67,8 +66,6 @@ public class DialogListAdapter<T extends ListItem> extends ListAdapter<T, Search
     }
 
     public T getItemAt(int position) {
-        Log.d(TAG, "getItemAt: "+position+'\n'
-        +"size: "+getItemCount());
         return getItem(position);
     }
 

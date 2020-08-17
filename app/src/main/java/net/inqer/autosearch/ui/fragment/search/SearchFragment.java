@@ -269,7 +269,6 @@ public class SearchFragment extends DaggerFragment {
         manager.setFragmentResultListener(PRICE, this, (requestKey, result) -> {
             ArrayList<Integer> values = result.getIntegerArrayList(valKey);
             if (values != null) {
-                Log.d(TAG, "setupResultListeners: values: " + values);
                 viewModel.setPrice(values.get(0), values.get(1));
             }
         });

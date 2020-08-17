@@ -25,14 +25,13 @@ public class DialogListSearchViewModel<T extends ListItem> extends ViewModel {
         instance.dataSource = dataSource;
         instance.title = title;
 
-        Log.d(TAG, "newInstance: done!");
         return instance;
     }
 
     LiveData<List<T>> observeDataList() {
         return LiveDataReactiveStreams.fromPublisher(dataSource
                 .map(tList -> {
-                    tList.add(0, tList.get(0));
+                    if (tList.size() > 0) tList.add(0, tList.get(0));
                     return tList;
                 })
                 .doOnError(throwable -> {

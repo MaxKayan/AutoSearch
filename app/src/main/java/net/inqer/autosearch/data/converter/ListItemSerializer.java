@@ -9,7 +9,7 @@ import net.inqer.autosearch.data.model.ListItem;
 
 import java.lang.reflect.Type;
 
-public class CitySerializer implements JsonSerializer<ListItem> {
+public class ListItemSerializer implements JsonSerializer<ListItem> {
     @Override
     public JsonElement serialize(ListItem src, Type typeOfSrc, JsonSerializationContext context) {
         return new JsonPrimitive(src.getId());

@@ -5,8 +5,10 @@ import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
+import androidx.room.Transaction;
 
 import net.inqer.autosearch.data.model.Region;
+import net.inqer.autosearch.data.model.transactions.RegionWithCities;
 
 import java.util.List;
 
@@ -24,6 +26,10 @@ public interface RegionDao {
 
     @Query("SELECT * FROM regions WHERE id = :id")
     Single<Region> getRegionById(long id);
+
+    @Transaction
+    @Query("SELECT * FROM regions WHERE id = :regionId")
+    Flowable<RegionWithCities> observeRegionWithCities(long regionId);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     Completable insertRegion(Region region);

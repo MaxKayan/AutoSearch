@@ -112,7 +112,6 @@ public class DialogRadioPicker extends DialogFragment {
 
 
     private void finishWithResult(String text) {
-        Log.d(TAG, "finishWithResult: " + text);
         Bundle bundle = new Bundle();
         bundle.putString(RESULT, text);
         getParentFragmentManager().setFragmentResult(requestKey, bundle);
@@ -138,7 +137,6 @@ public class DialogRadioPicker extends DialogFragment {
 
     private void setupListeners() {
         binding.radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
-            Log.d(TAG, "setupListeners: called: " + checkedId);
             if (checkedId <= 0) {
                 return;
             }

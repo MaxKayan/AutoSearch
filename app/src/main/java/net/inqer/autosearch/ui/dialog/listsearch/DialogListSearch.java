@@ -137,6 +137,7 @@ public class DialogListSearch<T extends ListItem> extends DialogFragment {
 
     private void setupObservers() {
         viewModel.observeDataList().observe(getViewLifecycleOwner(), list -> {
+            Log.d(TAG, "setupObservers: new data: " + list.size());
             adapter.setNewList(list);
             autoCompleteAdapter = new AutoCompleteListItemAdapter<>(context, list);
             binding.dialogLocInput.setAdapter(autoCompleteAdapter);

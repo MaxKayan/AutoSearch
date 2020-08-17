@@ -49,11 +49,14 @@ public class SearchViewModel extends ViewModel {
     }
 
     Flowable<List<Region>> observeRegions() {
-        return locationsRepository.getAllRegions();
+        return optionsRepository.observeRegions();
     }
 
     Flowable<List<CarMark>> observeMarks() {
-        return optionsRepository.observeAllMarks();
+        return optionsRepository.observeAllMarks()
+                .doOnNext(carMarks -> {
+                    Log.d(TAG, "observeMarks: next: " + carMarks);
+                });
     }
 
     Flowable<List<CarModel>> observeModelsByMark(CarMark carMark) {

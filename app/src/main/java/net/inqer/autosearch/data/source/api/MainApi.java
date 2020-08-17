@@ -45,7 +45,7 @@ public interface MainApi {
 
 
     @DELETE("filters/{itemId}/")
-    Completable deleteFilter(@Path("itemId") int id);
+    Completable deleteFilter(@Path("itemId") long id);
 
     @DELETE("filters/")
         // TODO: Implement this
@@ -72,8 +72,8 @@ public interface MainApi {
 
 
     @GET("car_marks/")
-    Single<PageResponse<CarMark>> getCarMarks();
+    Single<List<CarMark>> getCarMarks();
 
     @GET("car_models/")
-    Single<PageResponse<CarModel>> getCarModelsByMark(@Query("mark") long markId);
+    Single<List<CarModel>> getCarModelsByMark(@Query("mark") long markId);
 }

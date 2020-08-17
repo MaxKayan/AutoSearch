@@ -64,7 +64,6 @@ public class LocationsRepository {
 
                             // if current items are not in the new list, delete them, then save passed list
                             if (!diff.isEmpty()) {
-                                Log.d(TAG, "saveAll: diff not empty, count: " + diff.size());
                                 return deleteAllRegions(diff).andThen(local.insertAllRegions(newRegions));
                             }
 

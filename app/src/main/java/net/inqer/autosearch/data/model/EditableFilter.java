@@ -5,7 +5,7 @@ import androidx.annotation.Nullable;
 import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
 
-import net.inqer.autosearch.data.converter.CitySerializer;
+import net.inqer.autosearch.data.converter.ListItemSerializer;
 
 import java.util.Objects;
 
@@ -13,30 +13,31 @@ import java.util.Objects;
 public class EditableFilter {
 
     @SerializedName("cities")
-    @JsonAdapter(CitySerializer.class)
+    @JsonAdapter(ListItemSerializer.class)
     @Nullable
     private City city;
 
+    @SerializedName("regions")
     @Nullable
-    @JsonAdapter(CitySerializer.class)
+    @JsonAdapter(ListItemSerializer.class)
     private Region region;
 
-    @SerializedName("carname_mark")
+    @SerializedName("car_marks")
     @Nullable
-    @JsonAdapter(CitySerializer.class)
+    @JsonAdapter(ListItemSerializer.class)
     private CarMark carMark;
 
-    @SerializedName("carname_model")
+    @SerializedName("car_models")
     @Nullable
-    @JsonAdapter(CitySerializer.class)
+    @JsonAdapter(ListItemSerializer.class)
     private CarModel carModel;
 
     @Nullable
     private String hull;
+
     @Nullable
     private String fuel;
 
-    @SerializedName("transm")
     @Nullable
     private String transmission;
 
